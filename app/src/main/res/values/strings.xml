@@ -1,0 +1,127 @@
+<resources>
+    <string name="app_name">MITAnto</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_inicio">Inicio</string>
+    <string name="menu_exportar_datos">Exportar datos</string>
+    <string name="menu_preferencias">Preferencias</string>
+    <string name="menu_statistics">Estadística</string>
+    <string name ="menu_añadir_inventario">Añadir Inventario</string>
+
+    <!--activity_main-->
+    <string name="Inventory_items">Articulos en Inventario</string>
+    <string name="Inventory_values">Valor de inventario ($)</string>
+    <string name="statistics">+ Estadísticas</string>
+    <string name="Add_inventory">Añadir Inventario</string>
+    <string name="remove_inventory">Remover Inventario</string>
+
+    <!--dialog_list -->
+    <string name="add_data">Agregar datos</string>
+    <string name="ic_remove_inventory">Remover Inventario</string>
+    <string name="start">Inicio</string>
+    <string name="transactions"> Mis transacciones</string>
+    <string name="transfers"> Mis transferencias</string>
+    <string name="ic_add_inventory">Agregar inventario</string>
+    <string name="data">Mis datos</string>
+    <string name="add_transfer">Añadir transferencia</string>
+    <string name="list">Lista</string>
+    <string name="export_data">Exportar datos</string>
+    <string name="close_application">Cerrar Aplicación</string>
+
+    <!-- activity_statistics-->
+    <string name="statistics2">Estadística</string>
+    <string name="Overview">Visión General</string>
+    <string name="Warehouse_inventory">Inventario por almacén</string>
+    <string name="Margins">Márgenes</string>
+    <string name="Sales_to_customers">Ventas a clientes</string>
+    <string name="Inventory_by_product_type">Inventario por tipo de producto</string>
+    <string name="Purchases_by_supplier">Compras por proveedor</string>
+    <string name="Purchases_by_date">Compras por fecha</string>
+    <string name="Sales_by_date">Ventass por fecha</string>
+    <string name="Inventories_by_date">Inventarios por fecha</string>
+    <string name="Invoices_by_date">Facturas por fecha</string>
+    <string name="Analysis">Analisis</string>
+    <string name="Product_sales_by_date">Ventas de producto por fecha</string>
+
+    <!-- activity_export-->
+    <string name="Export_to_CSV">Exportar a CSV</string>
+    <string name="Export_to_PDF">Exportar a PDF</string>
+    <string name="warehouses">Almacenes</string>
+    <string name="types_of_products">Tipos de productos</string>
+    <string name="Products">Productos</string>
+    <string name="Suppliers">Proveedores</string>
+    <string name="Customers">Clientes</string>
+    <string name="Transactions">Transacciones</string>
+    <string name="Transfers">Transferencias</string>
+    <string name="Alerts">Alertas</string>
+    <string name="Inventories">Inventarios</string>
+
+    <!-- safe_or_send -->
+    <string name="safe_or_send">Guardar o enviar el fichero</string>
+    <string name="question_safe_or_send">¿Quiere guardar el fichero o enviarlo por mail?</string>
+    <string name="safe">GUARDAR EN MI DISPOSITIVO</string>
+    <string name="send">ENVIAR POR EMAIL</string>
+    <string name="goBack">VOLVER</string>
+
+    <!--activity_search_main-->
+    <string name="input_bills">Facturas de entrada</string>
+    <string name="exit_bills">Facturas de salida</string>
+    <string name="search">Buscar</string>
+
+    <!--activity_preferences-->
+    <string name="preferences">Preferencias</string>
+    <string name="bills">Facturas</string>
+    <string name="name_company">Nombre de empresa</string>
+    <string name="name_company_message">Definir el nombre de la empresa que desea que se presente en las facturas</string>
+    <string name="details_company_1">Detalles de la empresa - Línea 1</string>
+    <string name="details_company_2">Detalles de la empresa - Línea 2</string>
+    <string name="id_bills">Id de factura automatico</string>
+    <string name="id_bills_message">Sugerir un nuevo ID de factura</string>
+    <string name="prefix_id_bills">Prefijo para el ID de factura</string>
+    <string name="prefix">Prefijo:</string>
+    <string name="start_automatic_numeration">Iniciar la numeración automatica en ...</string>
+    <string name="start_bills">Facturas entradas: 1</string>
+    <string name="end_bills">Facturas salidas: 1</string>
+    <string name="choice_money">Elegir la moneda a utilizar</string>
+    <string name="select_money">Moneda seleccionada</string>
+    <string name="date_of_expiration">Fecha de expiración</string>
+    <string name="date_of_expirtation_message">Mis productos tienen fecha de caducidad. Tenga en cuenta que las transacciones
+    de salida serán manejados automaticamente como F.I.F.O.(First In First Out)</string>
+    <string name="data_synchronization">Sincronización de datos</string>
+    <string name="automatic_synchronization">Sincronización automatica</string>
+    <string name="automatic_synchronization_message">Sincronizar automaticamente cuando la app se inicia o cuando se cierra
+    y a intervalos especificos(definir abajo)</string>
+    <string name="data_synchronization_message">Sincronizar automaticamente cuando la aplicación abra</string>
+    <string name="data_synchronization_message2">Sincronizar automaticamente antes del cierre de la aplicación</string>
+    <string name="sync_my_data">Sincronizar mis datos</string>
+    <string name="sync_my_data_message">Una vez al día</string>
+    <string name="send_to_cloud">Enviar a la nube</string>
+    <string name="send_to_cloud_message">ÚLtimos 7 días</string>
+    <string name="sync_with_cloud">Sincronizar con la nube</string>
+    <string name="sync_with_cloud_message">Siempre envía datos a la nube después de añadir o editar</string>
+    <string name="sage_image_cloud">Guardar imagenes en la nube</string>
+    <string name="notifications">Notificaciones</string>
+    <string name="receive_notifications">Recibir notificaciones</string>
+    <string name="receive_notifications_message">Recibir notificaciones al utilizar el portal web o niticias sobre la app</string>
+
+    <!-- DIalog bills-->
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- fragment añadir inventario -->
+    <string name = "placeholder_nombre_almacen">Escriba el nombre del almacen</string>
+    <string name = "placeholder_dirección_almacen">Escriba la dirección del almacen</string>
+    <string name = "placeholder_usuario_responsable">Escriba el id del usuario responsable</string>
+    <string name="button_send">Enviar</string>
+    <string name = "textView_nombre_almacen">Nombre del almacen</string>
+    <string name = "textView_direccion_almacen">Dirección del almacen</string>
+    <string name = "textView_estado_almacen">Estado del almacen</string>
+    <string name = "textView_id_usuario_responsable">Id del usuario responsable</string>
+</resources>

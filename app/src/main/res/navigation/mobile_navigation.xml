@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_inicio">
+
+    <fragment
+        android:id="@+id/nav_inicio"
+        android:name="com.seba.mitantonavigationdrawer.ui.inicio.InicioFragment"
+        android:label="@string/menu_inicio"
+        tools:layout="@layout/fragment_inicio" >
+        <action
+            android:id="@+id/action_nav_inicio_to_nav_statistics"
+            app:destination="@id/nav_statistics" />
+        <action
+            android:id="@+id/action_nav_inicio_to_nav_exportar_datos"
+            app:destination="@id/nav_exportar_datos" />
+        <action
+            android:id="@+id/action_nav_inicio_to_nav_preferencias"
+            app:destination="@id/nav_preferencias" />
+        <action
+            android:id="@+id/action_nav_inicio_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_nav_inicio_to_nav_añadir_inventario"
+            app:destination="@id/nav_añadir_inventario" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_exportar_datos"
+        android:name="com.seba.mitantonavigationdrawer.ui.exportarDatos.ExportarDatosFragment"
+        android:label="@string/menu_exportar_datos"
+        tools:layout="@layout/fragment_exportar_datos" >
+        <action
+            android:id="@+id/action_nav_exportar_datos_to_nav_inicio"
+            app:destination="@id/nav_inicio" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_preferencias"
+        android:name="com.seba.mitantonavigationdrawer.ui.preferencias.PreferenciasFragment"
+        android:label="@string/menu_preferencias"
+        tools:layout="@layout/fragment_preferencias" >
+        <action
+            android:id="@+id/action_nav_preferencias_to_nav_inicio"
+            app:destination="@id/nav_inicio" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_statistics"
+        android:name="com.seba.mitantonavigationdrawer.ui.estadística.EstadisticaFragment"
+        android:label="@string/statistics2"
+        tools:layout="@layout/fragment_estadistica" >
+        <action
+            android:id="@+id/action_nav_statistics_to_nav_inicio"
+            app:destination="@id/nav_inicio" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.seba.mitantonavigationdrawer.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
+
+    <fragment
+        android:id="@+id/nav_añadir_inventario"
+        android:name="com.seba.mitantonavigationdrawer.ui.añadirInventario.AnadirInventarioFragment"
+        android:label="@string/menu_añadir_inventario"
+        tools:layout="@layout/fragment_anadir_inventario" >
+
+        <action
+            android:id="@+id/action_nav_añadir_inventario_to_nav_inicio3"
+            app:destination="@id/nav_inicio" />
+    </fragment>
+
+</navigation>
