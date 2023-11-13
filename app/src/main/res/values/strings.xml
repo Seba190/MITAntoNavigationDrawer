@@ -11,7 +11,7 @@
     <string name="menu_exportar_datos">Exportar datos</string>
     <string name="menu_preferencias">Preferencias</string>
     <string name="menu_statistics">Estadística</string>
-    <string name ="menu_añadir_inventario">Añadir Inventario</string>
+    <string name="menu_añadir_inventario">Añadir Inventario</string>
 
     <!--activity_main-->
     <string name="Inventory_items">Articulos en Inventario</string>
@@ -116,12 +116,16 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- fragment añadir inventario -->
-    <string name = "placeholder_nombre_almacen">Escriba el nombre del almacen</string>
-    <string name = "placeholder_dirección_almacen">Escriba la dirección del almacen</string>
-    <string name = "placeholder_usuario_responsable">Escriba el id del usuario responsable</string>
+    <string name="placeholder_nombre_almacen">Escriba el nombre del almacen</string>
+    <string name="placeholder_dirección_almacen">Escriba la dirección del almacen</string>
+    <string name="placeholder_usuario_responsable">Id</string>
+    <string name="placeholder_id_almacen">Id</string>
+    <string name="placeholder_estado_almacen">1</string>
     <string name="button_send">Enviar</string>
-    <string name = "textView_nombre_almacen">Nombre del almacen</string>
-    <string name = "textView_direccion_almacen">Dirección del almacen</string>
-    <string name = "textView_estado_almacen">Estado del almacen</string>
-    <string name = "textView_id_usuario_responsable">Id del usuario responsable</string>
+    <string name="textView_nombre_almacen">Nombre del almacen</string>
+    <string name="textView_direccion_almacen">Dirección del almacen</string>
+    <string name="textView_estado_almacen">Estado del almacen</string>
+    <string name="textView_id_usuario_responsable">Id del usuario responsable</string>
+    <string name = "textView_id_almacen">Id en la base de datos</string>
+    <string name = "CheckBox">Actividad</string>
 </resources>
