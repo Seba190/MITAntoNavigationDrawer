@@ -116,16 +116,17 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- fragment añadir inventario -->
-    <string name="placeholder_nombre_almacen">Escriba el nombre del almacen</string>
-    <string name="placeholder_dirección_almacen">Escriba la dirección del almacen</string>
+    <string name="placeholder_nombre_almacen">Escriba el nombre del almacén</string>
+    <string name="placeholder_dirección_almacen">Escriba la dirección del almacén</string>
     <string name="placeholder_usuario_responsable">Id</string>
     <string name="placeholder_id_almacen">Id</string>
     <string name="placeholder_estado_almacen">1</string>
     <string name="button_send">Enviar</string>
-    <string name="textView_nombre_almacen">Nombre del almacen</string>
-    <string name="textView_direccion_almacen">Dirección del almacen</string>
-    <string name="textView_estado_almacen">Estado del almacen</string>
-    <string name="textView_id_usuario_responsable">Id del usuario responsable</string>
+    <string name="textView_nombre_almacen">NOMBRE DEL ALMACÉN</string>
+    <string name="textView_direccion_almacen">DIRECCIÓN DEL ALMACÉN</string>
+    <string name="textView_estado_almacen">Estado del almacén</string>
+    <string name="textView_usuario_responsable">USUARIO RESPONSABLE</string>
     <string name = "textView_id_almacen">Id en la base de datos</string>
     <string name = "CheckBox">Actividad</string>
+    <string name="item_label">Eliga una opción</string>
 </resources>

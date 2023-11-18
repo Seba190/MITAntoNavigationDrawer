@@ -58,6 +58,9 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
+    //fragment añadir almacen
     implementation("com.android.volley:volley:1.2.1")
+    //implementation ("com.squareup.retrofit2:converter-moshi:2.4.0")
+    //implementation("com.squareup.moshi:moshi-kotlin:2.4.0")
 
 }
