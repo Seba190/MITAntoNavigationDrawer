@@ -109,7 +109,7 @@
         app:layout_constraintVertical_bias="0.3"
         />
 
-    <!-- Letreros rojos -->
+    <!-- Letreros verdes -->
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvAddInventory"
@@ -139,7 +139,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/Add_inventory"
+                android:text="@string/Add_data"
                 android:textColor="@color/white"
                 android:gravity="center"/>
 

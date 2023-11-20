@@ -1,44 +1,28 @@
-package com.seba.mitantonavigationdrawer.ui.añadirInventario
+package com.seba.mitantonavigationdrawer.ui.añadirAlmacen
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.graphics.PorterDuff
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.RadioButton
-import android.widget.RadioGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.content.getSystemService
 import com.android.volley.Request
-import com.android.volley.RequestQueue
-import com.android.volley.Response
 import com.android.volley.VolleyError
-import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.google.android.material.textfield.TextInputLayout
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirInventarioBinding
-import org.json.JSONArray
 import org.json.JSONObject
 
 @Suppress("NAME_SHADOWING")
-class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
+class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_inventario) {
 
     private var _binding: FragmentAnadirInventarioBinding? = null
 
@@ -53,7 +37,6 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
    // var TextId : EditText? = null
    // var CheckBox : CheckBox? = null
     var TvHolaMundo: AutoCompleteTextView? = null
-    var ListaDesplegable: TextInputLayout? = null
    // var stringRequest: StringRequest? = null
     //var queue1 : RequestQueue? = null
     val TAG = "MyTag"
@@ -65,7 +48,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         savedInstanceState: Bundle?
     ): View {
         val anadirInventarioViewModel =
-            ViewModelProvider(this).get(AnadirInventarioViewModel::class.java)
+            ViewModelProvider(this).get(AnadirAlmacenViewModel::class.java)
 
         _binding = FragmentAnadirInventarioBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -83,42 +66,16 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
             PorterDuff.Mode.SRC_ATOP)
         binding.etDireccionAlmacen.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
-        // binding.etEstadoAlmacen.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
-         //   PorterDuff.Mode.SRC_ATOP)
-       // binding.etIdAlmacen.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
-        //    PorterDuff.Mode.SRC_ATOP)
-      //  binding.etIdUsuarioResponsable.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
-       //     PorterDuff.Mode.SRC_ATOP)
-
 
      //   Mostrar los usuarios responsables en la lista desplegable
+        ListaDesplegable()
 
-        val queue1 =Volley.newRequestQueue(requireContext())
-        val url1 ="http://186.64.123.248/Almacen/usuario.php"
-        val jsonObjectRequest1 = JsonObjectRequest(
-            Request.Method.GET,url1, null,
-            { response ->
-                // Obtén el array de opciones desde el objeto JSON
-                val jsonArray = response.getJSONArray("Lista")
-                // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'","'"))
-                }
-                //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
-                //binding.tvholaMundo?.setText(response.getString("Lista"))
-                TvHolaMundo?.setAdapter(adapter)
+        //Botón enviar datos
+        binding.button.setOnClickListener {
+            ValidacionesIdInsertarDatos()
+        }
 
-                TvHolaMundo?.onItemClickListener = AdapterView.OnItemClickListener {
-                        parent, view, position, id ->
-                    val itemSelected = parent.getItemAtPosition(position)
-                }
-            }, { error ->
-                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
-            }
-        )
-        queue1.add(jsonObjectRequest1)
+
 
 
 
@@ -137,77 +94,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
             Toast.makeText(requireContext(), "Item: $itemSelected", Toast.LENGTH_SHORT).show()
         }*/
 
-        //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-        binding.button.setOnClickListener {
-            val queue =Volley.newRequestQueue(requireContext())
-            val url ="http://186.64.123.248/Almacen/registro2.php"
-            val jsonObjectRequest = object: StringRequest(
-                Request.Method.POST,url,
-                { response ->
-                    if(!TextNombre?.text.toString().isBlank()){
-                    val id = JSONObject(response).getString("ID_ALMACEN")
-                    //unico = 1
-                    //no unico = 0
-                    val unico = JSONObject(response).getString("ALMACEN_UNICO")
-                    if (unico == "1") {
-                    //Aqui va el código para validar el almacen
-                    val url1 = "http://186.64.123.248/Almacen/insertar.php" // Reemplaza esto con tu URL de la API
-                    val queue1 =Volley.newRequestQueue(requireContext())
-                    val stringRequest = object: StringRequest(
-                        Request.Method.POST,
-                        url1,
-                        { response ->
-                            Toast.makeText(requireContext(), "Almacén agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
-                        },
-                        { error ->
-                            // Toast.makeText(requireContext(),"No se ha introducido el almacen a la base de datos", Toast.LENGTH_LONG).show()
-                            Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
-                        }
-                    )
-
-                    {
-                        override fun getParams(): MutableMap<String, String> {
-                            val parametros = HashMap<String, String>()
-                            parametros.put("ID_ALMACEN", id.toString())
-                            parametros.put("ALMACEN", TextNombre?.text.toString().uppercase())
-                            parametros.put("DIRECCION_ALMACEN", TextDireccion?.text.toString().uppercase())
-                            parametros.put("ESTADO_ALMACEN", TextEstado.toString())
-                            parametros.put("USUARIO", TvHolaMundo?.text.toString())
-                            return parametros
-                        }
-                    }
-                    queue1.add(stringRequest)
-
-                    }
-                    else if (unico == "0"){
-                        VolleyError("El almacén ya se encuentra en la base de datos")
-                        //queue1.cancelAll(TAG)
-                        //jsonObjectRequest1.cancel()
-                        Toast.makeText(requireContext(), "El almacén ya se encuentra en la base de datos", Toast.LENGTH_LONG).show()
-                    }
-                    }
-                    else{
-                        Toast.makeText(requireContext(), "El nombre del almacén es obligatorio", Toast.LENGTH_LONG).show()
-                    }
-
-                    // TextId?.setText(response.getString("ID_ALMACEN"))
-                    // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
-                }, { error ->
-                    // Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-                    Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
-                }
-            ){
-                override fun getParams(): MutableMap<String, String> {
-                    val parametros = HashMap<String, String>()
-                    parametros.put("ALMACEN", TextNombre?.text.toString().uppercase())
-                    return parametros
-                }
-            }
-            queue.add(jsonObjectRequest)
-        }
-
-        //FIN EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 
@@ -335,7 +222,108 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         return root
     }
 
+    private fun ListaDesplegable() {
+        val queue1 =Volley.newRequestQueue(requireContext())
+        val url1 ="http://186.64.123.248/Almacen/usuario.php"
+        val jsonObjectRequest1 = JsonObjectRequest(
+            Request.Method.GET,url1, null,
+            { response ->
+                // Obtén el array de opciones desde el objeto JSON
+                val jsonArray = response.getJSONArray("Lista")
+                // Convierte el array JSON a una lista mutable
+                val opcionesList = mutableListOf<String>()
+                for (i in 0 until jsonArray.length()) {
+                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'","'"))
+                }
+                //Crea un adpatador para el dropdown
+                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
+                //binding.tvholaMundo?.setText(response.getString("Lista"))
+                TvHolaMundo?.setAdapter(adapter)
 
+                TvHolaMundo?.onItemClickListener = AdapterView.OnItemClickListener {
+                        parent, view, position, id ->
+                    val itemSelected = parent.getItemAtPosition(position)
+                }
+            }, { error ->
+                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+            }
+        )
+        queue1.add(jsonObjectRequest1)
+    }
+
+    private fun ValidacionesIdInsertarDatos() {
+        //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
+        val queue =Volley.newRequestQueue(requireContext())
+        val url ="http://186.64.123.248/Almacen/registro2.php"
+        val jsonObjectRequest = object: StringRequest(
+            Request.Method.POST,url,
+            { response ->
+                if(!TextNombre?.text.toString().isBlank()){
+                    val id = JSONObject(response).getString("ID_ALMACEN")
+                    //unico = 1
+                    //no unico = 0
+                    val unico = JSONObject(response).getString("ALMACEN_UNICO")
+                    if (unico == "1") {
+                        //Aqui va el código para validar el almacen
+                        val url1 = "http://186.64.123.248/Almacen/insertar.php" // Reemplaza esto con tu URL de la API
+                        val queue1 =Volley.newRequestQueue(requireContext())
+                        val stringRequest = object: StringRequest(
+                            Request.Method.POST,
+                            url1,
+                            { response ->
+                                Toast.makeText(requireContext(), "Almacén agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
+                                TextNombre?.setText("")
+                                TextDireccion?.setText("")
+                                TvHolaMundo?.setText("Eliga una opción")
+                            },
+                            { error ->
+                                // Toast.makeText(requireContext(),"No se ha introducido el almacen a la base de datos", Toast.LENGTH_LONG).show()
+                                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                            }
+                        )
+
+                        {
+                            override fun getParams(): MutableMap<String, String> {
+                                val parametros = HashMap<String, String>()
+                                parametros.put("ID_ALMACEN", id.toString())
+                                parametros.put("ALMACEN", TextNombre?.text.toString().uppercase())
+                                parametros.put("DIRECCION_ALMACEN", TextDireccion?.text.toString().uppercase())
+                                parametros.put("ESTADO_ALMACEN", TextEstado.toString())
+                                parametros.put("USUARIO", TvHolaMundo?.text.toString())
+                                return parametros
+                            }
+                        }
+                        queue1.add(stringRequest)
+
+                    }
+                    else if (unico == "0"){
+                        VolleyError("El almacén ya se encuentra en la base de datos")
+                        //queue1.cancelAll(TAG)
+                        //jsonObjectRequest1.cancel()
+                        Toast.makeText(requireContext(), "El almacén ya se encuentra en la base de datos", Toast.LENGTH_LONG).show()
+                    }
+                }
+                else{
+                    Toast.makeText(requireContext(), "El nombre del almacén es obligatorio", Toast.LENGTH_LONG).show()
+                }
+
+                // TextId?.setText(response.getString("ID_ALMACEN"))
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+            }, { error ->
+                // Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+            }
+        ){
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ALMACEN", TextNombre?.text.toString().uppercase())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
+    }
+
+    //FIN EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
 
     override fun onDestroyView() {
         super.onDestroyView()

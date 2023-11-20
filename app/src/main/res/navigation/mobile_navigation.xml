@@ -64,8 +64,8 @@
 
     <fragment
         android:id="@+id/nav_añadir_inventario"
-        android:name="com.seba.mitantonavigationdrawer.ui.añadirInventario.AnadirInventarioFragment"
-        android:label="@string/menu_añadir_inventario"
+        android:name="com.seba.mitantonavigationdrawer.ui.añadirAlmacen.AnadirAlmacenFragment"
+        android:label="@string/menu_añadir_almacen"
         tools:layout="@layout/fragment_anadir_inventario" >
 
         <action

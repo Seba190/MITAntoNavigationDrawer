@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MITAnto</string>
+    <string name="app_name">MiTAnto</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -7,17 +7,24 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Activity_main_drawer-->
+    <string name="title_data">Datos</string>
+    <string name="title_statistics">Estadísticas</string>
+
+    <!-- Menu -->
     <string name="menu_inicio">Inicio</string>
     <string name="menu_exportar_datos">Exportar datos</string>
     <string name="menu_preferencias">Preferencias</string>
     <string name="menu_statistics">Estadística</string>
     <string name="menu_añadir_inventario">Añadir Inventario</string>
+    <string name="menu_añadir_almacen">Añadir Almacén</string>
 
     <!--activity_main-->
     <string name="Inventory_items">Articulos en Inventario</string>
     <string name="Inventory_values">Valor de inventario ($)</string>
     <string name="statistics">+ Estadísticas</string>
     <string name="Add_inventory">Añadir Inventario</string>
+    <string name="Add_data">Añadir Datos</string>
     <string name="remove_inventory">Remover Inventario</string>
 
     <!--dialog_list -->

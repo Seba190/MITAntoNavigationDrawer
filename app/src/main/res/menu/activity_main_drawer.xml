@@ -2,27 +2,38 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_inicio"
             android:icon="@drawable/ic_house"
             android:title="@string/menu_inicio" />
+    </group>
+    <item android:title="@string/title_data">
+        <menu>
+    <group>
         <item
             android:id="@+id/nav_exportar_datos"
             android:icon="@drawable/ic_export_data"
             android:title="@string/menu_exportar_datos" />
         <item
-            android:id="@+id/nav_preferencias"
-            android:icon="@drawable/ic_preferences"
-            android:title="@string/menu_preferencias" />
-        <item
-            android:id="@+id/nav_statistics"
-            android:icon="@drawable/ic_statistics"
-            android:title="@string/statistics2" />
-        <item
             android:id="@+id/nav_añadir_inventario"
-            android:icon="@drawable/ic_add_inventory"
-            android:title="@string/menu_añadir_inventario" />
+            android:icon="@drawable/ic_add_data"
+            android:title="@string/Add_data" />
     </group>
+        </menu>
+    </item>
+    <item android:title="@string/title_statistics">
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/nav_statistics"
+                    android:icon="@drawable/ic_statistics"
+                    android:title="@string/statistics2" />
+                <item
+                    android:id="@+id/nav_preferencias"
+                    android:icon="@drawable/ic_preferences"
+                    android:title="@string/menu_preferencias" />
+            </group>
+        </menu>
+    </item>
 </menu>
