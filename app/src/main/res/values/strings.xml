@@ -18,6 +18,8 @@
     <string name="menu_statistics">Estadística</string>
     <string name="menu_añadir_inventario">Añadir Inventario</string>
     <string name="menu_añadir_almacen">Añadir Almacén</string>
+    <string name="menu_añadir_datos">Añadir Datos</string>
+    <string name="menu_añadir_producto">Añadir Producto</string>
 
     <!--activity_main-->
     <string name="Inventory_items">Articulos en Inventario</string>
@@ -122,7 +124,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <!-- fragment añadir inventario -->
+    <!-- fragment añadir Almacén -->
     <string name="placeholder_nombre_almacen">Escriba el nombre del almacén</string>
     <string name="placeholder_dirección_almacen">Escriba la dirección del almacén</string>
     <string name="placeholder_usuario_responsable">Id</string>
@@ -136,4 +138,28 @@
     <string name = "textView_id_almacen">Id en la base de datos</string>
     <string name = "CheckBox">Actividad</string>
     <string name="item_label">Eliga una opción</string>
+
+    <!-- fragment añadir Producto -->
+    <string name="placeholder_nombre_producto">Eliga un producto</string>
+    <string name="placeholder_peso_producto">Escriba el peso del producto</string>
+    <string name="placeholder_volumen_producto">Escriba el volumen del producto</string>
+    <string name="textView_nombre_producto">NOMBRE DEL PRODUCTO</string>
+    <string name="textView_peso_producto">PESO DEL PRODUCTO</string>
+    <string name="textView_volumen_producto">VOLUMEN DEL PRODUCTO</string>
+    <string name="textView_imagen">IMAGEN DEL PRODUCTO</string>
+    <string name="textView_tipo_producto">TIPO DE PRODUCTO</string>
+    <string name="boton_imagen">Insertar Imagen</string>
+    <string name="textView_codigo_barra_producto">CÓDIGO DE BARRA</string>
+    <string name="placeholder_codigo_barra_producto">Escriba el código de barra del producto</string>
+    <string name="textView_codigo_barra_embalaje">CÓDIGO DE BARRA DE EMBALAJE</string>
+    <string name="placeholder_codigo_barra_embalaje">Escriba el código de barra del embalaje</string>
+    <string name="textView_unidades_embalaje">UNIDADES DE EMBALAJE</string>
+    <string name="placeholder_unidades_embalaje">Escriba el número de unidades del embalaje</string>
+    <string name="upload_image">Cargar imagen</string>
+    <string name="take_image">Tomar foto</string>
+
+    <!-- alertas_por_almacen dialogo -->
+
+    <string name="title_alerts_warehouses">Alertas por Almacén</string>
+
 </resources>

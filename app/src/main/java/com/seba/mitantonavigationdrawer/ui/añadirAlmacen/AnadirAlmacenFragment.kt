@@ -18,13 +18,13 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
-import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirInventarioBinding
+import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirAlmacenBinding
 import org.json.JSONObject
 
 @Suppress("NAME_SHADOWING")
-class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_inventario) {
+class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
 
-    private var _binding: FragmentAnadirInventarioBinding? = null
+    private var _binding: FragmentAnadirAlmacenBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -50,7 +50,7 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_inventario) {
         val anadirInventarioViewModel =
             ViewModelProvider(this).get(AnadirAlmacenViewModel::class.java)
 
-        _binding = FragmentAnadirInventarioBinding.inflate(inflater, container, false)
+        _binding = FragmentAnadirAlmacenBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         //Aquí se programa

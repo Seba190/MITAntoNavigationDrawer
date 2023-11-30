@@ -1,14 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
-    android:layout_gravity="center"
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_add_data"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.añadirDatos.AnadirDatosFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
 
-</FrameLayout>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/containerAñadirDatos"
+                android:layout_width="match_parent"
+                android:layout_height="485dp"
+                android:layout_gravity="top"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardBackgroundColor="#80000000">
+
+                <!-- MITAnto-->
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:textSize="40sp"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"/>
+
+                <!-- Letreros blancos -->
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvAWarehouse1"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    app:cardBackgroundColor="@color/color_list"
+                    android:layout_marginHorizontal="50dp"
+                    android:layout_marginVertical="400dp">
+
+
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvAWarehouse2"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    app:cardBackgroundColor="@color/color_list"
+                    android:layout_marginStart="250dp"
+                    android:layout_marginVertical="400dp">
+
+
+
+                </androidx.cardview.widget.CardView>
+
+            </androidx.cardview.widget.CardView>
+            
+            
+            <androidx.cardview.widget.CardView
+                android:id="@+id/tvAñadirAlmacen"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_add_warehouse"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Añadir nuevo almacén"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingHorizontal="60dp"
+                    android:gravity="center"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/tvAñadirTipoProducto"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/add_type_of_products"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Añadir nuevo tipo de producto"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingHorizontal="65dp"
+                    android:gravity="center"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/tvAñadirProducto"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/add_product"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Añadir nuevo producto"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingHorizontal="60dp"
+                    android:gravity="center"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/tvAñadirProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/add_supplier"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Añadir nuevo proveedor"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingHorizontal="60dp"
+                    android:gravity="center"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/tvAñadirCliente"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/add_client"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="Añadir nuevo cliente"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:paddingHorizontal="60dp"
+                    android:gravity="center"/>
+
+            </androidx.cardview.widget.CardView>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+</RelativeLayout>

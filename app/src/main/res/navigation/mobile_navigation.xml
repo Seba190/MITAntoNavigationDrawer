@@ -20,11 +20,8 @@
             android:id="@+id/action_nav_inicio_to_nav_preferencias"
             app:destination="@id/nav_preferencias" />
         <action
-            android:id="@+id/action_nav_inicio_to_searchFragment"
-            app:destination="@id/searchFragment" />
-        <action
-            android:id="@+id/action_nav_inicio_to_nav_añadir_inventario"
-            app:destination="@id/nav_añadir_inventario" />
+            android:id="@+id/action_nav_inicio_to_nav_añadir_datos"
+            app:destination="@id/nav_añadir_datos" />
     </fragment>
 
     <fragment
@@ -56,21 +53,37 @@
             android:id="@+id/action_nav_statistics_to_nav_inicio"
             app:destination="@id/nav_inicio" />
     </fragment>
-    <fragment
-        android:id="@+id/searchFragment"
-        android:name="com.seba.mitantonavigationdrawer.SearchFragment"
-        android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+
 
     <fragment
-        android:id="@+id/nav_añadir_inventario"
+        android:id="@+id/nav_añadir_almacen"
         android:name="com.seba.mitantonavigationdrawer.ui.añadirAlmacen.AnadirAlmacenFragment"
         android:label="@string/menu_añadir_almacen"
-        tools:layout="@layout/fragment_anadir_inventario" >
+        tools:layout="@layout/fragment_anadir_almacen" >
 
         <action
-            android:id="@+id/action_nav_añadir_inventario_to_nav_inicio3"
+            android:id="@+id/action_nav_añadir_almacen_to_nav_inicio3"
             app:destination="@id/nav_inicio" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_añadir_datos"
+        android:name="com.seba.mitantonavigationdrawer.ui.añadirDatos.AnadirDatosFragment"
+        android:label="@string/menu_inicio"
+        tools:layout="@layout/fragment_anadir_datos" >
+        <action
+            android:id="@+id/action_nav_añadir_datos_to_nav_añadir_almacen"
+            app:destination="@id/nav_añadir_almacen" />
+        <action
+            android:id="@+id/action_nav_añadir_datos_to_nav_añadir_producto"
+            app:destination="@id/nav_añadir_producto" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_añadir_producto"
+        android:name="com.seba.mitantonavigationdrawer.ui.añadirProducto.AnadirProductoFragment"
+        android:label="@string/menu_añadir_producto"
+        tools:layout="@layout/fragment_anadir_producto" >
     </fragment>
 
 </navigation>

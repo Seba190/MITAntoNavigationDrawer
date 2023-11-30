@@ -21,7 +21,11 @@ import com.seba.mitantonavigationdrawer.databinding.ActivityMainBinding
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainer
 import androidx.navigation.fragment.findNavController
+import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirDatosBinding
+import com.seba.mitantonavigationdrawer.ui.añadirDatos.AnadirDatosFragment
+import com.seba.mitantonavigationdrawer.ui.inicio.InicioFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,6 +41,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //Sobreposicionar fragment añadir_datos sobre fragment inicio
+
+       /* if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, AnadirDatosFragment())
+                .commit()
+        }
+
+        // Luego, en algún momento, puedes reemplazar FragmentA con FragmentB
+        showFragmentB()*/
         setSupportActionBar(binding.appBarMain.toolbar)
 
         //val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
@@ -53,7 +67,8 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_inicio, R.id.nav_exportar_datos, R.id.nav_preferencias, R.id.nav_statistics, R.id.nav_añadir_inventario
+                R.id.nav_inicio, R.id.nav_exportar_datos, R.id.nav_preferencias, R.id.nav_statistics,
+                R.id.nav_añadir_datos, R.id.nav_añadir_almacen, R.id.nav_añadir_producto
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -65,15 +80,15 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_exportar_datos -> navController.navigate(R.id.nav_exportar_datos)
                 R.id.nav_preferencias -> navController.navigate(R.id.nav_preferencias)
                 R.id.nav_statistics -> navController.navigate(R.id.nav_statistics)
-                R.id.nav_añadir_inventario ->navController.navigate(R.id.nav_añadir_inventario)
-                R.id.nav_search -> navController.navigate(R.id.nav_search)
+                R.id.nav_añadir_almacen ->navController.navigate(R.id.nav_añadir_almacen)
+                R.id.nav_añadir_datos -> navController.navigate(R.id.nav_añadir_datos)
+                R.id.nav_añadir_producto ->navController.navigate(R.id.nav_añadir_producto)
             }
             drawerLayout.closeDrawers()
             true
 
         }
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -86,6 +101,7 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
 
     /* fun onMyButtonClick(view : View) {
          view.setOnClickListener {
