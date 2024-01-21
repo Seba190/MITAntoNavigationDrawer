@@ -42,12 +42,20 @@ class InicioFragment : Fragment() {
        // val root: View = binding.root
         val root = inflater.inflate(R.layout.fragment_inicio, container, false)
         val estadistics = root.findViewById<TextView>(R.id.tvStatistics)
-       // val addData = root.findViewById<CardView>(R.id.cvAddData)
+        val addInventory = root.findViewById<CardView>(R.id.cvAddInventory)
+        val removeInventory = root.findViewById<CardView>(R.id.cvRemoveInventory)
        // val inicio = root.findViewById<ViewGroup>(R.id.nav_inicio)
         val currentActivity = activity
         estadistics.setOnClickListener {
                 findNavController().navigate(R.id.action_nav_inicio_to_nav_statistics)
             }
+        addInventory.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_inicio_to_nav_añadir_inventario)
+        }
+        removeInventory.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_inicio_to_nav_remover_inventario)
+        }
+
        // addData.setOnClickListener {
         //    findNavController().navigate(R.id.action_nav_inicio_to_nav_añadir_datos)
        // }

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.Formularios.añadirAlmacen.AnadirAlmacenFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:longClickable="true"
+            android:orientation="vertical"
+            android:focusableInTouchMode="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+
+
+            <TextView
+                android:id="@+id/tvAlmacenEditable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_nombre_almacen"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etNombreAlmacenEditable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:gravity="center"
+                android:hint="@string/placeholder_nombre_almacen"
+                android:inputType="text"
+                android:backgroundTint="@color/color_list"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDireccionAlmacenEditable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_direccion_almacen"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etDireccionAlmacenEditable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:hint="@string/placeholder_dirección_almacen"
+                android:backgroundTint="@color/color_list"
+                android:inputType="text"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/tvIdUsuarioResponsableEditable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_usuario_responsable"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:focusableInTouchMode="true">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ListaDesplegableEditable"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColorHint="@color/color_list"
+                    android:layout_marginHorizontal="70dp"
+                    style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/tvAutoCompleteEditable"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/color_list"
+                        android:textColor="@color/black"
+                        android:hint="Opciones"
+                        android:text="@string/item_label"
+                        android:inputType="none"/>
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <Button
+                android:id="@+id/buttonEditable"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/light_green"
+                android:layout_marginHorizontal="160dp"
+                android:layout_marginVertical="40dp"
+                android:text="@string/button_send" />
+
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

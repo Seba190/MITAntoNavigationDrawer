@@ -48,11 +48,9 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.fragment_container, AnadirDatosFragment())
                 .commit()
         }
-
         // Luego, en algún momento, puedes reemplazar FragmentA con FragmentB
         showFragmentB()*/
         setSupportActionBar(binding.appBarMain.toolbar)
-
         //val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -68,7 +66,12 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_inicio, R.id.nav_exportar_datos, R.id.nav_preferencias, R.id.nav_statistics,
-                R.id.nav_añadir_datos, R.id.nav_añadir_almacen, R.id.nav_añadir_producto
+                R.id.nav_añadir_datos, R.id.nav_añadir_almacen, R.id.nav_añadir_producto, R.id.nav_añadir_proveedor,
+                R.id.nav_añadir_cliente,R.id.nav_añadir_tipo_de_producto,R.id.nav_añadir_inventario,R.id.nav_remover_inventario,
+                R.id.nav_añadir_transferencia, R.id.nav_mis_datos, R.id.nav_almacenes, R.id.tipos_de_productos, R.id.productos,
+                R.id.proveedores,R.id.clientes, R.id.nav_editar_almacen, R.id.nav_alertas_almacenes,R.id.nav_cliente_precio_venta,
+                R.id.nav_proveedor_precio_compra
+
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -83,11 +86,28 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_añadir_almacen ->navController.navigate(R.id.nav_añadir_almacen)
                 R.id.nav_añadir_datos -> navController.navigate(R.id.nav_añadir_datos)
                 R.id.nav_añadir_producto ->navController.navigate(R.id.nav_añadir_producto)
+                R.id.nav_añadir_proveedor ->navController.navigate(R.id.nav_añadir_proveedor)
+                R.id.nav_añadir_cliente -> navController.navigate(R.id.nav_añadir_cliente)
+                R.id.nav_añadir_tipo_de_producto -> navController.navigate(R.id.nav_añadir_tipo_de_producto)
+                R.id.nav_añadir_inventario -> navController.navigate(R.id.nav_añadir_inventario)
+                R.id.nav_remover_inventario -> navController.navigate(R.id.nav_remover_inventario)
+                R.id.nav_añadir_transferencia -> navController.navigate(R.id.nav_añadir_transferencia)
+                R.id.nav_mis_datos -> navController.navigate(R.id.nav_mis_datos)
+                R.id.nav_almacenes -> navController.navigate(R.id.nav_almacenes)
+                R.id.nav_tipos_de_productos -> navController.navigate(R.id.nav_tipos_de_productos)
+                R.id.nav_productos -> navController.navigate(R.id.nav_productos)
+                R.id.nav_proveedores -> navController.navigate(R.id.nav_proveedores)
+                R.id.nav_clientes -> navController.navigate(R.id.nav_clientes)
+                R.id.nav_editar_almacen -> navController.navigate(R.id.nav_editar_almacen)
+                R.id.nav_alertas_almacenes ->navController.navigate(R.id.nav_alertas_almacenes)
+                R.id.nav_proveedor_precio_compra -> navController.navigate(R.id.nav_proveedor_precio_compra)
+                R.id.nav_cliente_precio_venta -> navController.navigate(R.id.nav_cliente_precio_venta)
             }
             drawerLayout.closeDrawers()
             true
 
         }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

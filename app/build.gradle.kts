@@ -1,7 +1,13 @@
 
+
+// Otras importaciones según sea necesario
+
+
 plugins {
+    id("kotlin-android")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -37,21 +43,27 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    kotlin{
+        sourceSets["main"].apply {
+            kotlin.srcDirs("build/generated/source/navigation-args/")
+        }
+    }
+
 }
 
 dependencies {
 
-    val navVersion = "2.7.5"
+    val navVersion = "2.7.6"
     //NavComponent
     implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
     implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
    // implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     //implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
@@ -75,7 +87,18 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
+    //CameraX
+    implementation("androidx.camera:camera-core:1.3.1")
+    implementation("androidx.camera:camera-camera2:1.3.1")
+    implementation("androidx.camera:camera-lifecycle:1.3.1")
+    implementation("androidx.camera:camera-view:1.3.1")
+    implementation("androidx.camera:camera-extensions:1.3.1")
 
+    //Camara
+    implementation ("com.karumi:dexter:6.2.2")
+    implementation("io.coil-kt:coil:1.1.1")
 
+    //Lector de codigó de barra
+    implementation("com.google.android.gms:play-services-vision:20.1.3")
 
 }

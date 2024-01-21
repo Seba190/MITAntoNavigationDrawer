@@ -20,6 +20,32 @@
     <string name="menu_añadir_almacen">Añadir Almacén</string>
     <string name="menu_añadir_datos">Añadir Datos</string>
     <string name="menu_añadir_producto">Añadir Producto</string>
+    <string name="menu_añadir_proveedor">Añadir Proveedor</string>
+    <string name="menu_añadir_cliente">Añadir Cliente</string>
+    <string name="menu_añadir_tipo_producto">Añadir Tipo de Producto</string>
+    <string name ="menu_remover_inventario">Remover Inventario</string>
+    <string name ="menu_añadir_transferencia">Añadir Transferencia</string>
+    <string name ="menu_mis_datos">Mis Datos</string>
+    <string name ="menu_almacenes">Almacenes</string>
+    <string name ="menu_clientes">Clientes</string>
+    <string name ="menu_productos">Productos</string>
+    <string name ="menu_proveedores">Proveedores</string>
+    <string name ="menu_tipos_de_productos">Tipos de Productos</string>
+    <string name ="menu_editar_almacen">Editar almacén</string>
+    <string name ="menu_editar_tipos_de_producto">Editar Tipo de Producto</string>
+    <string name ="menu_editar_producto">Editar Producto</string>
+    <string name ="menu_editar_proveedor">Editar Proveedor</string>
+    <string name ="menu_editar_cliente">Editar Cliente</string>
+    <string name ="menu_editar_inventario">Editar Inventario</string>
+    <string name ="menu_editar_alerta">Editar Alerta</string>
+    <string name="menu_barcode_scan">Barcode Scan</string>
+    <string name="menu_barcode_scan_producto">Barcode Scan del Producto</string>
+    <string name="menu_alertas_almacenes">Alertas por almacén</string>
+    <string name="menu_proveedor_precio_compra">Precio de compra por proveedor</string>
+    <string name="menu_cliente_precio_venta">Precio de venta por cliente</string>
+
+
+    <string name="menu_camara">Camara</string>
 
     <!--activity_main-->
     <string name="Inventory_items">Articulos en Inventario</string>
@@ -140,12 +166,12 @@
     <string name="item_label">Eliga una opción</string>
 
     <!-- fragment añadir Producto -->
-    <string name="placeholder_nombre_producto">Eliga un producto</string>
+    <string name="placeholder_nombre_producto">Escriba el nombre del producto</string>
     <string name="placeholder_peso_producto">Escriba el peso del producto</string>
     <string name="placeholder_volumen_producto">Escriba el volumen del producto</string>
     <string name="textView_nombre_producto">NOMBRE DEL PRODUCTO</string>
-    <string name="textView_peso_producto">PESO DEL PRODUCTO</string>
-    <string name="textView_volumen_producto">VOLUMEN DEL PRODUCTO</string>
+    <string name="textView_peso_producto">PESO DEL PRODUCTO [kg]</string>
+    <string name="textView_volumen_producto">VOLUMEN DEL PRODUCTO [m\u00B3]</string>
     <string name="textView_imagen">IMAGEN DEL PRODUCTO</string>
     <string name="textView_tipo_producto">TIPO DE PRODUCTO</string>
     <string name="boton_imagen">Insertar Imagen</string>
@@ -155,11 +181,120 @@
     <string name="placeholder_codigo_barra_embalaje">Escriba el código de barra del embalaje</string>
     <string name="textView_unidades_embalaje">UNIDADES DE EMBALAJE</string>
     <string name="placeholder_unidades_embalaje">Escriba el número de unidades del embalaje</string>
-    <string name="upload_image">Cargar imagen</string>
-    <string name="take_image">Tomar foto</string>
+    <string name="save_image">Guardar imagen</string>
+    <string name="take_image">Imagenes</string>
+    <string name="Alerts_per_warehouses">Alertas por Almacén</string>
+    <string name="Buy_price_per_suppliers">Precio de compra por Proveedores</string>
+    <string name="Sell_price_per_customers">Precio de Venta por Clientes</string>
 
     <!-- alertas_por_almacen dialogo -->
+    <string name="title_alerts_warehouses">ALERTAS POR ALMACÉN</string>
+    <string name ="title_warehouses">BODEGAS</string>
+    <string name="title_alerts">ALERTAS</string>
+    <string name= "hint_alerts">Ingrese la alerta</string>
 
-    <string name="title_alerts_warehouses">Alertas por Almacén</string>
+    <!-- precio_compra_por_proveedor dialogo -->
+    <string name="hint_precio_compra">Ingrese el precio</string>
+    <string name="title_suppliers_buy_price">PRECIOS DE COMPRA POR PROVEEDOR</string>
+    <string name="title_suppliers">PROVEEDORES</string>
+    <string name="title_buy_price">PRECIO DE COMPRA</string>
+
+    <!--precio venta por cliente dialogo -->
+    <string name="hint_precio_venta">Ingrese el precio</string>
+    <string name="title_customers_sell_price">PRECIOS DE VENTA POR CLIENTE</string>
+    <string name="title_customers">CLIENTES</string>
+    <string name="title_sell_price">PRECIO DE VENTA</string>
+
+    <!--fragment añadir Proveedor -->
+    <string name="textView_nombre_proveedor">NOMBRE DEL PROVEEDOR</string>
+    <string name="textView_rut_proveedor">RUT DEL PROVEEDOR</string>
+    <string name="textView_correo_proveedor">CORREO DEL PROVEEDOR</string>
+    <string name="textView_telefono_proveedor">TELEFONO DEL PROVEEDOR</string>
+    <string name="textView_direccion_proveedor">DIRECCIÓN DEL PROVEEDOR</string>
+    <string name="placeholder_nombre_proveedor">Escriba el nombre del proveedor</string>
+    <string name="placeholder_rut_proveedor">Escriba el rut del proveedor</string>
+    <string name="placeholder_correo_proveedor">Escriba el correo del proveedor</string>
+    <string name="placeholder_telefono_proveedor">Escriba el telefono del proveedor</string>
+    <string name="placeholder_direccion_proveedor">Escriba la dirección del proveedor</string>
+    <string name="send_proveedor">ENVIAR</string>
+
+    <!--fragment añadir Cliente -->
+    <string name="textView_nombre_cliente">NOMBRE DEL CLIENTE</string>
+    <string name="textView_rut_cliente">RUT DEL CLIENTE</string>
+    <string name="textView_correo_cliente">CORREO DEL CLIENTE</string>
+    <string name="textView_telefono_cliente">TELEFONO DEL CLIENTE</string>
+    <string name="textView_direccion_cliente">DIRECCIÓN DEL CLIENTE</string>
+    <string name="placeholder_nombre_cliente">Escriba el nombre del cliente</string>
+    <string name="placeholder_rut_cliente">Escriba el rut del cliente</string>
+    <string name="placeholder_correo_cliente">Escriba el correo del cliente</string>
+    <string name="placeholder_telefono_cliente">Escriba el telefono del cliente</string>
+    <string name="placeholder_direccion_cliente">Escriba la dirección del cliente</string>
+    <string name="send_cliente">ENVIAR</string>
+
+    <!--fragment añadir Tipo de Producto -->
+    <string name="textView_nombre_tipo_de_producto">NOMBRE DEL TIPO DE PRODUCTO</string>
+    <string name="textView_descripcion_tipo_de_producto">DESCRIPCIÓN DEL TIPO DE PRODUCTO</string>
+    <string name="placeholder_nombre_tipo_de_producto">Escriba el nombre del tipo de producto</string>
+    <string name="placeholder_descripcion_tipo_de_producto">Escriba la descripción del tipo de producto</string>
+    <string name="send_tipo_de_producto">ENVIAR</string>
+
+    <!--fragment añadir Inventario -->
+    <string name="textView_nombre_factura_entrada">NOMBRE FACTURA DE ENTRADA</string>
+    <string name="textView_nombre_factura_entrada_proveedor">NOMBRE DEL PROVEEDOR</string>
+    <string name="textView_nombre_factura_entrada_almacen">NOMBRE DEL ALMACÉN</string>
+    <string name="textView_factura_entrada_fecha_transaccion">FECHA DE TRANSACCIÓN</string>
+    <string name="textView_factura_entrada_comentarios">COMENTARIOS</string>
+    <string name="placeholder_nombre_factura_entrada">Escriba el nombre de la factura</string>
+    <string name="placeholder_factura_entrada_fecha_transaccion">Escriba la fecha de transacción</string>
+    <string name="placeholder_factura_entrada_comentarios">Escriba algún comentario</string>
+    <string name="placeholder_dropdown">Opciones</string>
+    <string name="anadir_inventario_send">Guardar</string>
+    <string name="button_unidades">UNIDADES</string>
+    <string name="button_cajas_de_producto">CAJAS DE PRODUCTO</string>
+    <string name="numero_de_cajas">Núm. de cajas</string>
+    <string name="Articulos_por_caja">Articulos por caja</string>
+    <string name="precio_por_unidad">Precio por Unidad</string>
+    <string name="Impuesto">Impuesto</string>
+    <string name="Descuento_1">Descuento</string>
+    <string name="Total_Parcial">Total Parcial:</string>
+    <string name="Impuesto_Aplicado">Impuesto Aplicado:</string>
+    <string name="Descuento_2">Descuento:</string>
+    <string name="Total">Total:</string>
+
+
+    <!--fragment remover Inventario -->
+    <string name="textView_nombre_factura_salida">NOMBRE FACTURA DE SALIDA</string>
+    <string name="textView_nombre_factura_salida_cliente">NOMBRE DEL CLIENTE</string>
+    <string name="textView_nombre_factura_salida_almacen">NOMBRE DEL ALMACÉN</string>
+    <string name="textView_factura_salida_fecha_transaccion">FECHA DE TRANSACCIÓN</string>
+    <string name="textView_factura_salida_comentarios">COMENTARIOS</string>
+    <string name="placeholder_nombre_factura_salida">Escriba el nombre de la factura</string>
+    <string name="placeholder_factura_salida_fecha_transaccion">Escriba la fecha de transacción</string>
+    <string name="placeholder_factura_salida_comentarios">Escriba algún comentario</string>
+
+    <!--fragment añadir Transferencia -->
+    <string name="textView_nombre_transferencia">NOMBRE DE LA TRANSFERENCIA</string>
+    <string name="textView_fecha_transferencia">FECHA DE LA TRANSFERENCIA</string>
+    <string name="textView_transferencia_comentarios">COMENTARIOS</string>
+    <string name="textView_almacen_origen">ALMACÉN DE ORIGEN</string>
+    <string name="textView_almacen_destino">ALMACÉN DE DESTINO</string>
+    <string name="placeholder_nombre_transferencia">Escriba el nombre de la transferencia</string>
+    <string name="placeholder_fecha_transferencia">Escriba la fecha de transferencia</string>
+    <string name="placeholder_transferencia_comentarios">Escriba algún comentario</string>
+    <string name="button_codigo_de_barra">Escanear código de barra</string>
+    <string name="buttom_añadir_producto">Añadir nuevo producto</string>
+    <string name="textView_codigo_de_barra">CÓDIGO DE BARRA</string>
+    <string name="button_save">GUARDAR</string>
+
+    <!-- fragment barcode scan -->
+
+    <!-- bottom_nav -->
+    <string name="almacenes">Almacenes</string>
+    <string name="tipos_de_producto">Tipos de Producto</string>
+    <string name="productos">Productos</string>
+    <string name="proveedores">Proveedores</string>
+    <string name="clientes">Clientes</string>
+
+
 
 </resources>

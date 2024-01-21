@@ -15,4 +15,5 @@
     <color name="orange">#FF9800</color>
     <color name="cream">#FFF0C9</color>
     <color name ="color_list">#9C9C9B</color>
+    <color name="color_third">#6F000000</color>
 </resources>

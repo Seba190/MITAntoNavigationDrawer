@@ -37,8 +37,11 @@ class AnadirDatosFragment : Fragment(R.layout.fragment_anadir_datos) {
         val root: View = binding.root
         //Aquí se programa
         val añadirAlmacen = root.findViewById<CardView>(R.id.tvAñadirAlmacen)
-        val añadirDatos = binding.root.findViewById<CardView>(R.id.containerAñadirDatos)
+        val añadirDatos = root.findViewById<CardView>(R.id.containerAñadirDatos)
         val añadirProducto = root.findViewById<CardView>(R.id.tvAñadirProducto)
+        val añadirProveedor = root.findViewById<CardView>(R.id.tvAñadirProveedor)
+        val añadirCliente = root.findViewById<CardView>(R.id.tvAñadirCliente)
+        val añadirTipoDeProducto = root.findViewById<CardView>(R.id.tvAñadirTipoProducto)
 
         añadirAlmacen.setOnClickListener {
             findNavController().navigate(R.id.action_nav_añadir_datos_to_nav_añadir_almacen)
@@ -50,6 +53,16 @@ class AnadirDatosFragment : Fragment(R.layout.fragment_anadir_datos) {
         añadirProducto.setOnClickListener {
             findNavController().navigate(R.id.action_nav_añadir_datos_to_nav_añadir_producto)
         }
+        añadirProveedor.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_añadir_datos_to_nav_añadir_proveedor)
+        }
+        añadirCliente.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_añadir_datos_to_nav_añadir_cliente)
+        }
+        añadirTipoDeProducto.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_añadir_datos_to_nav_añadir_tipo_de_producto)
+        }
+
 
         return root
     }

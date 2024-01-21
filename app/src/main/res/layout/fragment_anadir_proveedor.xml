@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.Formularios.añadirAlmacen.añadirProveedor.AnadirProveedorFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:longClickable="true"
+            android:orientation="vertical"
+            android:focusableInTouchMode="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <TextView
+                android:id="@+id/tvProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_nombre_proveedor"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etNombreProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:gravity="center"
+                android:hint="@string/placeholder_nombre_proveedor"
+                android:inputType="text"
+                android:backgroundTint="@color/color_list"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvRutProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_rut_proveedor"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etRutProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:hint="@string/placeholder_rut_proveedor"
+                android:backgroundTint="@color/color_list"
+                android:inputType="text"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCorreoProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_correo_proveedor"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etCorreoProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:hint="@string/placeholder_correo_proveedor"
+                android:backgroundTint="@color/color_list"
+                android:inputType="textEmailAddress"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvTelefonoProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="100dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_telefono_proveedor"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etTelefonoProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:hint="@string/placeholder_telefono_proveedor"
+                android:backgroundTint="@color/color_list"
+                android:inputType="phone"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDireccionProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="100dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_direccion_proveedor"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etDireccionProveedor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:hint="@string/placeholder_direccion_proveedor"
+                android:backgroundTint="@color/color_list"
+                android:inputType="text"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/buttonProveedor"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/light_green"
+                android:layout_marginHorizontal="150dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/send_proveedor" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

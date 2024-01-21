@@ -19,12 +19,28 @@
             android:id="@+id/nav_añadir_datos"
             android:icon="@drawable/ic_add_data"
             android:title="@string/Add_data" />
+        <item
+            android:id="@+id/nav_añadir_inventario"
+            android:icon="@drawable/ic_add_inventory"
+            android:title="@string/menu_añadir_inventario" />
+        <item
+            android:id="@+id/nav_remover_inventario"
+            android:icon="@drawable/ic_remove_inventory"
+            android:title="@string/menu_remover_inventario" />
+        <item
+            android:id="@+id/nav_añadir_transferencia"
+            android:icon="@drawable/ic_add_transfer"
+            android:title="@string/menu_añadir_transferencia" />
     </group>
         </menu>
     </item>
     <item android:title="@string/title_statistics">
         <menu>
             <group>
+                <item
+                    android:id="@+id/nav_mis_datos"
+                    android:icon="@drawable/ic_my_data"
+                    android:title="@string/menu_mis_datos" />
                 <item
                     android:id="@+id/nav_statistics"
                     android:icon="@drawable/ic_statistics"

@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:longClickable="true"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/tvNombreTransferencia"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_nombre_transferencia"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etNombreTransferencia"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:backgroundTint="@color/color_list"
+                android:gravity="center"
+                android:hint="@string/placeholder_nombre_transferencia"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvFechaTransferencia"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_fecha_transferencia"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etFechaTransferencia"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:backgroundTint="@color/color_list"
+                android:gravity="center"
+                android:hint="@string/placeholder_fecha_transferencia"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/tvAlmacenOrigen"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_almacen_origen"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ListaDesplegableAlmacenOrigen"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="70dp"
+                    android:textColorHint="@color/color_list">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/tvListaDesplegableAlmacenOrigen"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/placeholder_dropdown"
+                        android:inputType="none"
+                        android:text="@string/item_label"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/color_list" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:id="@+id/tvAlmacenDestino"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_almacen_destino"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ListaDesplegableAlmacenDestino"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="70dp"
+                    android:textColorHint="@color/color_list">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/tvListaDesplegableAlmacenDestino"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/placeholder_dropdown"
+                        android:inputType="none"
+                        android:text="@string/item_label"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/color_list" />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:id="@+id/tvTransferenciaComentarios"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="140dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_transferencia_comentarios"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etTransferenciaComentarios"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginHorizontal="90dp"
+                android:backgroundTint="@color/color_list"
+                android:gravity="top"
+                android:hint="@string/placeholder_transferencia_comentarios"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/bEscanearCodigoDeBarra"
+                    android:layout_width="150dp"
+                    android:layout_height="80dp"
+                    android:layout_marginVertical="30dp"
+                    android:layout_marginStart="30dp"
+                    android:backgroundTint="@color/light_green"
+                    android:text="@string/button_codigo_de_barra" />
+
+                <Button
+                    android:id="@+id/bAñadirNuevoProducto"
+                    android:layout_width="150dp"
+                    android:layout_height="80dp"
+                    android:layout_marginVertical="35dp"
+                    android:layout_marginStart="50dp"
+                    android:backgroundTint="@color/light_green"
+                    android:text="@string/buttom_añadir_producto" />
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="140dp"
+                android:layout_marginVertical="10dp"
+                android:text="@string/textView_codigo_de_barra"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etCodigoDeBarra"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:textColor="@color/black"/>
+
+
+                <Button
+                    android:id="@+id/TransferenciaButtonEnviar"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="160dp"
+                    android:layout_marginVertical="20dp"
+                    android:backgroundTint="@color/light_green"
+                    android:text="@string/button_save" />
+
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

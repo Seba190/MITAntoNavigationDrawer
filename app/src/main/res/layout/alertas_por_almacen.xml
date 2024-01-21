@@ -1,22 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="500dp"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingDefaultResource"
+    android:id="@+id/layout_root"
+    android:layout_width="match_parent"
     android:background="@color/cream"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content"
+    tools:context=".ui.Formularios.añadirAlmacen.añadirProducto.AnadirProductoFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="30sp"
-        android:text="Alertas por Almacén"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_marginVertical="10dp"
-        android:layout_marginHorizontal="50dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:orientation="vertical"
+            android:background="@color/cream">
+
+            <TextView
+                android:id="@+id/tvCategoryNameAlert"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:text="@string/title_alerts_warehouses"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                android:textColor="@color/black"
+                android:layout_marginVertical="10dp"
+                android:layout_marginHorizontal="70dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAlmacenes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"/>
 
 
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/bAgregarAlmacen"
+                android:layout_width="110dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="85dp"
+                android:text="Agregar"
+                android:backgroundTint="@color/light_green"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+</androidx.cardview.widget.CardView>
