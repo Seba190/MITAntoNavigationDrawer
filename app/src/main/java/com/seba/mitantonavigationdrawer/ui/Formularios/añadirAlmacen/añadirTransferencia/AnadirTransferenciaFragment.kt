@@ -25,6 +25,7 @@ import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.MainActivity
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirTransferenciaBinding
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AlertasAlmacenesFragment
 import org.json.JSONObject
 
 
@@ -35,7 +36,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
         const val CODIGO_DE_BARRA = "CODIGO_DE_BARRA"
     }
 
-   private val args: BarcodeScanFragmentArgs by navArgs()
+
 
     private var _binding: FragmentAnadirTransferenciaBinding? = null
 
@@ -84,7 +85,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
 
 
         binding.TransferenciaButtonEnviar.setOnClickListener {
-            binding.etCodigoDeBarra.setText(args.code)
+           // binding.etCodigoDeBarra.setText(args.code)
             ValidacionesIdInsertarDatos()
         }
 
@@ -108,6 +109,12 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
        // var EditTextEmpty = binding.etCodigoDeBarra.text.toString()
        // val action = AnadirTransferenciaFragmentDirections.actionNavAñadirTransferenciaToNavBarcodeScan(EditTextEmpty)
        // findNavController().navigate(action)
+        parentFragmentManager.setFragmentResultListener("Codigo de barra transferencia",this){
+                key,bundle ->
+            binding.bAnadirNuevoProducto.setOnClickListener {
+                binding.etCodigoDeBarra.setText(bundle.getString("codigo"))
+            }
+        }
 
         return root
     }
@@ -253,6 +260,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
     fun obtenerMiView(): View {
         return binding.etNombreTransferencia // Tu vista que quieres acceder
     }
+
 
     // En el FragmentDestino o cualquier fragmento que desees personalizar
 

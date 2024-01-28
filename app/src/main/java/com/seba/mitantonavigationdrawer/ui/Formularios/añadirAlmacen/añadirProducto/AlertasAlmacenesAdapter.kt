@@ -6,17 +6,23 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.seba.mitantonavigationdrawer.R
+import com.seba.mitantonavigationdrawer.databinding.ItemAlertBinding
 
 class AlertasAlmacenesAdapter(var alertasAlmacenesList:
                               List<AlertasAlmacenesItemResponse> = emptyList(),
                               private val onCheckBoxClickListener: OnCheckBoxClickListener,
+                             // private val textChangeListener: (String,Int) -> Unit,
                               private val listener: OnTextChangeListener)
                               : RecyclerView.Adapter<AlertasAlmacenesViewHolder>() {
+
+
+
 
     fun updateList(alertasAlmacenesList: List<AlertasAlmacenesItemResponse>){
         this.alertasAlmacenesList = alertasAlmacenesList
         notifyDataSetChanged()
     }
+
 
     interface OnCheckBoxClickListener {
         fun onCheckBoxClick(id: Int, isChecked: Boolean)
@@ -42,8 +48,22 @@ class AlertasAlmacenesAdapter(var alertasAlmacenesList:
     override fun onBindViewHolder(viewholder: AlertasAlmacenesViewHolder, position: Int) {
         val item = alertasAlmacenesList[position]
         viewholder.bind(item)
+        //val listaEnPosicion = viewholder.obtenerLista()
+        //listener.obtenerListaEnPosicion(position)
+      /*  viewholder.bindTextChangeListener {
+            text ->
+            textChangeListener(text)
+        }*/
 
-    }
+
+        }
 
     override fun getItemCount() = alertasAlmacenesList.size
+
+    fun getAllItems(): List<AlertasAlmacenesItemResponse> {
+        // Devuelve la lista completa de elementos
+        return alertasAlmacenesList
+    }
+
+
 }

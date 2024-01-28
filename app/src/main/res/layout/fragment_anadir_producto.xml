@@ -196,6 +196,14 @@
                     android:backgroundTint="@color/light_green"
                     android:text="@string/take_image" />
 
+                <Button
+                    android:id="@+id/bEscanearCodigoDeBarraProducto"
+                    android:layout_width="130dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="135dp"
+                    android:backgroundTint="@color/light_green"
+                    android:text="@string/button_codigo_de_barra" />
+
                 <TextView
                     android:id="@+id/tvCodigoBarraProducto"
                     android:layout_width="match_parent"
@@ -311,13 +319,7 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <Button
-                    android:id="@+id/bEscanearCodigoDeBarraProducto"
-                    android:layout_width="130dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="135dp"
-                    android:backgroundTint="@color/light_green"
-                    android:text="@string/button_codigo_de_barra" />
+
 
                 <Button
                     android:id="@+id/buttonProducto"

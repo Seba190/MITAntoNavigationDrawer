@@ -14,6 +14,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
@@ -32,16 +34,19 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil.transform.CircleCropTransformation
 import com.android.volley.Request
+import com.android.volley.RequestQueue
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
@@ -49,8 +54,6 @@ import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirProductoBinding
 import com.seba.mitantonavigationdrawer.databinding.ItemAlertBinding
-import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AlertasAlmacenesFragment.Companion.REQUEST_KEY_1
-import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AlertasAlmacenesFragment.Companion.REQUEST_KEY_2
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.AlmacenesAdapter
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.AlmacenesDataResponse
@@ -73,11 +76,12 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         private const val  CAMERA_PERMISSION = android.Manifest.permission.CAMERA
 
     }*/
+
+    private val sharedViewModel2: SharedViewModel by activityViewModels()
+    private val viewModel: AnadirProductoViewModel by viewModels()
     private val alertasAlmacenesItemResponse: AlertasAlmacenesItemResponse? = null
-    private val bindingItemAlert = view?.let { ItemAlertBinding.bind(it) }
     private lateinit var adapterPrecioCompra :ProveedorPrecioCompraAdapter
     private lateinit var adapterPrecioVenta :ClientePrecioVentaAdapter
-    private val args: AlertasAlmacenesFragmentArgs by navArgs()
     private lateinit var retrofit: Retrofit
     private var selectedImageUrl: Uri? = null
     private var _binding: FragmentAnadirProductoBinding? = null
@@ -96,6 +100,9 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
     var TextCodigoEmbalaje: EditText? = null
     var TextUnidadesEmbalaje: EditText? = null
     var Imagen: ImageView? = null
+    private val ListaDeAlmacenes : MutableList<String> = mutableListOf()
+    private val ListaDeAlertas : MutableList<String> = mutableListOf()
+    private val ListaDeProductos : MutableList<String> = mutableListOf()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -110,7 +117,6 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
     ): View {
        // val anadirDatosViewModel =
         //    ViewModelProvider(this).get(AnadirProductoViewModel::class.java)
-
         _binding = FragmentAnadirProductoBinding.inflate(inflater, container, false)
         val root: View = binding.root
         //Aquí se programa
@@ -145,10 +151,14 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
             ListaDesplegableProducto()
         }
 
-       // binding.buttonProducto.setOnClickListener {
-         //   ValidacionesIdInsertarDatos()
+        binding.buttonProducto.setOnClickListener {
+            ValidacionesIdInsertarDatos()
+            Handler(Looper.getMainLooper()).postDelayed({
+                InsertarAlertasyAlmacenes()
+            },5000)
+
             //binding.etCodigoBarraProducto.setText(arguments?.getString("key"))
-        //}
+        }
 
 
         ///////El dialogo con alertas por almacen////////////
@@ -199,43 +209,13 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         binding.bEscanearCodigoDeBarraProducto.setOnClickListener {
             requestCamara?.launch(android.Manifest.permission.CAMERA)
         }
+        //Tengo que correr la aplicación con la lista de Edittext de esta forma
+        val listaDeEditText : MutableList<EditText?> = mutableListOf(TextNombre,
+            TextCodigoBarra)
 
-        parentFragmentManager.setFragmentResultListener(REQUEST_KEY_2,this){key,bundle ->
-            binding.buttonProducto.setOnClickListener {
-                binding.etNombreProducto.setText(bundle.getString("mensaje"))
-            }
-        }
-        parentFragmentManager.setFragmentResultListener(REQUEST_KEY_1,this){ key, bundle ->
-            binding.buttonBuyPrice.setOnClickListener {
-                binding.etCodigoBarraProducto.setText(bundle.getString("bundleKey"))
-                binding.etCodigoBarraEmbalaje.setText(bundle.getString("mensaje"))
-                ValidacionesIdInsertarDatos()
-            }
-        }
-       // goToDialogTest()
-      //  val dialog = TuDialogo(requireActivity(), this)
-       // dialog.show()
         return root
 
     }
-
-    /*override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setFragmentResultListener("Otro mas"){key,bundle ->
-            binding.buttonProducto.setOnClickListener {
-            binding.etNombreProducto.setText(bundle.getString("mensaje"))
-            }
-        }
-        setFragmentResultListener("requestKey"){key,bundle ->
-            binding.buttonBuyPrice.setOnClickListener {
-                binding.etCodigoBarraProducto.setText(bundle.getString("bundleKey"))
-                binding.etCodigoBarraEmbalaje.setText(bundle.getString("mensaje"))
-                ValidacionesIdInsertarDatos()
-            }
-        }
-    }*/
-
-
 
     private fun ValidacionesIdInsertarDatos() {
         //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
@@ -265,7 +245,6 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                             url1,
                             { response ->
                                 Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
-                                TextNombre?.setText("")
                                 TextPeso?.setText("")
                                 TextVolumen?.setText("")
                                 TextFoto?.setText("")
@@ -326,10 +305,49 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
             override fun getParams(): MutableMap<String, String> {
                 val parametros = HashMap<String, String>()
                 parametros.put("PRODUCTO", TextNombre?.text.toString().uppercase())
+
                 return parametros
             }
         }
         queue.add(jsonObjectRequest)
+    }
+    private fun InsertarAlertasyAlmacenes(){
+        for (i in 0..<sharedViewModel.listaDeAlertas.size) {
+            setFragmentResultListener("AlertaAlmacen$i"){key,bundle ->
+                ListaDeAlmacenes.add(bundle.getString("Almacen$i")!!.toString().uppercase())
+                ListaDeAlertas.add(bundle.getString("Alerta$i")!!)
+                ListaDeProductos.add(binding.etNombreProducto.text.toString().uppercase())
+            }}
+        val queueAlertas =Volley.newRequestQueue(requireContext())
+        val urlAlertas = "http://186.64.123.248/Producto/alertasAlmacenEnviar.php"
+        val jsonObjectRequestAlertas =object: StringRequest(
+            Request.Method.POST,
+            urlAlertas,{
+                response ->
+                      TextNombre?.setText("")
+                      Toast.makeText(requireContext(), "Alertas ingresadas exitosamente a la base de datos", Toast.LENGTH_LONG).show()
+                    },
+                    { error ->
+                    Toast.makeText(requireContext(), " No se ha podido enviar los almacenes y alertas", Toast.LENGTH_LONG).show()
+                  /*  for (i in 0..<sharedViewModel.listaDeAlertas.size) {
+                        Log.i("ALMACEN$i",ListaDeAlmacenes[i])
+                         Log.i("PRODUCTO$i", ListaDeProductos[i])
+                        Log.i("ALERTA$i",ListaDeAlertas[i])
+                    }*/
+            })
+            { override fun getParams(): MutableMap<String, String> {
+                val parametrosAlertas = HashMap<String, String>()
+                parametrosAlertas["NUMERO_DE_ALERTAS"] = sharedViewModel.listaDeAlertas.size.toString()
+                for (i in 0..<sharedViewModel.listaDeAlertas.size) {
+                    parametrosAlertas["ALMACEN$i"] = ListaDeAlmacenes[i]
+                    parametrosAlertas["PRODUCTO$i"] = ListaDeProductos[i]
+                    parametrosAlertas["ALERTA$i"] = ListaDeAlertas[i]
+                    }
+
+                 return parametrosAlertas
+                }
+            }
+        queueAlertas.add(jsonObjectRequestAlertas)
     }
 
     private fun ListaDesplegableProducto() {
@@ -422,10 +440,6 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         }
     }
 
-    /*private fun update(){
-        adapter.notifyDataSetChanged()
-    }*/
-
     override fun onResult(parametro: String) {
         val editText = view?.findViewById<EditText>(R.id.etCodigoBarraProducto)
         editText?.setText(parametro)
@@ -502,6 +516,27 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
 
      */
 
+    interface OnTextChangeListener {
+        fun onTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder)
+    }
+    fun actualizarDatos(){
+        sharedViewModel2.sharedData.value = "Datos actualizados desde el fragmento principal"
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        sharedViewModel2.sharedData.observe(viewLifecycleOwner){
+                newData ->
+            val alertasAlmacenesFragment = parentFragmentManager.findFragmentByTag("tag_alertas_almacenes") as? AlertasAlmacenesFragment
+            alertasAlmacenesFragment?.view?.findViewById<Button>(R.id.bAgregarAlmacen)?.setOnClickListener {
+                binding.etCodigoBarraProducto.setText(newData)
+                Toast.makeText(requireContext(),newData,Toast.LENGTH_LONG).show()
+            }
+            alertasAlmacenesFragment?.view?.findViewById<Button>(R.id.bAlertaAlmacenVolver)?.setOnClickListener {
+
+            }
+        }
+    }
 
 
 }

@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.media.MediaPlayer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.SurfaceHolder
@@ -13,6 +15,8 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
@@ -107,16 +111,18 @@ class BarcodeScanProductoFragment : Fragment() {
                     binding.bActionProducto.setBackgroundColor(Color.GREEN)
                     val mediaPlayer = MediaPlayer.create(context, R.raw.beep_barcode_scan)  // Reemplaza "beep_sound" con el nombre de tu archivo de sonido
                     mediaPlayer.start()
-                    Thread.sleep(500)
-                    mediaPlayer.release()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        mediaPlayer.release()
+                    },500)
                     binding.txtBarcodeValueProducto!!.post{
                         intentData = barcodes.valueAt(0).displayValue
                         binding.txtBarcodeValueProducto.setText(intentData)
                         //activity?.finish()
                         codigoDeBarra = intentData
-                        val bundle = Bundle()
+                        /*val bundle = Bundle()
                         bundle.putString(AnadirTransferenciaFragment.CODIGO_DE_BARRA,codigoDeBarra)
-                        arguments = bundle
+                        arguments = bundle*/
+                        setFragmentResult("Codigo de barra producto", bundleOf("codigo" to codigoDeBarra))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.tvCodigoBarraProducto)
                     codigo?.setText(codigoDeBarra)
@@ -161,8 +167,8 @@ class BarcodeScanProductoFragment : Fragment() {
     }
 
     private fun obtenerCodigo(code: String){
-        val action = BarcodeScanFragmentDirections.actionNavBarcodeScanToNavAñadirTransferencia(code)
-        findNavController().navigate(action)
+     //   val action = BarcodeScanFragmentDirections.actionNavBarcodeScanToNavAñadirTransferencia(code)
+      //  findNavController().navigate(action)
     }
 
 

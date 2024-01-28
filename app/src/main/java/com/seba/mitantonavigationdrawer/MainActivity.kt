@@ -19,21 +19,24 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.seba.mitantonavigationdrawer.databinding.ActivityMainBinding
 import android.view.View
+import androidx.activity.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainer
 import androidx.navigation.fragment.findNavController
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirDatosBinding
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.añadirDatos.AnadirDatosFragment
 import com.seba.mitantonavigationdrawer.ui.inicio.InicioFragment
 
 
 class MainActivity : AppCompatActivity() {
-
+    private val sharedViewModel: SharedViewModel by viewModels()
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var drawerLayout: DrawerLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

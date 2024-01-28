@@ -18,11 +18,16 @@ import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentBarcodeScanBinding
 import java.io.IOException
 import android.media.MediaPlayer
+import android.os.Handler
+import android.os.Looper
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.navigation.fragment.findNavController
 import androidx.activity.addCallback
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import com.seba.mitantonavigationdrawer.MainActivity
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AlertasAlmacenesFragment
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaFragment.Companion.CODIGO_DE_BARRA
 
 
@@ -53,9 +58,9 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
         val root: View = binding.root
         //Aquí se programa
        // binding.bAction.setBackgroundColor(resources.getColor(R.color.red))
-        if(binding.txtBarcodeValue.text == intentData){
-            obtenerCodigo(arguments?.getString(CODIGO_DE_BARRA)!!)
-        }
+      //  if(binding.txtBarcodeValue.text == intentData){
+       //     obtenerCodigo(arguments?.getString(CODIGO_DE_BARRA)!!)
+       // }
         return root
 
     }
@@ -108,16 +113,18 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
                     binding.bAction.setBackgroundColor(Color.GREEN)
                     val mediaPlayer = MediaPlayer.create(context, R.raw.beep_barcode_scan)  // Reemplaza "beep_sound" con el nombre de tu archivo de sonido
                     mediaPlayer.start()
-                    Thread.sleep(500)
-                    mediaPlayer.release()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        mediaPlayer.release()
+                    },500)
                     binding.txtBarcodeValue!!.post{
                         intentData = barcodes.valueAt(0).displayValue
                         binding.txtBarcodeValue.setText(intentData)
                         //activity?.finish()
                         codigoDeBarra = intentData
-                        val bundle = Bundle()
+                        /*val bundle = Bundle()
                         bundle.putString(CODIGO_DE_BARRA,codigoDeBarra)
-                        arguments = bundle
+                        arguments = bundle*/
+                        setFragmentResult("Codigo de barra transferencia", bundleOf("codigo" to codigoDeBarra))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
                     codigo?.setText(codigoDeBarra)
@@ -161,10 +168,9 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
 
     }
 
- private fun obtenerCodigo(code: String){
-     val action = BarcodeScanFragmentDirections.actionNavBarcodeScanToNavAñadirTransferencia(code)
-     findNavController().navigate(action)
+ //private fun obtenerCodigo(code: String){
+ //    val action = BarcodeScanFragmentDirections.actionNavBarcodeScanToNavAñadirTransferencia(code)
+ //    findNavController().navigate(action)
  }
 
 
-}

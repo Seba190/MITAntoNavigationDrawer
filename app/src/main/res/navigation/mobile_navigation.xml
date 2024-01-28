@@ -171,15 +171,8 @@
         <action
             android:id="@+id/action_nav_añadir_transferencia_to_nav_barcode_scan"
             app:destination="@id/nav_barcode_scan">
-        <argument
-            android:name="EditTextEmpty"
-            app:argType="string"
-            android:defaultValue="Empty"/>
+
         </action>
-        <argument
-            android:name="EditTextEmpty"
-            app:argType="string"
-            android:defaultValue="Empty"/>
     </fragment>
     <fragment
         android:id="@+id/nav_barcode_scan"
@@ -190,10 +183,6 @@
             android:id="@+id/action_nav_barcode_scan_to_nav_añadir_transferencia"
             app:destination="@id/nav_añadir_transferencia">
         </action>
-        <argument
-            android:name="code"
-            app:argType="string"
-            android:defaultValue="code"/>
     </fragment>
     <fragment
         android:id="@+id/nav_mis_datos"
@@ -284,23 +273,7 @@
         <action
             android:id="@+id/action_nav_alertas_almacenes_to_nav_añadir_producto"
             app:destination="@id/nav_añadir_producto">
-            <argument
-                android:name="id"
-                app:argType="string"
-                android:defaultValue="id" />
-            <argument
-                android:name="nombre"
-                app:argType="string"
-                android:defaultValue="nombre" />
         </action>
-        <argument
-            android:name="id"
-            app:argType="string"
-            android:defaultValue="id" />
-        <argument
-            android:name="nombre"
-            app:argType="string"
-            android:defaultValue="nombre" />
     </fragment>
     <fragment
         android:id="@+id/nav_proveedor_precio_compra"

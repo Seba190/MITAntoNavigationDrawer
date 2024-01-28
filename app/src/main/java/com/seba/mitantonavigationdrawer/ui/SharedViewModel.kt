@@ -10,4 +10,7 @@ class SharedViewModel : ViewModel() {
     fun setImageData(data: ByteArray?) {
         selectedImage.value = data
     }
+    val sharedData = MutableLiveData<String>()
+    val listaDeAlertas: MutableList<String> = mutableListOf()
+    val listaDeBodegas : MutableList<String> = mutableListOf()
 }

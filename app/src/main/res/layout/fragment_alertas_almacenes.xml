@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rlAlertasAlmacenes"
+    android:tag="tag_alertas_almacenes"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#80000000"
@@ -10,10 +11,10 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cvAlertasAlmacenes"
-        android:layout_width="300dp"
+        android:layout_width="340dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="35dp"
         android:background="@color/cream">
 
 
@@ -44,6 +45,13 @@
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -67,15 +75,23 @@
                     android:id="@+id/bAgregarAlmacen"
                     android:layout_width="110dp"
                     android:layout_height="50dp"
-                    android:layout_marginStart="25dp"
+                    android:layout_marginStart="5dp"
                     android:backgroundTint="@color/light_green"
                     android:text="Agregar" />
 
                     <Button
-                        android:id="@+id/bAlertaAlmacenVolver"
+                        android:id="@+id/bAlertaAlmacenEliminar"
                         android:layout_width="110dp"
                         android:layout_height="50dp"
-                        android:layout_marginStart="25dp"
+                        android:layout_marginStart="5dp"
+                        android:backgroundTint="@color/light_green"
+                        android:text="Eliminar" />
+
+                    <Button
+                        android:id="@+id/bAlertaAlmacenVolver"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="5dp"
                         android:backgroundTint="@color/light_green"
                         android:text="VOLVER" />
                 </LinearLayout>
