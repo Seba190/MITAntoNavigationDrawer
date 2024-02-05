@@ -284,9 +284,19 @@
     <string name="button_codigo_de_barra">Escanear código de barra</string>
     <string name="buttom_añadir_producto">Añadir nuevo producto</string>
     <string name="textView_codigo_de_barra">CÓDIGO DE BARRA</string>
+    <string name="placeholder_codigo_de_barra">Escriba el código de barra</string>
     <string name="button_save">GUARDAR</string>
 
-    <!-- fragment barcode scan -->
+    <!-- Elegir porducto fragment -->
+    
+    <string name="title_elegir_producto">ELEGIR PRODUCTO</string>
+    <string name="title_elegir_proveedor">ELEGIR PROVEEDOR</string>
+    <string name="title_cantidad">Cantidad</string>
+    <string name="title_precio_por_unidad">Precio por unidad (excl. impuestos)</string>
+    <string name="hint_ubicacion_interna">Ubicación interna en el almacén</string>
+    <string name="button_añadir_factura">Añadir a la factura</string>
+    <string name ="hint_precio_por_unidad">Escriba el precio unitario</string>
+
 
     <!-- bottom_nav -->
     <string name="almacenes">Almacenes</string>

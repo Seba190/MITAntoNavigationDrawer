@@ -291,19 +291,19 @@
 
                     <Button
                         android:id="@+id/buttonAlerts"
-                        android:layout_width="110dp"
+                        android:layout_width="108dp"
                         android:layout_height="match_parent"
-                        android:layout_marginVertical="30dp"
+                        android:layout_marginVertical="20dp"
                         android:layout_marginStart="10dp"
                         android:backgroundTint="@color/light_green"
                         android:text="@string/Alerts_per_warehouses" />
 
                     <Button
                         android:id="@+id/buttonBuyPrice"
-                        android:layout_width="110dp"
+                        android:layout_width="145dp"
                         android:layout_height="match_parent"
-                        android:layout_marginVertical="30dp"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginVertical="20dp"
+                        android:layout_marginStart="10dp"
                         android:backgroundTint="@color/light_green"
                         android:text="@string/Buy_price_per_suppliers" />
 
@@ -311,8 +311,8 @@
                         android:id="@+id/buttonSellPrice"
                         android:layout_width="110dp"
                         android:layout_height="match_parent"
-                        android:layout_marginVertical="30dp"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginVertical="20dp"
+                        android:layout_marginStart="10dp"
                         android:backgroundTint="@color/light_green"
                         android:text="@string/Sell_price_per_customers" />
 

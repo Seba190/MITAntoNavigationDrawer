@@ -43,13 +43,11 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
         const val REQUEST_KEY_3 = "Codigo de Barra"
         const val REQUEST_KEY_4 = "Codigo de Barra Transferencia"
     }*/
-    private val sharedModel3: SharedViewModel by activityViewModels()
     private val sharedViewModel by activityViewModels<SharedViewModel>()
     private var listaDeAlmacenes : List<AlertasAlmacenesItemResponse> = emptyList()
     private var _binding: FragmentAlertasAlmacenesBinding? = null
     private lateinit var adapter: AlertasAlmacenesAdapter
     private lateinit var retrofit: Retrofit
-    private val viewModel: AnadirProductoViewModel by viewModels({requireParentFragment()})
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -71,49 +69,24 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
 
         binding.bAlertaAlmacenVolver.setOnClickListener {
                 binding.rlAlertasAlmacenes.isVisible = false
-                //binding.cvAlertasAlmacenes.isVisible = false
-                //val bundle = Bundle()
-                //bundle.putString("key", "value")
                 val anadirProductoFragment = AnadirProductoFragment()
-                val result = "result"
-                val resultado = "Otro mensaje"
-                setFragmentResult("Prueba", bundleOf("bundleKey" to result, "mensaje" to resultado))
-                //anadirProductoFragment.arguments = bundle
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlAlertasAlmacenes, anadirProductoFragment)
                     .commitNow()
-
-            /*childFragmentManager.beginTransaction()
-                .remove(AlertasAlmacenesFragment())
-                .commit()*/
-            // parentFragmentManager.popBackStack()
-           // Toast.makeText(requireContext(), "Se ha agregado el almacen ${adapter.alertasAlmacenesList[1].Nombre} y la alerta ${listaDeAlertas[1]}", Toast.LENGTH_LONG).show()
         }
         binding.rlAlertasAlmacenes.setOnClickListener {
                 binding.rlAlertasAlmacenes.isVisible = false
-                //binding.cvAlertasAlmacenes.isVisible = false
-                //val result = "result"
-                //setResult("requestKey", bundleOf("bundleKey" to result))
-               // val bundle = Bundle()
-               // bundle.putString("key", "value")
-               val result = "result"
-               val resultado = "Otro mensaje"
-               setFragmentResult("Prueba", bundleOf("bundleKey" to result, "mensaje" to resultado))
                 val anadirProductoFragment = AnadirProductoFragment()
-               // anadirProductoFragment.arguments = bundle
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlAlertasAlmacenes, anadirProductoFragment)
                     .commitNow()
-
-            /*childFragmentManager.beginTransaction()
-                .remove(AlertasAlmacenesFragment())
-                .commit()*/
-            //parentFragmentManager.popBackStack()
-
         }
         binding.bAlertaAlmacenEliminar.setOnClickListener {
             sharedViewModel.listaDeBodegas.clear()
             sharedViewModel.listaDeAlertas.clear()
+            sharedViewModel.ListasDeAlertas.clear()
+            sharedViewModel.ListasDeAlmacenes.clear()
+            sharedViewModel.ListasDeProductosAlertas.clear()
             Toast.makeText(requireContext(), "Se han eliminado las alertas exitosamente", Toast.LENGTH_LONG).show()
         }
 
@@ -129,41 +102,12 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
         return root
     }
     private fun gestionarRecyclerView(){
-        adapter = AlertasAlmacenesAdapter(listaDeAlmacenes,this, /*{ nuevoTexto, posicion ->
-            // Manejar el cambio de texto aquí, por ejemplo:
-            Log.i("TuFragment", "Nuevo texto en la posición $posicion: $nuevoTexto")
-            val lista = mutableListOf<String>()
-            for (i in 0..<adapter.alertasAlmacenesList.size) {
-                val nombre =adapter.alertasAlmacenesList[i].Nombre
-                lista.add(nombre)
-            }
-            binding.bAgregarAlmacen.setOnClickListener {
-
-                // val anadirProductoFragment = AnadirProductoFragment()
-                /*  anadirProductoFragment.view?.findViewById<EditText>(R.id.etCodigoBarraProducto)?.setText(resultado)
-                  val nombreImagen =anadirProductoFragment.view?.findViewById<TextView>(R.id.tvUnidadesEmbalaje)
-                  //nombreImagen?.isInEditMode
-                  nombreImagen?.text = resultado*/
-                //sharedModel3.sharedData.value = resultado
-                //val anadirProductoFragment = parentFragmentManager.findFragmentByTag("tag_añadir_producto") as AnadirProductoFragment?
-                if (listaDeAlertas.size >= 2) {
-                    val prueba1 = listaDeAlertas[posicion] + nuevoTexto
-                    val prueba2 =listaDeAlertas[posicion]  + nuevoTexto
-                    Toast.makeText(requireContext(), "Se ha agregado el almacen ${adapter.alertasAlmacenesList[posicion].Nombre} y la alerta $nuevoTexto", Toast.LENGTH_LONG).show()
-                    //Toast.makeText(requireContext(), "Se ha agregado el almacen ${adapter.alertasAlmacenesList[1].Nombre} y la alerta ${listaDeAlertas[1]}", Toast.LENGTH_LONG).show()
-
-                    setFragmentResult(REQUEST_KEY_2, bundleOf("mensaje" to prueba1, "mensaje2" to prueba2))
-
-                }
-            }
-        }*/this)
+        adapter = AlertasAlmacenesAdapter(listaDeAlmacenes,this,this)
         val recyclerView = binding.rvAlmacenes.findViewById<RecyclerView>(R.id.rvAlmacenes)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
         searchByName()
-
-
     }
 
     private fun searchByName() {
@@ -190,25 +134,12 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
                     Log.i("Sebastian", "No funciona.")
                 }
             } catch (e: SocketTimeoutException) {
-               // requireActivity().runOnUiThread {
-                    /*Toast.makeText(
-                        requireContext(),
-                        "Se acabo el tiempo de espera para conectar la aplicación al servidor",
-                        Toast.LENGTH_LONG
-                    ).show()*/
-               // }
+
             } catch (e: Exception) {
-               // requireActivity().runOnUiThread {
-                  /*  Toast.makeText(
-                        requireContext(),
-                        "No se puedo conectar la aplicación al servidor",
-                        Toast.LENGTH_LONG
-                    ).show()*/
-                //}
+
             }
         }
       }
-
    }
     private fun getRetrofit(): Retrofit {
         return Retrofit
@@ -247,34 +178,15 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
     }*/
 
     override fun onTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder) {
-       /* var lista = mutableListOf<String>()
-        val alertas: MutableList<Int> = mutableListOf()
-        for (i in 0..<adapter.alertasAlmacenesList.size) {
-            val nombre =adapter.alertasAlmacenesList[i].Nombre
-            lista.add(nombre)
-        val pattern = Regex("""\d+""")
-        pattern.findAll(text).forEach {
-            alertas.add(it.value.toInt())
-        }*/
+     TODO("Not yet implemented")
 
     }
-
     override fun afterTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder) {
         if (!binding.bAlertaAlmacenVolver.isPressed){
         Toast.makeText(requireContext(), "Se he agregado la alarma", Toast.LENGTH_LONG).show()
         sharedViewModel.listaDeAlertas.add(text)
         sharedViewModel.listaDeBodegas.add(adapter.alertasAlmacenesList[viewHolder.adapterPosition].Nombre)}
         binding.bAgregarAlmacen.setOnClickListener {
-            // val anadirProductoFragment = AnadirProductoFragment()
-            /*  anadirProductoFragment.view?.findViewById<EditText>(R.id.etCodigoBarraProducto)?.setText(resultado)
-              val nombreImagen =anadirProductoFragment.view?.findViewById<TextView>(R.id.tvUnidadesEmbalaje)
-              //nombreImagen?.isInEditMode
-              nombreImagen?.text = resultado*/
-            //sharedModel3.sharedData.value = resultado
-            //val anadirProductoFragment = parentFragmentManager.findFragmentByTag("tag_añadir_producto") as AnadirProductoFragment?
-            // if (listaDeAlertas.size >= 2) {
-            // val prueba1 = listaDeAlertas[0] +lista[0]
-            // val prueba2 =listaDeAlertas[1]  + lista[1]
             if (sharedViewModel.listaDeAlertas.size > 0) {
                 for (i in 0..<sharedViewModel.listaDeAlertas.size) {
                     setFragmentResult("AlertaAlmacen$i", bundleOf("Almacen$i" to sharedViewModel.listaDeBodegas[i], "Alerta$i" to sharedViewModel.listaDeAlertas[i]))
@@ -284,7 +196,6 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
             }
         }
     }
-
     override fun getAllItems(): List<AlertasAlmacenesItemResponse> {
         TODO("Not yet implemented")
     }

@@ -3,13 +3,8 @@ package com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirPr
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.seba.mitantonavigationdrawer.MainActivity
-import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirProductoBinding
 import com.seba.mitantonavigationdrawer.databinding.ItemAlertBinding
-
 
 class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeListener): RecyclerView.ViewHolder(view) {
     private val binding = ItemAlertBinding.bind(view)
@@ -28,18 +23,13 @@ class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeL
     }
 
    // private val bindingAlert = FragmentAnadirProductoBinding.bind(view)
-   init {
-       binding.etAlert.addTextChangedListener(object : TextWatcher {
+   init { binding.etAlert.addTextChangedListener(object : TextWatcher {
            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
-
            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
                val texto = charSequence?.toString() ?: ""
                if(binding.etAlert.text.isNotBlank() && !binding.etAlert.isFocusable){
                    listener.onTextChange(texto,this@AlertasAlmacenesViewHolder)
-                   listaDeAlertas.add(texto)
-               }
-           }
-
+                   listaDeAlertas.add(texto) } }
            override fun afterTextChanged(s: Editable?) {
                binding.etAlert.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
                    if(!hasFocus){
@@ -47,30 +37,12 @@ class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeL
                            val texto = s.toString()
                            // valoresDelRecyclerView.add(adapterPosition, s.toString())
                            // textChangeListener?.invoke(s.toString(),adapterPosition)
-                           listener.afterTextChange(texto, this@AlertasAlmacenesViewHolder)
-                       }
-                   }
-               }
-              // if (binding.etAlert.text.isNotBlank() && !binding.etAlert.isFocusable) {
-
-           }
-       })
-   }
+                           listener.afterTextChange(texto, this@AlertasAlmacenesViewHolder) } } } } }) }
     fun bind(alertasAlmacenesItemResponse: AlertasAlmacenesItemResponse) {
         binding.tvWarehouse.text = alertasAlmacenesItemResponse.Nombre
         // Verificar si el CheckBox está marcado o no
         binding.cbWarehouse.setOnClickListener {
             binding.etAlert.isEnabled = binding.cbWarehouse.isChecked
         }
-       // binding.bAlertaAlmacen.setOnClickListener {
-           // bindingAlert.etCodigoBarraProducto.setText(alertasAlmacenesItemResponse.Nombre)
-           // bindingAlert.etCodigoBarraProducto.setText(binding.tvWarehouse.text)
-       // }
-        //binding.etAlert.isVisible = binding.cbWarehouse.isChecked
     }
-
-
-
-
-
 }

@@ -35,9 +35,12 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -76,9 +79,9 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         private const val  CAMERA_PERMISSION = android.Manifest.permission.CAMERA
 
     }*/
-
+    private val viewModel by activityViewModels<SharedViewModel>()
     private val sharedViewModel2: SharedViewModel by activityViewModels()
-    private val viewModel: AnadirProductoViewModel by viewModels()
+   // private val viewModel: AnadirProductoViewModel by viewModels()
     private val alertasAlmacenesItemResponse: AlertasAlmacenesItemResponse? = null
     private lateinit var adapterPrecioCompra :ProveedorPrecioCompraAdapter
     private lateinit var adapterPrecioVenta :ClientePrecioVentaAdapter
@@ -100,9 +103,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
     var TextCodigoEmbalaje: EditText? = null
     var TextUnidadesEmbalaje: EditText? = null
     var Imagen: ImageView? = null
-    private val ListaDeAlmacenes : MutableList<String> = mutableListOf()
-    private val ListaDeAlertas : MutableList<String> = mutableListOf()
-    private val ListaDeProductos : MutableList<String> = mutableListOf()
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -147,18 +148,70 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         binding.etNombreImagen.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
 
-        binding.tvAutoCompleteTipoDeProducto.setOnClickListener {
+       // binding.tvAutoCompleteTipoDeProducto.setOnClickListener {
             ListaDesplegableProducto()
-        }
+        //}
 
         binding.buttonProducto.setOnClickListener {
             ValidacionesIdInsertarDatos()
-            Handler(Looper.getMainLooper()).postDelayed({
-                InsertarAlertasyAlmacenes()
-            },5000)
+            //Solo 1 se envía:
+            if(sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty() && sharedViewModel.listaDePreciosCompra.isEmpty()){
+                Handler(Looper.getMainLooper()).postDelayed({
+                    InsertarAlertasyAlmacenes()
+                }, 4000)
+            }
+            //Solo 2 se envía:
+            if(sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty()){
+                Handler(Looper.getMainLooper()).postDelayed({
+                    InsertarPreciosCompraYProveedores()
+                },4000)
+            }
+            //Solo 3 se envía
+            if(sharedViewModel.listaDePreciosVenta.isNotEmpty() &&  sharedViewModel.listaDeAlertas.isEmpty() && sharedViewModel.listaDePreciosCompra.isEmpty()){
+                Handler(Looper.getMainLooper()).postDelayed({
+                    InsertarPreciosVentayClientes()
+                },4000)
+            }
+            //1 y 2 se envían
+            if(sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty()){
+                Handler(Looper.getMainLooper()).postDelayed({
+                    InsertarAlertasyAlmacenes()
+                }, 4000)
+               Handler(Looper.getMainLooper()).postDelayed({
+                InsertarPreciosCompraYProveedores()
+            },8000)}
+            //1 y 3 s envían
+            if(sharedViewModel.listaDePreciosCompra.isEmpty() &&  sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isNotEmpty()){
+                Handler(Looper.getMainLooper()).postDelayed({
+                    InsertarAlertasyAlmacenes()
+                }, 4000)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    InsertarPreciosVentayClientes()
+                },8000)
+            }
+            //2 y 3 se envían
+            if(sharedViewModel.listaDePreciosVenta.isNotEmpty() && sharedViewModel.listaDeAlertas.isEmpty() && sharedViewModel.listaDePreciosCompra.isNotEmpty()){
+                Handler(Looper.getMainLooper()).postDelayed({
+                    InsertarPreciosCompraYProveedores()
+                },4000)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    InsertarPreciosVentayClientes()
+                },8000)}
+            //1, 2 y 3 se envían
+            if(sharedViewModel.listaDePreciosVenta.isNotEmpty() && sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isNotEmpty()){
+                Handler(Looper.getMainLooper()).postDelayed({
+                    InsertarAlertasyAlmacenes()
+                }, 4000)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    InsertarPreciosCompraYProveedores()
+                },8000)
+                Handler(Looper.getMainLooper()).postDelayed({
+                InsertarPreciosVentayClientes()
+            },12000)
+            }
 
-            //binding.etCodigoBarraProducto.setText(arguments?.getString("key"))
-        }
+            }
+
 
 
         ///////El dialogo con alertas por almacen////////////
@@ -174,11 +227,17 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         }
 
         binding.buttonBuyPrice.setOnClickListener {
-           // goToDialogBuyPriceSuppliers()
+            checkIfFragmentAttached { val proveedorPrecioCompraFragment = ProveedorPrecioCompraFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.rlAnadirProducto,proveedorPrecioCompraFragment,"tag_proveedor_precio_compra")
+                    .commit()}
         }
 
         binding.buttonSellPrice.setOnClickListener {
-          //  goToDialogSellPriceCustomers()
+            checkIfFragmentAttached { val clientePrecioVentaFragment = ClientePrecioVentaFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.rlAnadirProducto,clientePrecioVentaFragment,"tag_precio_venta_clientes")
+                    .commit()}
         }
         ////La camara///////////////
         val btnCamara = binding.buttonTomar.findViewById<Button>(R.id.buttonTomar)
@@ -314,9 +373,9 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
     private fun InsertarAlertasyAlmacenes(){
         for (i in 0..<sharedViewModel.listaDeAlertas.size) {
             setFragmentResultListener("AlertaAlmacen$i"){key,bundle ->
-                ListaDeAlmacenes.add(bundle.getString("Almacen$i")!!.toString().uppercase())
-                ListaDeAlertas.add(bundle.getString("Alerta$i")!!)
-                ListaDeProductos.add(binding.etNombreProducto.text.toString().uppercase())
+                sharedViewModel.ListasDeAlmacenes.add(bundle.getString("Almacen$i")!!.toString().uppercase())
+                sharedViewModel.ListasDeAlertas.add(bundle.getString("Alerta$i")!!)
+                sharedViewModel.ListasDeProductosAlertas.add(binding.etNombreProducto.text.toString().uppercase())
             }}
         val queueAlertas =Volley.newRequestQueue(requireContext())
         val urlAlertas = "http://186.64.123.248/Producto/alertasAlmacenEnviar.php"
@@ -324,7 +383,13 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
             Request.Method.POST,
             urlAlertas,{
                 response ->
-                      TextNombre?.setText("")
+                sharedViewModel.listaDeAlertas.clear()
+                sharedViewModel.listaDeBodegas.clear()
+                sharedViewModel.ListasDeAlertas.clear()
+                sharedViewModel.ListasDeAlmacenes.clear()
+                sharedViewModel.ListasDeProductosAlertas.clear()
+                if(sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty() && sharedViewModel.listaDePreciosCompra.isEmpty()){
+                      TextNombre?.setText("")  }
                       Toast.makeText(requireContext(), "Alertas ingresadas exitosamente a la base de datos", Toast.LENGTH_LONG).show()
                     },
                     { error ->
@@ -339,15 +404,106 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                 val parametrosAlertas = HashMap<String, String>()
                 parametrosAlertas["NUMERO_DE_ALERTAS"] = sharedViewModel.listaDeAlertas.size.toString()
                 for (i in 0..<sharedViewModel.listaDeAlertas.size) {
-                    parametrosAlertas["ALMACEN$i"] = ListaDeAlmacenes[i]
-                    parametrosAlertas["PRODUCTO$i"] = ListaDeProductos[i]
-                    parametrosAlertas["ALERTA$i"] = ListaDeAlertas[i]
+                    parametrosAlertas["ALMACEN$i"] = sharedViewModel.ListasDeAlmacenes[i]
+                    parametrosAlertas["PRODUCTO$i"] = sharedViewModel.ListasDeProductosAlertas[i]
+                    parametrosAlertas["ALERTA$i"] = sharedViewModel.ListasDeAlertas[i]
                     }
 
                  return parametrosAlertas
                 }
             }
         queueAlertas.add(jsonObjectRequestAlertas)
+    }
+
+    private fun InsertarPreciosCompraYProveedores(){
+        for (i in 0..<sharedViewModel.listaDePreciosCompra.size) {
+            setFragmentResultListener("PreciosCompraProveedores$i"){key,bundle ->
+                sharedViewModel.ListasDeProveedores.add(bundle.getString("Proveedores$i")!!.toString().uppercase())
+                sharedViewModel.ListasDePreciosDeCompra.add(bundle.getString("PreciosCompra$i")!!)
+                sharedViewModel.ListasDeProductosPrecioCompra.add(binding.etNombreProducto.text.toString().uppercase())
+            }}
+        val queuePrecioCompra =Volley.newRequestQueue(requireContext())
+        val urlPrecioCompra = "http://186.64.123.248/Producto/proveedorPrecioCompraEnviar.php"
+        val jsonObjectRequestPrecioCompra = object: StringRequest(
+            Request.Method.POST,
+            urlPrecioCompra,{
+                    response ->
+                sharedViewModel.listaDePreciosCompra.clear()
+                sharedViewModel.listaDeProveedores.clear()
+                sharedViewModel.ListasDePreciosDeCompra.clear()
+                sharedViewModel.ListasDeProveedores.clear()
+                sharedViewModel.ListasDeProductosPrecioCompra.clear()
+                if(sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty()
+                    || (sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty())){
+                    TextNombre?.setText("")
+                }
+                Toast.makeText(requireContext(), "Precios de compra ingresados exitosamente a la base de datos", Toast.LENGTH_LONG).show()
+            },
+            { error ->
+                Toast.makeText(requireContext(), " No se ha podido enviar los proveedores y precios de compra", Toast.LENGTH_LONG).show()
+                /*  for (i in 0..<sharedViewModel.listaDeAlertas.size) {
+                      Log.i("ALMACEN$i",ListaDeAlmacenes[i])
+                       Log.i("PRODUCTO$i", ListaDeProductos[i])
+                      Log.i("ALERTA$i",ListaDeAlertas[i])
+                  }*/
+            })
+        { override fun getParams(): MutableMap<String, String> {
+            val parametrosPrecioCompra = HashMap<String, String>()
+            parametrosPrecioCompra["NUMERO_DE_PRECIOS_DE_COMPRA"] = sharedViewModel.listaDePreciosCompra.size.toString()
+            for (i in 0..<sharedViewModel.listaDePreciosCompra.size) {
+                parametrosPrecioCompra["PROVEEDOR$i"] = sharedViewModel.ListasDeProveedores[i]
+                parametrosPrecioCompra["PRODUCTO$i"] = sharedViewModel.ListasDeProductosPrecioCompra[i]
+                parametrosPrecioCompra["PRECIO_COMPRA$i"] = sharedViewModel.ListasDePreciosDeCompra[i]
+            }
+
+            return parametrosPrecioCompra
+          }
+        }
+        queuePrecioCompra.add(jsonObjectRequestPrecioCompra)
+    }
+
+    private fun InsertarPreciosVentayClientes(){
+        for (i in 0..<sharedViewModel.listaDePreciosVenta.size) {
+            setFragmentResultListener("PreciosVentaClientes$i"){key,bundle ->
+                sharedViewModel.ListasDeClientes.add(bundle.getString("Clientes$i")!!.toString().uppercase())
+                sharedViewModel.ListasDePreciosDeVenta.add(bundle.getString("PreciosDeVenta$i")!!)
+                sharedViewModel.ListasDeProductosPrecioVenta.add(binding.etNombreProducto.text.toString().uppercase())
+            }}
+        val queuePrecioVenta =Volley.newRequestQueue(requireContext())
+        val urlPrecioVenta = "http://186.64.123.248/Producto/clientePrecioVentaEnviar.php"
+        val jsonObjectRequestPrecioVenta =object: StringRequest(
+            Request.Method.POST,
+            urlPrecioVenta,{
+                    response ->
+                sharedViewModel.listaDePreciosVenta.clear()
+                sharedViewModel.listaDeClientes.clear()
+                sharedViewModel.ListasDePreciosDeVenta.clear()
+                sharedViewModel.ListasDeClientes.clear()
+                sharedViewModel.ListasDeProductosPrecioVenta.clear()
+                TextNombre?.setText("")
+                Toast.makeText(requireContext(), "Precios de venta ingresados exitosamente a la base de datos", Toast.LENGTH_LONG).show()
+            },
+            { error ->
+                Toast.makeText(requireContext(), " No se ha podido enviar los clientes y precios de venta", Toast.LENGTH_LONG).show()
+                /*  for (i in 0..<sharedViewModel.listaDeAlertas.size) {
+                      Log.i("ALMACEN$i",ListaDeAlmacenes[i])
+                       Log.i("PRODUCTO$i", ListaDeProductos[i])
+                      Log.i("ALERTA$i",ListaDeAlertas[i])
+                  }*/
+            })
+        { override fun getParams(): MutableMap<String, String> {
+            val parametrosPrecioVenta = HashMap<String, String>()
+            parametrosPrecioVenta["NUMERO_DE_PRECIOS_DE_VENTA"] = sharedViewModel.listaDePreciosVenta.size.toString()
+            for (i in 0..<sharedViewModel.listaDePreciosVenta.size) {
+                parametrosPrecioVenta["CLIENTE$i"] = sharedViewModel.ListasDeClientes[i]
+                parametrosPrecioVenta["PRODUCTO$i"] = sharedViewModel.ListasDeProductosPrecioVenta[i]
+                parametrosPrecioVenta["PRECIO_VENTA$i"] = sharedViewModel.ListasDePreciosDeVenta[i]
+            }
+
+            return parametrosPrecioVenta
+        }
+        }
+        queuePrecioVenta.add(jsonObjectRequestPrecioVenta)
     }
 
     private fun ListaDesplegableProducto() {
@@ -392,52 +548,6 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
             .baseUrl("http://186.64.123.248/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    }
-
-
-
-    private fun searchByNameBuyPrice() {
-        CoroutineScope(Dispatchers.IO).launch{
-            val myResponse : Response<ProveedorPrecioCompraDataResponse> = retrofit.create(ApiServicePrecioCompra::class.java).getProveedorPrecioCompra()
-            // retrofit.create(ApiServiceAlertas::class.java).getAlertasAlmacenes()
-            if(myResponse.isSuccessful){
-                Log.i("Sebastian", "Funciona!!")
-                val response: ProveedorPrecioCompraDataResponse? = myResponse.body()
-                if(response != null){
-                    Log.i("Sebastian", response.toString())
-                    //Log.i("Sebastian", response2.toString())
-                    activity?.runOnUiThread {
-                        adapterPrecioCompra.updateList(response.Proveedores)
-
-                    }
-                }
-
-            }else{
-                Log.i("Sebastian", "No funciona.")
-            }
-        }
-    }
-
-    private fun searchByNameSellPrice() {
-        CoroutineScope(Dispatchers.IO).launch{
-            val myResponse : Response<ClientePrecioVentaDataResponse> = retrofit.create(ApiServicePrecioVenta::class.java).getClientePrecioVenta()
-            // retrofit.create(ApiServiceAlertas::class.java).getAlertasAlmacenes()
-            if(myResponse.isSuccessful){
-                Log.i("Sebastian", "Funciona!!")
-                val response: ClientePrecioVentaDataResponse? = myResponse.body()
-                if(response != null){
-                    Log.i("Sebastian", response.toString())
-                    //Log.i("Sebastian", response2.toString())
-                    activity?.runOnUiThread {
-                        adapterPrecioVenta.updateList(response.Clientes)
-
-                    }
-                }
-
-            }else{
-                Log.i("Sebastian", "No funciona.")
-            }
-        }
     }
 
     override fun onResult(parametro: String) {
@@ -525,7 +635,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sharedViewModel2.sharedData.observe(viewLifecycleOwner){
+       /* sharedViewModel2.sharedData.observe(viewLifecycleOwner){
                 newData ->
             val alertasAlmacenesFragment = parentFragmentManager.findFragmentByTag("tag_alertas_almacenes") as? AlertasAlmacenesFragment
             alertasAlmacenesFragment?.view?.findViewById<Button>(R.id.bAgregarAlmacen)?.setOnClickListener {
@@ -535,9 +645,41 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
             alertasAlmacenesFragment?.view?.findViewById<Button>(R.id.bAlertaAlmacenVolver)?.setOnClickListener {
 
             }
+        }*/
+        viewModel.CodigoDeBarra.observe(viewLifecycleOwner) { newText ->
+            val pictureDialog = AlertDialog.Builder(requireContext())
+            pictureDialog.setTitle("¿Cómo quieres ingresar tu código?")
+            val pictureDialogItem = arrayOf("Código de Producto",
+                "Código de embalaje")
+            pictureDialog.setItems(pictureDialogItem){
+                    dialog, which ->
+                when(which){
+                    0 ->  binding.etCodigoBarraProducto.setText(newText)
+                    1 ->  binding.etCodigoBarraEmbalaje.setText(newText)
+                }
+            }
+            pictureDialog.show()
+
         }
     }
 
+    private fun clear(){
+        sharedViewModel.listaDeAlertas.clear()
+        sharedViewModel.listaDeBodegas.clear()
+        sharedViewModel.listaDePreciosCompra.clear()
+        sharedViewModel.listaDeProveedores.clear()
+        sharedViewModel.listaDePreciosVenta.clear()
+        sharedViewModel.listaDeClientes.clear()
+        sharedViewModel.ListasDeAlertas.clear()
+        sharedViewModel.ListasDeAlmacenes.clear()
+        sharedViewModel.ListasDeProductosAlertas.clear()
+        sharedViewModel.ListasDePreciosDeCompra.clear()
+        sharedViewModel.ListasDeProveedores.clear()
+        sharedViewModel.ListasDeProductosPrecioCompra.clear()
+        sharedViewModel.ListasDePreciosDeVenta.clear()
+        sharedViewModel.ListasDeClientes.clear()
+        sharedViewModel.ListasDeProductosPrecioVenta.clear()
+    }
 
 }
 

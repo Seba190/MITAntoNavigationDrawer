@@ -14,6 +14,8 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -26,6 +28,7 @@ import com.seba.mitantonavigationdrawer.MainActivity
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirTransferenciaBinding
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AlertasAlmacenesFragment
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONObject
 
 
@@ -37,7 +40,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
     }
 
 
-
+    private val viewModel by activityViewModels<SharedViewModel>()
     private var _binding: FragmentAnadirTransferenciaBinding? = null
 
     // This property is only valid between onCreateView and
@@ -50,6 +53,11 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
     var DropDownDestino: AutoCompleteTextView? = null
     private var requestCamara:ActivityResultLauncher<String>? = null
     private var CodigoDeBarra: EditText? = null
+    private val ListaDeProductos : MutableList<String> = mutableListOf()
+    private val ListaDeCantidades : MutableList<String> = mutableListOf()
+    private val ListaDePreciosUnidad : MutableList<String> = mutableListOf()
+    private val ListaDePreciosCajas : MutableList<String> = mutableListOf()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,6 +89,12 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
 
         ListaDesplegableOrigen()
         ListaDesplegableDestino()
+
+        binding.bAnadirNuevoProducto.setOnClickListener {
+                val elegirProductoFragment = ElegirProductoFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.clAnadirTransferencia,elegirProductoFragment)
+                    .commit()}
 
 
 
@@ -179,6 +193,15 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
 
     private fun ValidacionesIdInsertarDatos() {
         //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
+        setFragmentResultListener("ElegirProducto1"){key,bundle ->
+            ListaDeCantidades.add(bundle.getString("Cantidad")!!)
+            ListaDePreciosUnidad.add(bundle.getString("PrecioUnidades")!!)
+            ListaDeProductos.add(bundle.getString("Producto")!!)}
+
+        setFragmentResultListener("ElegirProducto2"){key,bundle ->
+            ListaDeCantidades.add(bundle.getString("Cantidad")!!)
+            ListaDePreciosCajas.add(bundle.getString("PrecioCajas")!!)
+            ListaDeProductos.add(bundle.getString("Producto")!!)}
         val queue =Volley.newRequestQueue(requireContext())
         val url ="http://186.64.123.248/Transferencia/registro.php"
         val jsonObjectRequest = object: StringRequest(
@@ -205,7 +228,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                 TextComentarios?.setText("")
                             },
                             { error ->
-                                Toast.makeText(requireContext(),"El almacen de origen y de destino son obligatorios", Toast.LENGTH_LONG).show()
+                                Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
                                 //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
                             }
                         )
@@ -219,6 +242,14 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                 parametros.put("ALMACEN_ORIGEN", DropDownOrigen?.text.toString())
                                 parametros.put("ALMACEN_DESTINO", DropDownDestino?.text.toString())
                                 parametros.put("COMENTARIOS", TextComentarios?.text.toString().uppercase())
+                                parametros.put("PRODUCTO", ListaDeProductos[0].uppercase())
+                                parametros.put("CANTIDAD",ListaDeCantidades[0])
+                                if(ListaDePreciosUnidad.isEmpty()){
+                                    parametros.put("PRECIO", ListaDePreciosCajas[0])
+                                }else if(ListaDePreciosCajas.isEmpty()) {
+                                    parametros.put("PRECIO", ListaDePreciosUnidad[0])
+                                }
+
 
                                 return parametros
                             }
@@ -260,8 +291,15 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
     fun obtenerMiView(): View {
         return binding.etNombreTransferencia // Tu vista que quieres acceder
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.CodigoDeBarraTransferencia.observe(viewLifecycleOwner) { newText ->
+            binding.etCodigoDeBarra.setText(newText)
+        }
+    }
 
+
+}
 
     // En el FragmentDestino o cualquier fragmento que desees personalizar
 
-}

@@ -15,7 +15,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.vision.CameraSource
@@ -28,10 +30,12 @@ import com.seba.mitantonavigationdrawer.databinding.FragmentBarcodeScanProductoB
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaFragment
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.BarcodeScanFragmentDirections
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.BarcodeScanViewModel
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import java.io.IOException
 
 class BarcodeScanProductoFragment : Fragment() {
 
+    private val viewModel by activityViewModels<SharedViewModel>()
     // private val args: AnadirTransferenciaFragmentArgs by navArgs()
     private var _binding: FragmentBarcodeScanProductoBinding? = null
     // private var codigoDeBarra: String? = null
@@ -122,12 +126,14 @@ class BarcodeScanProductoFragment : Fragment() {
                         /*val bundle = Bundle()
                         bundle.putString(AnadirTransferenciaFragment.CODIGO_DE_BARRA,codigoDeBarra)
                         arguments = bundle*/
-                        setFragmentResult("Codigo de barra producto", bundleOf("codigo" to codigoDeBarra))
+                        viewModel.CodigoDeBarra.value = codigoDeBarra
+                        //setFragmentResult("Codigo de barra producto", bundleOf("codigo" to codigoDeBarra))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.tvCodigoBarraProducto)
                     codigo?.setText(codigoDeBarra)
                     activity?.runOnUiThread {
                         Toast.makeText(requireContext(),codigoDeBarra, Toast.LENGTH_LONG).show()
+
                         //obtenerCodigo(codigoDeBarra!!)
                     }
 

@@ -25,16 +25,18 @@ import android.widget.EditText
 import androidx.navigation.fragment.findNavController
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import com.seba.mitantonavigationdrawer.MainActivity
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AlertasAlmacenesFragment
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaFragment.Companion.CODIGO_DE_BARRA
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
 
 class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
 
 
-
+    private val viewModel by activityViewModels<SharedViewModel>()
    // private val args: AnadirTransferenciaFragmentArgs by navArgs()
     private var _binding: FragmentBarcodeScanBinding? = null
    // private var codigoDeBarra: String? = null
@@ -124,6 +126,7 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
                         /*val bundle = Bundle()
                         bundle.putString(CODIGO_DE_BARRA,codigoDeBarra)
                         arguments = bundle*/
+                        viewModel.CodigoDeBarraTransferencia.value = codigoDeBarra
                         setFragmentResult("Codigo de barra transferencia", bundleOf("codigo" to codigoDeBarra))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
