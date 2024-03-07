@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.SurfaceHolder
 import android.view.View
 import android.view.ViewGroup
@@ -16,9 +17,12 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.vision.CameraSource
 import com.google.android.gms.vision.Detector
@@ -45,7 +49,8 @@ class BarcodeScanProductoFragment : Fragment() {
     private lateinit var barcodeDetector: BarcodeDetector
     private lateinit var cameraSource: CameraSource
     var intentData = "algo"
-    var codigoDeBarra : String? = null
+    var codigoDeBarraProducto : String? = null
+    var anadirProducto: MutableList<String> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -102,8 +107,8 @@ class BarcodeScanProductoFragment : Fragment() {
         })
         barcodeDetector.setProcessor(object : Detector.Processor<Barcode>{
             override fun release() {
-                Toast.makeText(requireContext()," El scanner del código de barra ha sido detenido",
-                    Toast.LENGTH_LONG).show()
+               // Toast.makeText(requireContext()," El scanner del código de barra ha sido detenido",
+                 //   Toast.LENGTH_LONG).show()
 
 
             }
@@ -122,23 +127,22 @@ class BarcodeScanProductoFragment : Fragment() {
                         intentData = barcodes.valueAt(0).displayValue
                         binding.txtBarcodeValueProducto.setText(intentData)
                         //activity?.finish()
-                        codigoDeBarra = intentData
+                        codigoDeBarraProducto = intentData
                         /*val bundle = Bundle()
                         bundle.putString(AnadirTransferenciaFragment.CODIGO_DE_BARRA,codigoDeBarra)
                         arguments = bundle*/
-                        viewModel.CodigoDeBarra.value = codigoDeBarra
+                        viewModel.CodigoDeBarra.value = codigoDeBarraProducto
                         //setFragmentResult("Codigo de barra producto", bundleOf("codigo" to codigoDeBarra))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.tvCodigoBarraProducto)
-                    codigo?.setText(codigoDeBarra)
+                    codigo?.setText(codigoDeBarraProducto)
                     activity?.runOnUiThread {
-                        Toast.makeText(requireContext(),codigoDeBarra, Toast.LENGTH_LONG).show()
-
+                        Toast.makeText(requireContext(),codigoDeBarraProducto, Toast.LENGTH_LONG).show()
                         //obtenerCodigo(codigoDeBarra!!)
                     }
 
-                    //obtenerCodigo(arguments?.getString(CODIGO_DE_BARRA)!!)
-                    // findNavController().navigate(R.id.action_nav_barcode_scan_to_nav_añadir_transferencia)
+
+
                 }
 
             }
@@ -156,26 +160,78 @@ class BarcodeScanProductoFragment : Fragment() {
         iniBc()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().onBackPressedDispatcher
+        /*requireActivity().onBackPressedDispatcher
             .addCallback(viewLifecycleOwner) {
-                activity?.runOnUiThread { Toast.makeText(requireContext(),codigoDeBarra, Toast.LENGTH_LONG).show()}
-            }
-
-
+                activity?.runOnUiThread { Toast.makeText(requireContext(),codigoDeBarraProducto, Toast.LENGTH_LONG).show()}
+            }*/
+        setFragmentResultListener("Añadir Producto") {key, bundle ->
+            anadirProducto.add(bundle.getString("nombre")!!)
+            anadirProducto.add(bundle.getString("peso")!!)
+            anadirProducto.add(bundle.getString("volumen")!!)
+            anadirProducto.add(bundle.getString("tipoDeProducto")!!)
+            anadirProducto.add(bundle.getString("unidadesEmbalaje")!!)
+        }
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                viewModel.CodigoDeBarra.observe(viewLifecycleOwner) { newText ->
+                    // if(!segundaVez) {
+                    val pictureDialog = AlertDialog.Builder(requireContext())
+                    pictureDialog.setTitle("¿Cómo quieres ingresar tu código?")
+                    val pictureDialogItem = arrayOf(
+                        "Código de Producto",
+                        "Código de embalaje"
+                    )
+                    pictureDialog.setItems(pictureDialogItem) { dialog, which ->
+                        when (which) {
+                            0 -> setFragmentResult("Producto", bundleOf("Producto" to newText))
+                            1 -> setFragmentResult("Embalaje", bundleOf("Embalaje" to newText))
+                        }
+                    }
+                    pictureDialog.show()
+                    // segundaVez = true
+                    //}
+                }
+               // binding.clBarcodeScanProducto.isVisible = false
+               /* val anadirProductoFragment = AnadirProductoFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.clBarcodeScanProducto, anadirProductoFragment)
+                    .commitNow()*/
+                setFragmentResult("Añadir Producto vuelta",
+                    bundleOf("nombre" to anadirProducto[0],
+                                    "peso" to anadirProducto[1],
+                                    "volumen" to anadirProducto[2],
+                                 "tipoDeProducto" to anadirProducto[3],
+                                 "unidadesEmbalaje" to anadirProducto[4]))
+                findNavController().navigate(R.id.action_nav_barcode_scan_producto_to_nav_añadir_producto)
+                return true
+
+            }
+
+        }
+
+        return super.onOptionsItemSelected(item)
+
+    }
+
 
     private fun obtenerCodigo(code: String){
      //   val action = BarcodeScanFragmentDirections.actionNavBarcodeScanToNavAñadirTransferencia(code)
       //  findNavController().navigate(action)
     }
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
 }

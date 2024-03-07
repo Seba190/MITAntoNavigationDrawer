@@ -3,191 +3,192 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/clRemoverInventario"
     android:layout_height="match_parent"
     tools:context=".ui.removerInventario.RemoverInventarioFragment">
 
-        <ScrollView
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:longClickable="true"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0">
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <TextView
+                android:id="@+id/tvNombreFacturaSalida"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_nombre_factura_salida"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etNombreFacturaSalida"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:backgroundTint="@color/color_list"
+                android:gravity="center"
+                android:hint="@string/placeholder_nombre_factura_entrada"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <TextView
+                android:id="@+id/tvFacturaSalidaCliente"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_nombre_factura_salida_cliente"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:longClickable="true"
-                android:orientation="vertical"
+                android:layout_height="match_parent"
                 android:focusableInTouchMode="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                android:orientation="vertical">
 
-
-
-                <TextView
-                    android:id="@+id/tvNombreFacturaSalida"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ListaDesplegableCliente"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="90dp"
-                    android:layout_marginVertical="30dp"
-                    android:text="@string/textView_nombre_factura_salida"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:layout_marginHorizontal="70dp"
+                    android:textColorHint="@color/color_list">
 
-                <EditText
-                    android:id="@+id/etNombreFacturaSalida"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="90dp"
-                    android:hint="@string/placeholder_nombre_factura_entrada"
-                    android:backgroundTint="@color/color_list"
-                    android:inputType="text"
-                    android:gravity="center"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/color_list"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-
-                <TextView
-                    android:id="@+id/tvFacturaSalidaCliente"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
-                    android:layout_marginVertical="30dp"
-                    android:text="@string/textView_nombre_factura_salida_cliente"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:focusableInTouchMode="true">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/ListaDesplegableCliente"
+                    <AutoCompleteTextView
+                        android:id="@+id/tvListaDesplegableCliente"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColorHint="@color/color_list"
-                        android:layout_marginHorizontal="70dp"
-                        style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/tvListaDesplegableCliente"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColorHint="@color/color_list"
-                            android:textColor="@color/black"
-                            android:hint="@string/placeholder_dropdown"
-                            android:text="@string/item_label"
-                            android:inputType="none"/>
+                        android:layout_height="wrap_content"
+                        android:hint="@string/placeholder_dropdown"
+                        android:inputType="none"
+                        android:text="@string/item_label"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/color_list" />
 
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <TextView
-                    android:id="@+id/tvFacturaSalidaAlmacen"
+            <TextView
+                android:id="@+id/tvFacturaSalidaAlmacen"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_nombre_factura_entrada_almacen"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/ListaDesplegableAlmacen"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
-                    android:layout_marginVertical="30dp"
-                    android:text="@string/textView_nombre_factura_entrada_almacen"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:layout_marginHorizontal="70dp"
+                    android:textColorHint="@color/color_list">
 
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:focusableInTouchMode="true">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/ListaDesplegableAlmacen"
+                    <AutoCompleteTextView
+                        android:id="@+id/tvListaDesplegableAlmacen"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textColorHint="@color/color_list"
-                        android:layout_marginHorizontal="70dp"
-                        style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/tvListaDesplegableAlmacen"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColorHint="@color/color_list"
-                            android:textColor="@color/black"
-                            android:hint="@string/placeholder_dropdown"
-                            android:text="@string/item_label"
-                            android:inputType="none"/>
+                        android:layout_height="wrap_content"
+                        android:hint="@string/placeholder_dropdown"
+                        android:inputType="none"
+                        android:text="@string/item_label"
+                        android:textColor="@color/black"
+                        android:textColorHint="@color/color_list" />
 
 
-                    </com.google.android.material.textfield.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <TextView
-                    android:id="@+id/tvFacturaSalidaFechaTransaccion"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
-                    android:layout_marginVertical="30dp"
-                    android:text="@string/textView_factura_salida_fecha_transaccion"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvFacturaSalidaFechaTransaccion"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="110dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_factura_salida_fecha_transaccion"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/etFacturaSalidaFechaTransaccion"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="90dp"
-                    android:gravity="center"
-                    android:hint="@string/placeholder_factura_salida_fecha_transaccion"
-                    android:inputType="text"
-                    android:backgroundTint="@color/color_list"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/color_list"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+            <EditText
+                android:id="@+id/etFacturaSalidaFechaTransaccion"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:backgroundTint="@color/color_list"
+                android:gravity="center"
+                android:hint="@string/placeholder_factura_salida_fecha_transaccion"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvFacturaSalidaComentarios"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="140dp"
-                    android:layout_marginVertical="30dp"
-                    android:text="@string/textView_factura_entrada_comentarios"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tvFacturaSalidaComentarios"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="140dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_factura_entrada_comentarios"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/etFacturaSalidaComentarios"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_marginHorizontal="90dp"
-                    android:gravity="top"
-                    android:hint="@string/placeholder_factura_entrada_comentarios"
-                    android:inputType="text"
-                    android:backgroundTint="@color/color_list"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/color_list"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+            <EditText
+                android:id="@+id/etFacturaSalidaComentarios"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginHorizontal="90dp"
+                android:backgroundTint="@color/color_list"
+                android:gravity="top"
+                android:hint="@string/placeholder_factura_entrada_comentarios"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
 
-                <!-- RecyclerView con imagen de buscar en EditText-->
+            <!-- RecyclerView con imagen de buscar en EditText-->
 
-                <LinearLayout
+            <!--   <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -215,11 +216,11 @@
                     android:id="@+id/rvProductosSalida"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"/>-->
 
-                <!--Productos Añadidos-->
+            <!--Productos Añadidos-->
 
-                <TextView
+            <!--     <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Productos Añadidos:"
@@ -260,10 +261,10 @@
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:tint="@color/red" />
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
-                    <!--Boton Unidades y la suma y resta de unidades-->
-                    <LinearLayout
+            <!--Boton Unidades y la suma y resta de unidades-->
+            <!--   <LinearLayout
                         android:id="@+id/llUnidadesSalida"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -308,11 +309,11 @@
                                 android:layout_marginStart="20dp"
                                 android:contentDescription="Menos"/>
 
-                        </LinearLayout>
+                        </LinearLayout>-->
 
 
-                        <!--Precio por unidad, Impuesto y Descuento -->
-                        <LinearLayout
+            <!--Precio por unidad, Impuesto y Descuento -->
+            <!--  <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
@@ -427,10 +428,10 @@
                                 android:layout_marginStart="30dp"
                                 android:hint="@string/Articulos_por_caja"/>
 
-                        </LinearLayout>
+                        </LinearLayout>-->
 
-                        <!--Precio por unidad, Impuesto y Descuento -->
-                        <LinearLayout
+            <!--Precio por unidad, Impuesto y Descuento -->
+            <!-- <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
@@ -501,11 +502,11 @@
 
                         </LinearLayout>
 
-                    </LinearLayout>
+                    </LinearLayout>-->
 
-                    <!--Texto de Contabilidad-->
+            <!--Texto de Contabilidad-->
 
-                    <TextView
+            <!-- <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/Total_Parcial"
@@ -535,21 +536,72 @@
                         android:layout_marginTop="15dp"
                         android:layout_marginStart="250dp"/>
 
-                </LinearLayout>
-
-                <!--Botón de guardar y subir los datos al servidor-->
+                </LinearLayout>-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/FacturaSalidaButtonEnviar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:id="@+id/bEscanearCodigoDeBarraRemover"
+                    android:layout_width="150dp"
+                    android:layout_height="80dp"
+                    android:layout_marginVertical="30dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginEnd="50dp"
                     android:backgroundTint="@color/light_green"
-                    android:layout_marginHorizontal="160dp"
-                    android:layout_marginVertical="40dp"
-                    android:text="@string/anadir_inventario_send" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                    android:text="@string/button_codigo_de_barra" />-
 
-        </ScrollView>
+                <Button
+                    android:id="@+id/bAnadirNuevoProductoRemover"
+                    android:layout_width="150dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="30dp"
+                    android:backgroundTint="@color/light_green"
+                    android:gravity="center"
+                    android:text="@string/buttom_añadir_producto" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvProductosAnadidosRemover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Productos añadidos:"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvElegirProductoRemover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <Button
+                android:id="@+id/bActualizarRecyclerViewRemover"
+                android:layout_width="130dp"
+                android:layout_marginTop="15dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginVertical="10dp"
+                android:backgroundTint="@color/light_green"
+                android:text="Actualizar" />
+
+
+            <!--Botón de guardar y subir los datos al servidor-->
+
+            <Button
+                android:id="@+id/FacturaSalidaButtonEnviar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginVertical="15dp"
+                android:backgroundTint="@color/light_green"
+                android:text="@string/anadir_inventario_send" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
 

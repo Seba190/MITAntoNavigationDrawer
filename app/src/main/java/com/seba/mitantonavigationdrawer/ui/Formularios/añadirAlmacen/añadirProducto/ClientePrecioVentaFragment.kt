@@ -1,6 +1,8 @@
 package com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -54,13 +56,13 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
         retrofit = getRetrofit()
         gestionarRecyclerView()
 
-        binding.bPrecioVentaClientesVolver.setOnClickListener {
+       /* binding.bPrecioVentaClientesVolver.setOnClickListener {
             binding.rlPrecioVentaClientes.isVisible = false
             val anadirProductoFragment = AnadirProductoFragment()
             parentFragmentManager.beginTransaction()
                 .replace(R.id.rlPrecioVentaClientes, anadirProductoFragment)
                 .commitNow()
-        }
+        }*/
         binding.rlPrecioVentaClientes.setOnClickListener {
             binding.rlPrecioVentaClientes.isVisible = false
             val anadirProductoFragment = AnadirProductoFragment()
@@ -89,7 +91,7 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
     }
 
     private fun gestionarRecyclerView(){
-        adapterPrecioVenta = ClientePrecioVentaAdapter(listaDeClientes,this,this)
+        adapterPrecioVenta = ClientePrecioVentaAdapter(listaDeClientes,sharedViewModel,this,this)
         val recyclerView = binding.rvClientes.findViewById<RecyclerView>(R.id.rvClientes)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -141,17 +143,27 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
     }
 
     override fun afterTextChange(text: String, viewHolder: ClientePrecioVentaViewHolder) {
-        if (!binding.bPrecioVentaClientesVolver.isPressed){
-            Toast.makeText(requireContext(), "Se he agregado el precio de venta", Toast.LENGTH_LONG).show()
+        if (!binding.bAgregarCliente.isPressed && text.isNotEmpty()){
+            Toast.makeText(requireContext(), "Se he agregado el precio de venta", Toast.LENGTH_SHORT).show()
             sharedViewModel.listaDePreciosVenta.add(text)
             sharedViewModel.listaDeClientes.add(adapterPrecioVenta.clientePrecioVentaList[viewHolder.adapterPosition].Nombre)}
+        else if (!binding.bAgregarCliente.isPressed && text.isEmpty() && sharedViewModel.listaDePreciosVenta.isNotEmpty() &&
+            sharedViewModel.listaDeClientes.isNotEmpty()){
+            Toast.makeText(requireContext(), "Se ha eliminado el precio de venta", Toast.LENGTH_SHORT).show()
+            sharedViewModel.listaDePreciosVenta.remove(sharedViewModel.listaDePreciosVenta[viewHolder.adapterPosition])
+            sharedViewModel.listaDeClientes.remove(sharedViewModel.listaDeClientes[viewHolder.adapterPosition])
+        }
         binding.bAgregarCliente.setOnClickListener {
             if (sharedViewModel.listaDePreciosVenta.size > 0) {
                 for (i in 0..<sharedViewModel.listaDePreciosVenta.size) {
                     setFragmentResult("PreciosVentaClientes$i", bundleOf("Clientes$i" to sharedViewModel.listaDeClientes[i], "PreciosDeVenta$i" to sharedViewModel.listaDePreciosVenta[i]))
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente los clientes con los precios con un largo de ${sharedViewModel.listaDePreciosVenta.size}", Toast.LENGTH_LONG).show()
-
+                Toast.makeText(requireContext(), "Se han agregado exitosamente los clientes y los precios de venta", Toast.LENGTH_LONG).show()
+                binding.rlPrecioVentaClientes.isVisible = false
+                val anadirProductoFragment = AnadirProductoFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.rlPrecioVentaClientes, anadirProductoFragment)
+                    .commitNow()
             }
         }
     }

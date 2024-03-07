@@ -16,11 +16,13 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
 import android.os.Looper
+import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.util.Base64
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -43,6 +45,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -70,6 +75,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
+import java.lang.Exception
 
 
 //@Suppress("UNREACHABLE_CODE")
@@ -79,7 +85,6 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         private const val  CAMERA_PERMISSION = android.Manifest.permission.CAMERA
 
     }*/
-    private val viewModel by activityViewModels<SharedViewModel>()
     private val sharedViewModel2: SharedViewModel by activityViewModels()
    // private val viewModel: AnadirProductoViewModel by viewModels()
     private val alertasAlmacenesItemResponse: AlertasAlmacenesItemResponse? = null
@@ -103,7 +108,13 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
     var TextCodigoEmbalaje: EditText? = null
     var TextUnidadesEmbalaje: EditText? = null
     var Imagen: ImageView? = null
-
+    //Guardar la información en el fragment
+    private var nombre: String? = null
+    private var peso: Float? = null
+    private var volumen: Float? = null
+    private var codigoDeBarra: String? = null
+    private var codigoDeBarraEmbalaje: String? = null
+    private var unidadesEmbalaje: Int? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -260,21 +271,50 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
 
         requestCamara = registerForActivityResult(ActivityResultContracts.RequestPermission(),){
             if(it){
+                /*val barcodeScanProductoFragment = BarcodeScanProductoFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.rlAnadirProducto, barcodeScanProductoFragment)
+                    .commitNow()*/
                 findNavController().navigate(R.id.action_nav_añadir_producto_to_nav_barcode_scan_producto)
             }else{
                 Toast.makeText(requireContext(),"Permiso denegado",Toast.LENGTH_LONG).show()
             }
         }
         binding.bEscanearCodigoDeBarraProducto.setOnClickListener {
+            setFragmentResult("Añadir Producto",
+                bundleOf("nombre" to binding.etNombreProducto.text.toString(),
+                                "peso" to binding.etPesoProducto.text.toString(),
+                               "volumen" to binding.etVolumenProducto.text.toString(),
+                             "tipoDeProducto" to binding.tvAutoCompleteTipoDeProducto.text.toString(),
+                          "unidadesEmbalaje"  to binding.etUnidadesEmbalaje.text.toString()))
             requestCamara?.launch(android.Manifest.permission.CAMERA)
+
         }
         //Tengo que correr la aplicación con la lista de Edittext de esta forma
         val listaDeEditText : MutableList<EditText?> = mutableListOf(TextNombre,
             TextCodigoBarra)
 
+        codigoDeBarraProducto()
+        codigoDeBarraEmbalaje()
+
+      // val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+      // isFirstRun = prefs.getBoolean("is_first_run",true)
+        setFragmentResultListener("Producto"){key,bundle ->binding.etCodigoBarraProducto.setText(bundle.getString("Producto"))}
+        setFragmentResultListener("Embalaje"){key,bundle ->binding.etCodigoBarraEmbalaje.setText(bundle.getString("Embalaje"))}
+
+        setFragmentResultListener("Añadir Producto vuelta") {key, bundle ->
+            binding.etNombreProducto.setText(bundle.getString("nombre"))
+            binding.etPesoProducto.setText(bundle.getString("peso"))
+            binding.etVolumenProducto.setText(bundle.getString("volumen"))
+            binding.tvAutoCompleteTipoDeProducto.setText(bundle.getString("tipoDeProducto"),false)
+            binding.etUnidadesEmbalaje.setText(bundle.getString("unidadesEmbalaje"))
+        }
         return root
 
     }
+
+
+
 
     private fun ValidacionesIdInsertarDatos() {
         //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
@@ -529,7 +569,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                     val itemSelected = parent.getItemAtPosition(position)
                 }
             }, { error ->
-                Toast.makeText(requireContext(), " Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
+               // Toast.makeText(requireContext(), " Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -561,17 +601,33 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         }
     }
 
+    //override fun onOptionsItemSelected(item: MenuItem): Boolean {
+      /*  if(item.itemId == android.R.id.home){
+            viewModel.CodigoDeBarra.observe(viewLifecycleOwner) { newText ->
+                // if(!segundaVez) {
+                val pictureDialog = AlertDialog.Builder(requireContext())
+                pictureDialog.setTitle("¿Cómo quieres ingresar tu código?")
+                val pictureDialogItem = arrayOf(
+                    "Código de Producto",
+                    "Código de embalaje"
+                )
+                pictureDialog.setItems(pictureDialogItem) { dialog, which ->
+                    when (which) {
+                        0 -> binding.etCodigoBarraProducto.setText(newText)
+                        1 -> binding.etCodigoBarraEmbalaje.setText(newText)
+                    }
+                }
+                pictureDialog.show()
+                // segundaVez = true
+                //}
+
+            }
 
 
+        }*/
+    //    return super.onOptionsItemSelected(item)
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-
-
-
+    //}
     /* private fun goToDialogTest(){
          val dialog = TuDialogo()
          dialog.onDialogResultListener = this
@@ -623,8 +679,38 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
          searchByNameSellPrice()
          dialog.show()
      }
-
      */
+
+    /*override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        savedInstanceState?.let { bundle ->
+            nombre = bundle.getString("nombre")
+            peso = bundle.getFloat("peso")
+            volumen = bundle.getFloat("volumen")
+            codigoDeBarra = bundle.getString("codigoDeBarra")
+            codigoDeBarraEmbalaje = bundle.getString("codigoDeBarraEmbalaje")
+            unidadesEmbalaje = bundle.getInt("unidadesEmbalaje")
+        }
+        nombre.let { nombre -> binding.etNombreProducto.setText(nombre)}
+        /*peso.let { peso -> binding.etPesoProducto.setText(peso.toString())}
+        volumen.let { volumen -> binding.etVolumenProducto.setText(volumen.toString())}
+        codigoDeBarra.let { codigoDeBarra -> binding.etCodigoBarraProducto.setText(codigoDeBarra)}
+        codigoDeBarraEmbalaje.let { codigoDeBarraEmbalaje -> binding.etCodigoBarraEmbalaje.setText(codigoDeBarraEmbalaje)}
+        unidadesEmbalaje.let { unidadesEmbalaje -> binding.etUnidadesEmbalaje.setText(unidadesEmbalaje.toString())}*/
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if(peso != null) { outState.putFloat("peso", peso!!)}
+        if(volumen != null) { outState.putFloat("volumen", volumen!!)}
+        if(unidadesEmbalaje != null){outState.putInt("unidadesEmbalaje", unidadesEmbalaje!!)}
+        outState.putString("nombre", nombre)
+        if(codigoDeBarra != ""){outState.putString("codigoDeBarra", codigoDeBarra)}
+        if(codigoDeBarraEmbalaje != ""){outState.putString("codigoDeBarraEmbalaje", codigoDeBarraEmbalaje)}
+}*/
+
+
+
 
     interface OnTextChangeListener {
         fun onTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder)
@@ -633,33 +719,109 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         sharedViewModel2.sharedData.value = "Datos actualizados desde el fragmento principal"
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-       /* sharedViewModel2.sharedData.observe(viewLifecycleOwner){
-                newData ->
-            val alertasAlmacenesFragment = parentFragmentManager.findFragmentByTag("tag_alertas_almacenes") as? AlertasAlmacenesFragment
-            alertasAlmacenesFragment?.view?.findViewById<Button>(R.id.bAgregarAlmacen)?.setOnClickListener {
-                binding.etCodigoBarraProducto.setText(newData)
-                Toast.makeText(requireContext(),newData,Toast.LENGTH_LONG).show()
-            }
-            alertasAlmacenesFragment?.view?.findViewById<Button>(R.id.bAlertaAlmacenVolver)?.setOnClickListener {
 
-            }
-        }*/
-        viewModel.CodigoDeBarra.observe(viewLifecycleOwner) { newText ->
-            val pictureDialog = AlertDialog.Builder(requireContext())
-            pictureDialog.setTitle("¿Cómo quieres ingresar tu código?")
-            val pictureDialogItem = arrayOf("Código de Producto",
-                "Código de embalaje")
-            pictureDialog.setItems(pictureDialogItem){
-                    dialog, which ->
-                when(which){
-                    0 ->  binding.etCodigoBarraProducto.setText(newText)
-                    1 ->  binding.etCodigoBarraEmbalaje.setText(newText)
+
+    private fun codigoDeBarraProducto(){
+        binding.etCodigoBarraProducto.setOnClickListener {
+            if(binding.etCodigoBarraProducto.text.isNotBlank()){
+                val queue = Volley.newRequestQueue(requireContext())
+                val url = "http://186.64.123.248/Transferencia/codigoDeBarraProducto.php"
+                val jsonObjectRequest = object : StringRequest(
+                    Request.Method.POST, url,
+                    { response ->
+                        try {
+                            val codigoBarraProducto = JSONObject(response).getString("PRODUCTO")
+                            val codigoBarraEmbalaje = JSONObject(response).getString("EMBALAJE")
+                            if (codigoBarraEmbalaje == "") {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "EL código de barra pertenece al producto $codigoBarraProducto",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else if (codigoBarraProducto == "") {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Código de barra de embalaje que pertenece al producto $codigoBarraEmbalaje",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                        catch(e: Exception){
+                            Toast.makeText(requireContext(), "No hay producto o embalaje asociado a este producto",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    },
+                    { error ->
+                        Toast.makeText(
+                            requireContext(),
+                            "No hay producto o embalaje asociado a este producto $error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }) {
+                    override fun getParams(): MutableMap<String, String> {
+                        val parametros = HashMap<String, String>()
+                        parametros.put(
+                            "CODIGO_BARRA_PRODUCTO",
+                            binding.etCodigoBarraProducto.text.toString()
+                        )
+                        return parametros
+                    }
                 }
+                queue.add(jsonObjectRequest)
             }
-            pictureDialog.show()
+        }
+    }
 
+    private fun codigoDeBarraEmbalaje(){
+        binding.etCodigoBarraEmbalaje.setOnClickListener {
+            if(binding.etCodigoBarraEmbalaje.text.isNotBlank()){
+                val queue = Volley.newRequestQueue(requireContext())
+                val url = "http://186.64.123.248/Transferencia/codigoDeBarraProducto.php"
+                val jsonObjectRequest = object : StringRequest(
+                    Request.Method.POST, url,
+                    { response ->
+                        try {
+                            val codigoBarraProducto = JSONObject(response).getString("PRODUCTO")
+                            val codigoBarraEmbalaje = JSONObject(response).getString("EMBALAJE")
+                            if (codigoBarraEmbalaje == "") {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "EL código de barra pertenece al producto $codigoBarraProducto",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else if (codigoBarraProducto == "") {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Código de barra de embalaje que pertenece al producto $codigoBarraEmbalaje",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                        catch(e: Exception){
+                            Toast.makeText(requireContext(), "No hay producto o embalaje asociado a este producto",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    },
+                    { error ->
+                        Toast.makeText(
+                            requireContext(),
+                            "No hay producto o embalaje asociado a este producto $error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }) {
+                    override fun getParams(): MutableMap<String, String> {
+                        val parametros = HashMap<String, String>()
+                        parametros.put(
+                            "CODIGO_BARRA_PRODUCTO",
+                            binding.etCodigoBarraEmbalaje.text.toString()
+                        )
+                        return parametros
+                    }
+                }
+                queue.add(jsonObjectRequest)
+            }
         }
     }
 
@@ -679,6 +841,11 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         sharedViewModel.ListasDePreciosDeVenta.clear()
         sharedViewModel.ListasDeClientes.clear()
         sharedViewModel.ListasDeProductosPrecioVenta.clear()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

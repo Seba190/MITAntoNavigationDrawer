@@ -2,6 +2,8 @@ package com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirIn
 
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -14,10 +16,16 @@ import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
@@ -25,9 +33,12 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirInventarioBinding
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaAdapter
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.ElegirProductoFragment
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.AlmacenesAdapter
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.AlmacenesDataResponse
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.ApiService
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,6 +57,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
     var TextNombre: EditText? = null
     var TextFecha: EditText? = null
     var TextComentarios: EditText? = null
@@ -53,7 +65,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
     var DropDownAlmacen: AutoCompleteTextView? = null
     private lateinit var retrofit: Retrofit
     private lateinit var adapter: AnadirInventarioAdapter
-    private var listaProductos: MutableList<ProductosItemResponse> = arrayListOf()
+    private var requestCamara: ActivityResultLauncher<String>? = null
+    //private var listaProductos: MutableList<ProductosItemResponse> = arrayListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,19 +91,35 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
             PorterDuff.Mode.SRC_ATOP)
         binding.etFacturaEntradaComentarios.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
-        binding.etProductos.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
-            PorterDuff.Mode.SRC_ATOP)
+        //binding.etProductos.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
+         //   PorterDuff.Mode.SRC_ATOP)
 
         ListaDesplegableProveedor()
         ListaDesplegableAlmacen()
-        retrofit = getRetrofit()
+       // retrofit = getRetrofit()
 
-        searchByName()
+        requestCamara = registerForActivityResult(ActivityResultContracts.RequestPermission(),){
+            if(it){
+                findNavController().navigate(R.id.action_nav_añadir_inventario_to_nav_barcode_scan_anadir)
+            }else{
+                Toast.makeText(requireContext(),"Permiso denegado",Toast.LENGTH_LONG).show()
+            }
+        }
+        binding.bEscanearCodigoDeBarraAnadir.setOnClickListener {
+            requestCamara?.launch(android.Manifest.permission.CAMERA)
+        }
+        //searchByName()
 
         binding.FacturaEntradaButtonEnviar.setOnClickListener {
             ValidacionesIdInsertarDatos()
+            Handler(Looper.getMainLooper()).postDelayed({
+                InsertarPreciosYCantidades()
+            }, 2500)
+            Handler(Looper.getMainLooper()).postDelayed({
+                anadirInventario()
+            }, 5000)
         }
-        binding.llCajasDeProducto.isVisible = false
+      /*  binding.llCajasDeProducto.isVisible = false
         binding.bUnidades.setOnClickListener {
             binding.llUnidades.isVisible = false
             binding.llCajasDeProducto.isVisible = true
@@ -103,7 +132,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
 
         binding.ivTrash.setOnClickListener {
             binding.llProductos.isVisible = false
-        }
+        }*/
 
 
        /* binding.etProductos.addTextChangedListener(object: TextWatcher{
@@ -120,11 +149,55 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
             }
 
         })*/
+        binding.tvProductosAnadidosAnadir.isVisible = false
+        recyclerViewElegirProducto()
+        binding.bActualizarRecyclerViewAnadir.setOnClickListener {
+            adapter.notifyDataSetChanged()
+            binding.rvElegirProductoAnadir.requestLayout()
+        }
+
+        binding.bAnadirNuevoProductoAnadir.setOnClickListener {
+            if(DropDownProveedor?.text.toString() != "Eliga una opción"){
+                sharedViewModel.ListaDeProveedoresAnadir.add(DropDownProveedor?.text.toString())
+            //setFragmentResult("Proveedor", bundleOf("Proveedor" to DropDownProveedor?.text.toString()))
+            //Toast.makeText(requireContext(),"Funciona el traspaso de información", Toast.LENGTH_LONG).show()
+            }
+            val elegirProductoAnadirFragment = ElegirProductoAnadirFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.clAnadirInventario, elegirProductoAnadirFragment)
+                .commit()
+
+
+            binding.tvProductosAnadidosAnadir.isVisible = true
+        }
 
 
         return root
     }
+    fun updateData(dataCantidad:MutableList<String>, dataProducto: MutableList<String>,dataPrecio: MutableList<String>){
+        adapter.updateData(dataCantidad,dataProducto,dataPrecio)
+        binding.rvElegirProductoAnadir.adapter?.notifyDataSetChanged()
+        binding.rvElegirProductoAnadir.requestLayout()
+    }
 
+    fun recyclerViewElegirProducto(){
+        adapter = AnadirInventarioAdapter(sharedViewModel.listaDeCantidadesAnadir,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosAnadir) { position ->
+            onDeletedItem(position)}
+        binding.rvElegirProductoAnadir.setHasFixedSize(true)
+        binding.rvElegirProductoAnadir.adapter = adapter
+        binding.rvElegirProductoAnadir.layoutManager = LinearLayoutManager(requireContext())
+        adapter.updateList(sharedViewModel.listaDeCantidadesAnadir,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosAnadir)
+        adapter.notifyDataSetChanged()
+        binding.rvElegirProductoAnadir.requestLayout()
+    }
+
+    private fun onDeletedItem(position: Int){
+        sharedViewModel.listaDeCantidadesAnadir.removeAt(position)
+        sharedViewModel.listaDeProductosAnadir.removeAt(position)
+        adapter.notifyItemRemoved(position)
+        adapter.notifyDataSetChanged()
+        binding.rvElegirProductoAnadir.requestLayout()
+    }
    /* private fun filtrar(texto: String) {
          var listaFiltrada = arrayListOf<ProductosItemResponse>()
          listaProductos.forEach{
@@ -135,14 +208,14 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         adapter.filtrar(listaFiltrada)
     }*/
 
-    private fun setUpRecyclerView() {
+   /* private fun setUpRecyclerView() {
 
         //adapter = AnadirInventarioAdapter{appearQuantity(it)}
         // adapter2 = CaracteristicasAdapter()
         binding.rvProductos.setHasFixedSize(true)
         binding.rvProductos.layoutManager = LinearLayoutManager(requireContext())
         binding.rvProductos.adapter = adapter
-    }
+    }*/
 
     private fun ValidacionesIdInsertarDatos() {
         //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
@@ -165,11 +238,11 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                             url1,
                             { response ->
                                 Toast.makeText(requireContext(), "Factura agregada exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
-                                TextNombre?.setText("")
+                                /*TextNombre?.setText("")
                                 TextFecha?.setText("")
                                 DropDownProveedor?.setText("Eliga una opción",false)
                                 DropDownAlmacen?.setText("Eliga una opción",false)
-                                TextComentarios?.setText("")
+                                TextComentarios?.setText("")*/
                             },
                             { error ->
                                 Toast.makeText(requireContext(),"El proveedor y el almacén son obligatorios", Toast.LENGTH_LONG).show()
@@ -278,15 +351,139 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         queue1.add(jsonObjectRequest1)
     }
 
-    private fun getRetrofit(): Retrofit {
+    private fun InsertarPreciosYCantidades(){
+        val queue =Volley.newRequestQueue(requireContext())
+        val url ="http://186.64.123.248/FacturaEntrada/registroProductos.php"
+        val jsonObjectRequest = object: StringRequest(
+            Request.Method.POST,url,
+            { response ->
+                if(TextNombre?.text.toString().isNotBlank()){
+                    val id = JSONObject(response).getString("ID_FACTURA_ENTRADA")
+                    //unico = 1
+                    //no unico = 0
+                    //Aqui va el código para validar el almacen
+                    val url1 = "http://186.64.123.248/FacturaEntrada/insertarProductos.php" // Reemplaza esto con tu URL de la API
+                    val queue1 =Volley.newRequestQueue(requireContext())
+                    val stringRequest = object: StringRequest(
+                        Request.Method.POST,
+                        url1,
+                        { response ->
+                           Toast.makeText(requireContext(),"Productos agregados exitosamente", Toast.LENGTH_LONG).show()
+                            /*TextNombre?.setText("")
+                            TextFecha?.setText("")
+                            binding.tvListaDesplegableProveedor.setText("Eliga una opción",false)
+                            binding.tvListaDesplegableAlmacen.setText("Eliga una opción",false)
+                            TextComentarios?.setText("")
+                            sharedViewModel.listaDeCantidadesAnadir.removeAll(sharedViewModel.listaDeCantidadesAnadir)
+                            sharedViewModel.listaDeProductosAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
+                            sharedViewModel.listaDePreciosAnadir.removeAll(sharedViewModel.listaDePreciosAnadir)
+                            adapter.notifyDataSetChanged()
+                            binding.rvElegirProductoAnadir.requestLayout()
+                            binding.tvProductosAnadidosAnadir.isVisible = false*/
+
+                        },
+                        { error ->
+                          /*  TextNombre?.setText("")
+                            TextFecha?.setText("")
+                            binding.tvListaDesplegableProveedor.setText("Eliga una opción",false)
+                            binding.tvListaDesplegableAlmacen.setText("Eliga una opción",false)
+                            TextComentarios?.setText("")*/
+                            Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosAnadir} y ${sharedViewModel.listaDeCantidadesAnadir}", Toast.LENGTH_LONG).show()
+                        }
+                    )
+
+                    {
+                        override fun getParams(): MutableMap<String, String> {
+                            val parametros = HashMap<String, String>()
+                            parametros.put("ID_FACTURA_ENTRADA", id.toString())
+                            parametros.put("NUMERO_DE_PRODUCTOS",sharedViewModel.listaDeProductosAnadir.size.toString())
+                            for (i in 0..<sharedViewModel.listaDeProductosAnadir.size) {
+                                parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductosAnadir[i].uppercase()
+                                parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidadesAnadir[i]
+                                parametros["PRECIO_COMPRA$i"] = sharedViewModel.listaDePreciosAnadir[i]
+                            }
+
+                            return parametros
+                        }
+                    }
+                    queue1.add(stringRequest)
+
+                }
+
+                // TextId?.setText(response.getString("ID_ALMACEN"))
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+            }, { error ->
+                //Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+            }
+        ){
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("FACTURA_ENTRADA", TextNombre?.text.toString())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
+    }
+
+    fun anadirInventario(){
+        //Si el inventario es menor que la transferencia que no la haga y si el almacen de destino no existe, que lo cree
+        val url1 = "http://186.64.123.248/FacturaEntrada/anadirInventario.php" // Reemplaza esto con tu URL de la API
+        val queue1 =Volley.newRequestQueue(requireContext())
+        val stringRequest = object: StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+                Toast.makeText(requireContext(),"Cantidad de inventario añadida exitosamente", Toast.LENGTH_SHORT).show()
+                TextNombre?.setText("")
+                TextFecha?.setText("")
+                DropDownProveedor?.setText("Eliga una opción",false)
+                DropDownAlmacen?.setText("Eliga una opción",false)
+                TextComentarios?.setText("")
+                sharedViewModel.listaDeCantidadesAnadir.removeAll(sharedViewModel.listaDeCantidadesAnadir)
+                sharedViewModel.listaDeProductosAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
+                sharedViewModel.listaDePreciosAnadir.removeAll(sharedViewModel.listaDePreciosAnadir)
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProductoAnadir.requestLayout()
+                binding.tvProductosAnadidosAnadir.isVisible = false
+            },
+            { error ->
+                /*  TextNombre?.setText("")
+                  TextFecha?.setText("")
+                  DropDownOrigen?.setText("Eliga una opción",false)
+                  DropDownDestino?.setText("Eliga una opción",false)
+                  TextComentarios?.setText("")
+                  TextCodigoDeBarra?.setText("")*/
+                Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosAnadir} y ${sharedViewModel.listaDeCantidadesAnadir}", Toast.LENGTH_LONG).show()
+            }
+        )
+
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("NUMERO_DE_PRODUCTOS",sharedViewModel.listaDeProductosAnadir.size.toString())
+                parametros.put("ALMACEN", DropDownAlmacen?.text.toString())
+                for (i in 0..<sharedViewModel.listaDeProductosAnadir.size) {
+                    parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductosAnadir[i].uppercase()
+                    parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidadesAnadir[i]
+                }
+
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
+    }/*,
+
+   /* private fun getRetrofit(): Retrofit {
         return Retrofit
             .Builder()
             .baseUrl("http://186.64.123.248/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    }
+    }*/
 
-    private fun searchByName() {
+
+   /* private fun searchByName() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
             val myResponse: Response<ProductosDataResponse> =
@@ -335,14 +532,14 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                 activity?.runOnUiThread { Toast.makeText(requireContext(),"No se puedo conectar la aplicación al servidor",Toast.LENGTH_LONG).show()}
             }
         }
-    }
+    }*/
 
-    private fun appearQuantity(id:String) {
+   /* private fun appearQuantity(id:String) {
         val nombre = adapter.obtenerNombreEnPosicion(id.toInt())
         binding.llProductos.isVisible = true
         binding.tvProductos.setText(nombre)
         binding.rvProductos.isVisible = false
-    }
+    }*/*/
 
     override fun onDestroyView() {
         super.onDestroyView()

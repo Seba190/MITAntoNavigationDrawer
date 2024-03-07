@@ -55,13 +55,13 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
         retrofit = getRetrofit()
         gestionarRecyclerView()
 
-        binding.bPrecioCompraProveedorVolver.setOnClickListener {
+       /* binding.bPrecioCompraProveedorVolver.setOnClickListener {
             binding.rlProveedorPrecioCompra.isVisible = false
             val anadirProductoFragment = AnadirProductoFragment()
             parentFragmentManager.beginTransaction()
                 .replace(R.id.rlProveedorPrecioCompra, anadirProductoFragment)
                 .commitNow()
-        }
+        }*/
         binding.rlProveedorPrecioCompra.setOnClickListener {
             binding.rlProveedorPrecioCompra.isVisible = false
             val anadirProductoFragment = AnadirProductoFragment()
@@ -89,7 +89,7 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
             .build()
     }
     private fun gestionarRecyclerView(){
-        adapterPrecioCompra = ProveedorPrecioCompraAdapter(listaDeProveedores,this,this)
+        adapterPrecioCompra = ProveedorPrecioCompraAdapter(listaDeProveedores,sharedViewModel,this,this)
         val recyclerView = binding.rvProveedores.findViewById<RecyclerView>(R.id.rvProveedores)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -134,17 +134,27 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
     }
 
     override fun afterTextChange(text: String, viewHolder: ProveedorPrecioCompraViewHolder) {
-        if (!binding.bPrecioCompraProveedorVolver.isPressed){
-            Toast.makeText(requireContext(), "Se he agregado el precio de compra", Toast.LENGTH_LONG).show()
+        if (!binding.bAgregarProveedor.isPressed && text.isNotEmpty()){
+            Toast.makeText(requireContext(), "Se he agregado el precio de compra", Toast.LENGTH_SHORT).show()
             sharedViewModel.listaDePreciosCompra.add(text)
             sharedViewModel.listaDeProveedores.add(adapterPrecioCompra.proveedorPrecioCompraList[viewHolder.adapterPosition].Nombre)}
+        else if (!binding.bAgregarProveedor.isPressed && text.isEmpty() && sharedViewModel.listaDePreciosCompra.isNotEmpty() &&
+            sharedViewModel.listaDeProveedores.isNotEmpty()){
+            Toast.makeText(requireContext(), "Se ha eliminado el precio de compra", Toast.LENGTH_SHORT).show()
+            sharedViewModel.listaDePreciosCompra.remove(sharedViewModel.listaDePreciosCompra[viewHolder.adapterPosition])
+            sharedViewModel.listaDeProveedores.remove(sharedViewModel.listaDeProveedores[viewHolder.adapterPosition])
+        }
         binding.bAgregarProveedor.setOnClickListener {
             if (sharedViewModel.listaDePreciosCompra.size > 0) {
                 for (i in 0..<sharedViewModel.listaDePreciosCompra.size) {
                     setFragmentResult("PreciosCompraProveedores$i", bundleOf("Proveedores$i" to sharedViewModel.listaDeProveedores[i], "PreciosCompra$i" to sharedViewModel.listaDePreciosCompra[i]))
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente los proveedores con los precios con un largo de ${sharedViewModel.listaDePreciosCompra.size}", Toast.LENGTH_LONG).show()
-
+                Toast.makeText(requireContext(), "Se han agregado exitosamente los proveedores y los precios de compra", Toast.LENGTH_LONG).show()
+                binding.rlProveedorPrecioCompra.isVisible = false
+                val anadirProductoFragment = AnadirProductoFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.rlProveedorPrecioCompra, anadirProductoFragment)
+                    .commitNow()
             }
         }
     }

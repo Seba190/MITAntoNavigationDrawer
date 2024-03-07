@@ -6,10 +6,12 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.seba.mitantonavigationdrawer.R
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
 class ProveedorPrecioCompraAdapter(
                                    var proveedorPrecioCompraList:
                                    List<ProveedorPrecioCompraItemResponse> = emptyList(),
+                                   private val sharedViewModel: SharedViewModel,
                                    private val listener: OnTextChangeListenerPrecioCompra,
                                    private val onCheckBoxClickListener: OnCheckBoxClickListenerPrecioCompra)
                               : RecyclerView.Adapter<ProveedorPrecioCompraViewHolder>() {
@@ -34,12 +36,13 @@ class ProveedorPrecioCompraAdapter(
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProveedorPrecioCompraViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return ProveedorPrecioCompraViewHolder(layoutInflater.inflate(R.layout.item_precio_compra,parent,false),listener)
+        return ProveedorPrecioCompraViewHolder(layoutInflater.inflate(R.layout.item_precio_compra,parent,false)
+            ,listener,sharedViewModel)
     }
 
     override fun onBindViewHolder(viewholder: ProveedorPrecioCompraViewHolder, position: Int) {
         val item = proveedorPrecioCompraList[position]
-        viewholder.bind(item)
+        viewholder.bind(item,this)
 
     }
 

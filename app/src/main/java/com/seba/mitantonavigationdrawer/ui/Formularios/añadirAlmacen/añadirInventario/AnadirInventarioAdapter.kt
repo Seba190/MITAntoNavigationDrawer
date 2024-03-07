@@ -4,33 +4,44 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.seba.mitantonavigationdrawer.R
-import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.AlmacenesViewHolder
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
-class AnadirInventarioAdapter(var productosList: List<ProductosItemResponse> = emptyList(),
-                              private val onItemSelected:(String) -> Unit
-    ): RecyclerView.Adapter<AnadirInventarioViewHolder>() {
+class AnadirInventarioAdapter (var listaDeCantidadesAnadir: MutableList<String>
+                               , var listaDeProductosAnadir: MutableList<String>
+                               , var listaDePreciosAnadir: MutableList<String>
+                               , private val onClickDelete:(Int) -> Unit)
+    : RecyclerView.Adapter<AnadirInventarioViewHolder>() {
 
+     fun updateList(listaDeCantidad: MutableList<String>,listaDeProducto: MutableList<String>, listaDePrecio: MutableList<String>){
+         this.listaDeCantidadesAnadir =listaDeCantidad
+         this.listaDeProductosAnadir = listaDeProducto
+         this.listaDePreciosAnadir = listaDePrecio
+         notifyDataSetChanged()
+     }
 
-    fun updateList(almacenesList: List<ProductosItemResponse>){
-        this.productosList = almacenesList
-        notifyDataSetChanged()
-    }
+     fun updateData(newDataCantidad: MutableList<String>, newDataProducto: MutableList<String>,newDataPrecio: MutableList<String>){
+         listaDeCantidadesAnadir = newDataCantidad
+         listaDeProductosAnadir = newDataProducto
+         listaDePreciosAnadir = newDataPrecio
+         notifyDataSetChanged()
+     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnadirInventarioViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        return AnadirInventarioViewHolder(layoutInflater.inflate(R.layout.item_producto,parent,false))
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.item_anadir,parent,false)
+        return AnadirInventarioViewHolder(v)
     }
 
-    override fun getItemCount() = productosList.size
-    override fun onBindViewHolder(viewholder: AnadirInventarioViewHolder, position: Int) {
-        val item = productosList[position]
-        viewholder.bind(item, onItemSelected)
+    override fun getItemCount(): Int {
+        return listaDeCantidadesAnadir.size
     }
-    fun filtrar(listaFiltrada: List<ProductosItemResponse>){
-        this.productosList = listaFiltrada
-        notifyDataSetChanged()
+
+    override fun onBindViewHolder(holder: AnadirInventarioViewHolder, position: Int) {
+        val itemCantidad = listaDeCantidadesAnadir[position]
+        val itemProducto = listaDeProductosAnadir[position]
+        val itemPrecio = listaDePreciosAnadir[position]
+        holder.bind(itemCantidad,itemProducto,itemPrecio,onClickDelete)
+
     }
-    fun obtenerNombreEnPosicion(posicion: Int): String {
-        notifyDataSetChanged()
-        return this.productosList[posicion].Nombre
-    }
+
+
 }

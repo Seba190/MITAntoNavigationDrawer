@@ -142,7 +142,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="70dp"
-                    android:textColorHint="@color/color_list">
+                    android:textColorHint="@color/color_list"
+                    app:boxStrokeColor="@color/color_list">
 
                     <AutoCompleteTextView
                         android:id="@+id/tvListaDesplegableAlmacenDestino"
@@ -184,10 +185,10 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/bEscanearCodigoDeBarra"
@@ -195,21 +196,23 @@
                     android:layout_height="80dp"
                     android:layout_marginVertical="30dp"
                     android:layout_marginStart="30dp"
+                    android:layout_marginEnd="50dp"
                     android:backgroundTint="@color/light_green"
-                    android:text="@string/button_codigo_de_barra" />
+                    android:text="@string/button_codigo_de_barra" />-
 
                 <Button
                     android:id="@+id/bAnadirNuevoProducto"
                     android:layout_width="150dp"
                     android:layout_height="80dp"
-                    android:layout_marginVertical="35dp"
-                    android:layout_marginStart="50dp"
+                    android:layout_marginVertical="30dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:backgroundTint="@color/light_green"
                     android:text="@string/buttom_añadir_producto" />
 
-            </LinearLayout>
+           </LinearLayout>
 
-            <TextView
+           <!-- <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="140dp"
@@ -229,17 +232,44 @@
                 android:gravity="center"
                 android:hint="@string/placeholder_codigo_de_barra"
                 android:layout_marginStart="100dp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"/> -->
 
+            <!-- Elegir productos resultado miniforulario-->
+
+
+            <TextView
+                android:id="@+id/tvProductosAnadidos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="Productos añadidos:"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvElegirProducto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <Button
+                    android:id="@+id/bActualizarRecyclerView"
+                    android:layout_width="130dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="10dp"
+                    android:backgroundTint="@color/light_green"
+                    android:text="Actualizar"/>
 
                 <Button
                     android:id="@+id/TransferenciaButtonEnviar"
                     android:layout_width="120dp"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="160dp"
-                    android:layout_marginVertical="20dp"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="10dp"
                     android:backgroundTint="@color/light_green"
-                    android:text="@string/button_save" />
+                    android:text="@string/button_save"/>
+
+
 
 
         </androidx.appcompat.widget.LinearLayoutCompat>

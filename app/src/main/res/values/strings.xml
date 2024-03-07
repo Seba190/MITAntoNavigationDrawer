@@ -38,11 +38,16 @@
     <string name ="menu_editar_cliente">Editar Cliente</string>
     <string name ="menu_editar_inventario">Editar Inventario</string>
     <string name ="menu_editar_alerta">Editar Alerta</string>
-    <string name="menu_barcode_scan">Barcode Scan</string>
+    <string name="menu_barcode_scan">Barcode Scan del Producto</string>
     <string name="menu_barcode_scan_producto">Barcode Scan del Producto</string>
     <string name="menu_alertas_almacenes">Alertas por almacén</string>
     <string name="menu_proveedor_precio_compra">Precio de compra por proveedor</string>
     <string name="menu_cliente_precio_venta">Precio de venta por cliente</string>
+    <string name="menu_elegir_producto">Elegir Producto</string>
+    <string name="menu_elegir_producto_anadir">Elegir producto</string>
+    <string name="menu_barcode_scan_anadir">Barcode Scan del Producto</string>
+    <string name="menu_elegir_producto_remover">Elegir Producto</string>
+    <string name="menu_barcode_scan_remover">Barcode Scan del Producto</string>
 
 
     <string name="menu_camara">Camara</string>
@@ -287,7 +292,7 @@
     <string name="placeholder_codigo_de_barra">Escriba el código de barra</string>
     <string name="button_save">GUARDAR</string>
 
-    <!-- Elegir porducto fragment -->
+    <!-- Elegir producto fragment -->
     
     <string name="title_elegir_producto">ELEGIR PRODUCTO</string>
     <string name="title_elegir_proveedor">ELEGIR PROVEEDOR</string>
@@ -296,6 +301,13 @@
     <string name="hint_ubicacion_interna">Ubicación interna en el almacén</string>
     <string name="button_añadir_factura">Añadir a la factura</string>
     <string name ="hint_precio_por_unidad">Escriba el precio unitario</string>
+    <string name="back">Volver</string>
+
+    <!-- Editar cliente fragment -->
+    <string name="title_nombre_cliente">NOMBRE DEL CLIENTE</string>
+    <string name="placeholder_dirección_cliente">Escriba la dirección del cliente </string>
+
+    <!-- Editar proveedor fragment -->
 
 
     <!-- bottom_nav -->

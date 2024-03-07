@@ -22,7 +22,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:text="Código de barra no detectado"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/bAction"
@@ -36,7 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:backgroundTint="@color/red"
-        android:text=""
+        android:text="Código de barra no detectado"
         app:layout_constraintBottom_toBottomOf="@+id/svSurfaceView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

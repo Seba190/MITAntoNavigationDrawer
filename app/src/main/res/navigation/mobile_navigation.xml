@@ -104,7 +104,7 @@
         tools:layout="@layout/fragment_anadir_producto" >
         <action
             android:id="@+id/action_nav_añadir_producto_to_nav_camara"
-            app:destination="@id/nav_camara"/>
+            app:destination="@id/navigation"/>
         <action
             android:id="@+id/action_nav_añadir_producto_to_nav_barcode_scan_producto"
             app:destination="@id/nav_barcode_scan_producto" />
@@ -123,6 +123,9 @@
         android:name="com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.BarcodeScanProductoFragment"
         android:label="@string/menu_barcode_scan_producto"
         tools:layout="@layout/fragment_barcode_scan_producto" >
+        <action
+            android:id="@+id/action_nav_barcode_scan_producto_to_nav_añadir_producto"
+            app:destination="@id/nav_añadir_producto" />
     </fragment>
     <fragment
         android:id="@+id/nav_añadir_proveedor"
@@ -143,25 +146,64 @@
         tools:layout="@layout/fragment_anadir_tipo_de_producto" >
     </fragment>
     <fragment
-        android:id="@+id/nav_camara"
-        android:name="com.seba.mitantonavigationdrawer.ui.Camara.CamaraFragment"
-        android:label="@string/menu_camara"
-        tools:layout="@layout/fragment_camara" >
-        <action
-            android:id="@+id/action_nav_camara_to_nav_añadir_producto"
-            app:destination="@id/nav_añadir_producto" />
-    </fragment>
-    <fragment
         android:id="@+id/nav_añadir_inventario"
         android:name="com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirInventario.AnadirInventarioFragment"
         android:label="@string/menu_añadir_inventario"
         tools:layout="@layout/fragment_anadir_inventario" >
+        <action
+            android:id="@+id/action_nav_añadir_inventario_to_nav_elegir_producto_anadir"
+            app:destination="@id/nav_elegir_producto_anadir" />
+        <action
+            android:id="@+id/action_nav_añadir_inventario_to_nav_barcode_scan_anadir"
+            app:destination="@id/nav_barcode_scan_anadir" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_elegir_producto_anadir"
+        android:name="com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirInventario.ElegirProductoAnadirFragment"
+        android:label="@string/menu_elegir_producto_anadir"
+        tools:layout="@layout/fragment_elegir_producto_anadir" >
+        <action
+            android:id="@+id/action_nav_elegir_producto_anadir_to_nav_añadir_inventario"
+            app:destination="@id/nav_añadir_inventario" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_barcode_scan_anadir"
+        android:name="com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirInventario.BarcodeScanAnadirFragment"
+        android:label="@string/menu_barcode_scan_anadir"
+        tools:layout="@layout/fragment_barcode_scan_anadir" >
+        <action
+            android:id="@+id/action_nav_barcode_scan_anadir_to_nav_añadir_inventario"
+            app:destination="@id/nav_añadir_inventario" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_elegir_producto_remover"
+        android:name="com.seba.mitantonavigationdrawer.ui.removerInventario.ElegirProductoRemoverFragment"
+        android:label="@string/menu_elegir_producto_remover"
+        tools:layout="@layout/fragment_elegir_producto_remover" >
+        <action
+            android:id="@+id/action_nav_elegir_producto_remover_to_nav_remover_inventario"
+            app:destination="@id/nav_remover_inventario" />
     </fragment>
     <fragment
         android:id="@+id/nav_remover_inventario"
         android:name="com.seba.mitantonavigationdrawer.ui.removerInventario.RemoverInventarioFragment"
         android:label="@string/menu_remover_inventario"
         tools:layout="@layout/fragment_remover_inventario" >
+        <action
+            android:id="@+id/action_nav_remover_inventario_to_nav_elegir_producto_remover"
+            app:destination="@id/nav_elegir_producto_remover" />
+        <action
+            android:id="@+id/action_nav_remover_inventario_to_nav_barcode_scan_remover"
+            app:destination="@id/nav_barcode_scan_remover" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_barcode_scan_remover"
+        android:name="com.seba.mitantonavigationdrawer.ui.removerInventario.BarcodeScanRemoverFragment"
+        android:label="@string/menu_barcode_scan_remover"
+        tools:layout="@layout/fragment_barcode_scan_remover" >
+        <action
+            android:id="@+id/action_nav_barcode_scan_remover_to_nav_remover_inventario"
+            app:destination="@id/nav_remover_inventario" />
     </fragment>
     <fragment
         android:id="@+id/nav_añadir_transferencia"
@@ -183,6 +225,21 @@
             android:id="@+id/action_nav_barcode_scan_to_nav_añadir_transferencia"
             app:destination="@id/nav_añadir_transferencia">
         </action>
+        <action
+            android:id="@+id/action_nav_barcode_scan_to_nav_elegir_producto"
+            app:destination="@id/nav_elegir_producto" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_elegir_producto"
+        android:name="com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.ElegirProductoFragment"
+        android:label="@string/menu_elegir_producto"
+        tools:layout="@layout/fragment_elegir_producto" >
+        <action
+            android:id="@+id/action_nav_elegir_producto_to_nav_añadir_transferencia"
+            app:destination="@id/nav_añadir_transferencia" />
+        <action
+            android:id="@+id/action_nav_elegir_producto_to_nav_barcode_scan"
+            app:destination="@id/nav_barcode_scan" />
     </fragment>
     <fragment
         android:id="@+id/nav_mis_datos"
@@ -197,10 +254,7 @@
                 app:argType="string"
                 android:defaultValue="id"/>
         </action>
-        <argument
-            android:name="id"
-            app:argType="string"
-            android:defaultValue="id" />
+
         <action
             android:id="@+id/action_nav_mis_datos_to_nav_clientes"
             app:destination="@id/nav_clientes" />
@@ -216,6 +270,26 @@
         <action
             android:id="@+id/action_nav_mis_datos_to_nav_proveedores"
             app:destination="@id/nav_proveedores" />
+        <action
+            android:id="@+id/action_nav_mis_datos_to_nav_editar_cliente"
+            app:destination="@id/nav_editar_cliente" >
+            <argument
+                android:name="id"
+                app:argType="string"
+                android:defaultValue="id" />
+        </action>
+        <action
+            android:id="@+id/action_nav_mis_datos_to_nav_editar_proveedor"
+            app:destination="@id/nav_editar_proveedor">
+            <argument
+                android:name="id"
+                app:argType="string"
+                android:defaultValue="id" />
+        </action>
+        <argument
+            android:name="id"
+            app:argType="string"
+            android:defaultValue="id"/>
     </fragment>
     <fragment
         android:id="@+id/nav_almacenes"
@@ -240,6 +314,18 @@
         android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesFragment"
         android:label="@string/menu_clientes"
         tools:layout="@layout/fragment_clientes" >
+        <action
+            android:id="@+id/action_nav_cliente_to_nav_editar_cliente"
+            app:destination="@id/nav_editar_cliente">
+            <argument
+                android:name="id"
+                app:argType="string"
+                android:defaultValue="id" />
+        </action>
+        <argument
+            android:name="id"
+            app:argType="string"
+            android:defaultValue="id" />
     </fragment>
     <fragment
         android:id="@+id/nav_productos"
@@ -252,6 +338,18 @@
         android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.proveedores.ProveedoresFragment"
         android:label="@string/menu_proveedores"
         tools:layout="@layout/fragment_proveedores" >
+        <action
+            android:id="@+id/action_nav_proveedores_to_nav_editar_proveedor"
+            app:destination="@id/nav_editar_proveedor">
+            <argument
+                android:name="id"
+                app:argType="string"
+                android:defaultValue="id" />
+        </action>
+        <argument
+            android:name="id"
+            app:argType="string"
+            android:defaultValue="id" />
     </fragment>
     <fragment
         android:id="@+id/nav_tipos_de_productos"
@@ -265,6 +363,19 @@
         android:label="@string/menu_editar_almacen"
         tools:layout="@layout/fragment_editar_almacen" >
     </fragment>
+    <fragment
+        android:id="@+id/nav_editar_cliente"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.editarCliente.EditarClienteFragment"
+        android:label="@string/menu_editar_cliente"
+        tools:layout="@layout/fragment_editar_cliente" >
+    </fragment>
+    <fragment
+        android:id="@+id/nav_editar_proveedor"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.proveedores.editarProveedor.EditarProveedorFragment"
+        android:label="@string/menu_editar_proveedor"
+        tools:layout="@layout/fragment_editar_proveedor" >
+    </fragment>
+
     <fragment
         android:id="@+id/nav_alertas_almacenes"
         android:name="com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AlertasAlmacenesFragment"
@@ -293,4 +404,16 @@
             android:id="@+id/action_nav_cliente_precio_venta_to_nav_añadir_producto"
             app:destination="@id/nav_añadir_producto" />
     </fragment>
+    <navigation android:id="@+id/navigation"
+        app:startDestination="@id/nav_camara">
+        <fragment
+            android:id="@+id/nav_camara"
+            android:name="com.seba.mitantonavigationdrawer.ui.Camara.CamaraFragment"
+            android:label="@string/menu_camara"
+            tools:layout="@layout/fragment_camara">
+            <action
+                android:id="@+id/action_nav_camara_to_nav_añadir_producto"
+                app:destination="@id/nav_añadir_producto" />
+        </fragment>
+    </navigation>
 </navigation>

@@ -6,12 +6,16 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.seba.mitantonavigationdrawer.R
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
+//Puse sharedViewModel aquí y al lado del listener
 class AlertasAlmacenesAdapter(var alertasAlmacenesList:
                               List<AlertasAlmacenesItemResponse> = emptyList(),
+                              private val sharedViewModel: SharedViewModel,
                               private val onCheckBoxClickListener: OnCheckBoxClickListener,
-                             // private val textChangeListener: (String,Int) -> Unit,
-                              private val listener: OnTextChangeListener)
+                              // private val textChangeListener: (String,Int) -> Unit,
+                              private val listener: OnTextChangeListener,
+                              private val listener2: OnTextChangeListener2)
                               : RecyclerView.Adapter<AlertasAlmacenesViewHolder>() {
 
 
@@ -39,11 +43,11 @@ class AlertasAlmacenesAdapter(var alertasAlmacenesList:
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlertasAlmacenesViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_alert,parent,false)
-        return AlertasAlmacenesViewHolder(view,listener)
+        return AlertasAlmacenesViewHolder(view,listener,listener2,sharedViewModel)
     }
     override fun onBindViewHolder(viewholder: AlertasAlmacenesViewHolder, position: Int) {
         val item = alertasAlmacenesList[position]
-        viewholder.bind(item)
+        viewholder.bind(item,this)
         }
 
     override fun getItemCount() = alertasAlmacenesList.size

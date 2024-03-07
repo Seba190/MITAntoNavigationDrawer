@@ -89,6 +89,7 @@ class AlmacenesFragment : Fragment(R.layout.fragment_almacenes) {
                   //Log.i("Sebastian", response2.toString())
                   activity?.runOnUiThread {
                       adapter.updateList(response.Almacenes)
+                      binding.progressBar.isVisible = false
                   }
               }
 

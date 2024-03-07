@@ -33,6 +33,7 @@
             android:layout_marginStart="10dp"
             android:singleLine="true"
             android:maxLines="1"
+            android:gravity="center"
             android:imeOptions="actionDone"
             android:inputType="number"
             android:textSize="10sp"

@@ -2,6 +2,8 @@ package com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTr
 
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,13 +15,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.cardview.widget.CardView
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.NavigationUI.navigateUp
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
@@ -28,9 +35,10 @@ import com.seba.mitantonavigationdrawer.MainActivity
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirTransferenciaBinding
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AlertasAlmacenesFragment
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.AlmacenesAdapter
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONObject
-
+import java.lang.Exception
 
 
 class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferencia) {
@@ -40,7 +48,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
     }
 
 
-    private val viewModel by activityViewModels<SharedViewModel>()
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
     private var _binding: FragmentAnadirTransferenciaBinding? = null
 
     // This property is only valid between onCreateView and
@@ -57,6 +65,9 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
     private val ListaDeCantidades : MutableList<String> = mutableListOf()
     private val ListaDePreciosUnidad : MutableList<String> = mutableListOf()
     private val ListaDePreciosCajas : MutableList<String> = mutableListOf()
+    private val ListaDeProductosAnadidos : MutableList<CardView> = mutableListOf()
+    private lateinit var adapter: AnadirTransferenciaAdapter
+
 
 
     override fun onCreateView(
@@ -84,23 +95,73 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
             PorterDuff.Mode.SRC_ATOP)
         binding.etTransferenciaComentarios.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
-        binding.etCodigoDeBarra.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
-            PorterDuff.Mode.SRC_ATOP)
+
 
         ListaDesplegableOrigen()
         ListaDesplegableDestino()
 
         binding.bAnadirNuevoProducto.setOnClickListener {
+            sharedViewModel.almacen = DropDownOrigen?.text.toString()
+            //Aquí se obtiene el id de la transferencia actual
+            if (TextNombre?.text.toString().isNotBlank()) {
+                val queue = Volley.newRequestQueue(requireContext())
+                val url = "http://186.64.123.248/Transferencia/registro.php"
+                val jsonObjectRequest = object : StringRequest(
+                    Request.Method.POST, url,
+                    { response ->
+                        if (TextNombre?.text.toString().isNotBlank()) {
+                            val id = JSONObject(response).getString("ID_TRANSFERENCIA")
+                            setFragmentResult(
+                                "ID_TRANSFERENCIA", bundleOf(
+                                    "id_transferencia" to id.toString()
+                                )
+                            )
+                            //unico = 1
+                            //no unico = 0
+                            val unico = JSONObject(response).getString("TRANSFERENCIA_UNICA")
+                            Toast.makeText(
+                                requireContext(),
+                                "El id de ingreso es $id",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }, { error ->
+                        Toast.makeText(
+                            requireContext(),
+                            "Conecte la aplicación al servidor",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                    }
+                ) {
+                    override fun getParams(): MutableMap<String, String> {
+                        val parametros = HashMap<String, String>()
+                        parametros.put("TRANSFERENCIA", TextNombre?.text.toString().uppercase())
+                        return parametros
+                    }
+                }
+                queue.add(jsonObjectRequest)
+
+
+            }
                 val elegirProductoFragment = ElegirProductoFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.clAnadirTransferencia,elegirProductoFragment)
-                    .commit()}
+                    .commit()
 
 
+                binding.tvProductosAnadidos.isVisible = true
+        }
 
         binding.TransferenciaButtonEnviar.setOnClickListener {
            // binding.etCodigoDeBarra.setText(args.code)
             ValidacionesIdInsertarDatos()
+            Handler(Looper.getMainLooper()).postDelayed({
+                InsertarPreciosYCantidades()
+            }, 2500)
+            Handler(Looper.getMainLooper()).postDelayed({
+                modificarInventario()
+            }, 5000)
         }
 
         requestCamara = registerForActivityResult(ActivityResultContracts.RequestPermission(),){
@@ -123,14 +184,49 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
        // var EditTextEmpty = binding.etCodigoDeBarra.text.toString()
        // val action = AnadirTransferenciaFragmentDirections.actionNavAñadirTransferenciaToNavBarcodeScan(EditTextEmpty)
        // findNavController().navigate(action)
-        parentFragmentManager.setFragmentResultListener("Codigo de barra transferencia",this){
-                key,bundle ->
+       /* parentFragmentManager.setFragmentResultListener("Codigo de barra transferencia",this) { key, bundle ->
             binding.bAnadirNuevoProducto.setOnClickListener {
                 binding.etCodigoDeBarra.setText(bundle.getString("codigo"))
             }
+           }*/
+        binding.tvProductosAnadidos.isVisible = false
+        recyclerViewElegirProducto()
+        binding.bActualizarRecyclerView.setOnClickListener {
+            adapter.notifyDataSetChanged()
+            binding.rvElegirProducto.requestLayout()
         }
 
         return root
+    }
+
+    fun updateData(dataCantidad:MutableList<String>, dataProducto: MutableList<String>){
+        adapter.updateData(dataCantidad,dataProducto)
+        binding.rvElegirProducto.adapter?.notifyDataSetChanged()
+        binding.rvElegirProducto.requestLayout()
+    }
+
+   /* fun refreshAdapter(){
+       adapter.notifyDataSetChanged()
+        binding.rvElegirProducto.requestLayout()
+    }*/
+
+    fun recyclerViewElegirProducto(){
+       adapter = AnadirTransferenciaAdapter(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos) { position ->
+           onDeletedItem(position)}
+        binding.rvElegirProducto.setHasFixedSize(true)
+        binding.rvElegirProducto.adapter = adapter
+        binding.rvElegirProducto.layoutManager = LinearLayoutManager(requireContext())
+        adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
+        adapter.notifyDataSetChanged()
+        binding.rvElegirProducto.requestLayout()
+    }
+
+   private fun onDeletedItem(position: Int){
+       sharedViewModel.listaDeCantidades.removeAt(position)
+       sharedViewModel.listaDeProductos.removeAt(position)
+       adapter.notifyItemRemoved(position)
+       adapter.notifyDataSetChanged()
+       binding.rvElegirProducto.requestLayout()
     }
 
     private fun ListaDesplegableDestino() {
@@ -185,7 +281,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                     val itemSelected = parent.getItemAtPosition(position)
                 }
             }, { error ->
-                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -193,15 +289,6 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
 
     private fun ValidacionesIdInsertarDatos() {
         //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
-        setFragmentResultListener("ElegirProducto1"){key,bundle ->
-            ListaDeCantidades.add(bundle.getString("Cantidad")!!)
-            ListaDePreciosUnidad.add(bundle.getString("PrecioUnidades")!!)
-            ListaDeProductos.add(bundle.getString("Producto")!!)}
-
-        setFragmentResultListener("ElegirProducto2"){key,bundle ->
-            ListaDeCantidades.add(bundle.getString("Cantidad")!!)
-            ListaDePreciosCajas.add(bundle.getString("PrecioCajas")!!)
-            ListaDeProductos.add(bundle.getString("Producto")!!)}
         val queue =Volley.newRequestQueue(requireContext())
         val url ="http://186.64.123.248/Transferencia/registro.php"
         val jsonObjectRequest = object: StringRequest(
@@ -214,18 +301,14 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                     val unico = JSONObject(response).getString("TRANSFERENCIA_UNICA")
                     if (unico == "1") {
                         //Aqui va el código para validar el almacen
-                        val url1 = "http://186.64.123.248/Transferencia/insertar.php" // Reemplaza esto con tu URL de la API
+                        val url1 = "http://186.64.123.248/Transferencia/insertarTransferencia.php" // Reemplaza esto con tu URL de la API
                         val queue1 =Volley.newRequestQueue(requireContext())
                         val stringRequest = object: StringRequest(
                             Request.Method.POST,
                             url1,
                             { response ->
                                 Toast.makeText(requireContext(), "Transferencia agregada exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
-                                TextNombre?.setText("")
-                                TextFecha?.setText("")
-                                DropDownOrigen?.setText("Eliga una opción",false)
-                                DropDownDestino?.setText("Eliga una opción",false)
-                                TextComentarios?.setText("")
+
                             },
                             { error ->
                                 Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
@@ -242,14 +325,11 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                 parametros.put("ALMACEN_ORIGEN", DropDownOrigen?.text.toString())
                                 parametros.put("ALMACEN_DESTINO", DropDownDestino?.text.toString())
                                 parametros.put("COMENTARIOS", TextComentarios?.text.toString().uppercase())
-                                parametros.put("PRODUCTO", ListaDeProductos[0].uppercase())
-                                parametros.put("CANTIDAD",ListaDeCantidades[0])
-                                if(ListaDePreciosUnidad.isEmpty()){
-                                    parametros.put("PRECIO", ListaDePreciosCajas[0])
-                                }else if(ListaDePreciosCajas.isEmpty()) {
-                                    parametros.put("PRECIO", ListaDePreciosUnidad[0])
-                                }
-
+                               /* parametros.put("NUMERO_DE_PRODUCTOS",sharedViewModel.listaDeProductos.size.toString())
+                                for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                                    parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
+                                    parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
+                                }*/
 
                                 return parametros
                             }
@@ -284,22 +364,147 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
         queue.add(jsonObjectRequest)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun InsertarPreciosYCantidades(){
+        //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
+        val queue =Volley.newRequestQueue(requireContext())
+        val url ="http://186.64.123.248/Transferencia/registroProductos.php"
+        val jsonObjectRequest = object: StringRequest(
+            Request.Method.POST,url,
+            { response ->
+                if(TextNombre?.text.toString().isNotBlank()){
+                    val id = JSONObject(response).getString("ID_TRANSFERENCIA")
+                    //unico = 1
+                    //no unico = 0
+                    //Aqui va el código para validar el almacen
+                    val url1 = "http://186.64.123.248/Transferencia/insertarProductos.php" // Reemplaza esto con tu URL de la API
+                    val queue1 =Volley.newRequestQueue(requireContext())
+                    val stringRequest = object: StringRequest(
+                        Request.Method.POST,
+                        url1,
+                        { response ->
+                            Toast.makeText(requireContext(),"Productos agregados exitosamente", Toast.LENGTH_SHORT).show()
+                        },
+                        { error ->
+                            Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductos} y ${sharedViewModel.listaDeCantidades}", Toast.LENGTH_LONG).show()
+                        }
+                        )
+
+                        {
+                            override fun getParams(): MutableMap<String, String> {
+                                val parametros = HashMap<String, String>()
+                                parametros.put("ID_TRANSFERENCIA", id.toString())
+                                parametros.put("NUMERO_DE_PRODUCTOS",sharedViewModel.listaDeProductos.size.toString())
+                                for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                                    parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
+                                    parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
+                                 }
+
+                                return parametros
+                            }
+                        }
+                        queue1.add(stringRequest)
+
+                    }
+
+                // TextId?.setText(response.getString("ID_ALMACEN"))
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+            }, { error ->
+                //Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+            }
+        ){
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("TRANSFERENCIA", TextNombre?.text.toString().uppercase())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
     }
     fun obtenerMiView(): View {
         return binding.etNombreTransferencia // Tu vista que quieres acceder
     }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel.CodigoDeBarraTransferencia.observe(viewLifecycleOwner) { newText ->
-            binding.etCodigoDeBarra.setText(newText)
-        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 
+    fun modificarInventario(){
+        //Si el inventario es menor que la transferencia que no la haga y si el almacen de destino no existe, que lo cree
+        val url1 = "http://186.64.123.248/Transferencia/modificarInventario.php" // Reemplaza esto con tu URL de la API
+        val queue1 =Volley.newRequestQueue(requireContext())
+        val stringRequest = object: StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+                Toast.makeText(requireContext(),"Inventario modificado exitosamente", Toast.LENGTH_SHORT).show()
+                TextNombre?.setText("")
+                TextFecha?.setText("")
+                DropDownOrigen?.setText("Eliga una opción",false)
+                DropDownDestino?.setText("Eliga una opción",false)
+                TextComentarios?.setText("")
+                sharedViewModel.listaDeCantidades.removeAll(sharedViewModel.listaDeCantidades)
+                sharedViewModel.listaDeProductos.removeAll(sharedViewModel.listaDeProductos)
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProducto.requestLayout()
+                binding.tvProductosAnadidos.isVisible = false
+
+            },
+            { error ->
+                        /*  TextNombre?.setText("")
+                          TextFecha?.setText("")
+                          DropDownOrigen?.setText("Eliga una opción",false)
+                          DropDownDestino?.setText("Eliga una opción",false)
+                          TextComentarios?.setText("")
+                          TextCodigoDeBarra?.setText("")*/
+                Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductos} y ${sharedViewModel.listaDeCantidades}", Toast.LENGTH_LONG).show()
+            }
+        )
+
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("NUMERO_DE_PRODUCTOS",sharedViewModel.listaDeProductos.size.toString())
+                parametros.put("ALMACEN_ORIGEN", DropDownOrigen?.text.toString())
+                parametros.put("ALMACEN_DESTINO", DropDownDestino?.text.toString())
+                for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                    parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
+                    parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
+                }
+
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
+    }/*,
+            {error ->
+                Toast.makeText(requireContext(),"El inventario del almacén es menor que la transferencia",Toast.LENGTH_SHORT).show()
+            }) {
+            override fun getParams(): MutableMap<String, String> {
+
+                val parametros = HashMap<String, String>()
+                for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                    parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
+                }
+                return parametros
+            }
+        }
+        queue.add(stringRequest1)*/
+
 }
+
+   /* private var segundaVez = false
+    override fun onResume() {
+        super.onResume()
+        if (segundaVez && sharedViewModel.listaDeProductos.isNotEmpty() && sharedViewModel.listaDeCantidades.isNotEmpty()){
+            view?.findViewById<TextView>(R.id.tvProductosAnadidos)?.isVisible = true
+        }
+        segundaVez = true
+
+    }*/
+
+
 
     // En el FragmentDestino o cualquier fragmento que desees personalizar
 

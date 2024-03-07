@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/clAnadirInventario"
     android:layout_height="match_parent"
     tools:context=".ui.Formularios.añadirAlmacen.añadirInventario.AnadirInventarioFragment">
 
@@ -181,20 +182,17 @@
                 <EditText
                     android:id="@+id/etFacturaEntradaComentarios"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
+                    android:layout_height="100dp"
                     android:layout_marginHorizontal="90dp"
                     android:gravity="top"
                     android:hint="@string/placeholder_factura_entrada_comentarios"
                     android:inputType="text"
-                    android:backgroundTint="@color/color_list"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/color_list"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <!-- RecyclerView con imagen de buscar en EditText-->
 
-                <LinearLayout
+              <!--  <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -223,11 +221,11 @@
                     android:id="@+id/rvProductos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"/> -->
 
    <!--Productos Añadidos-->
 
-                <TextView
+             <!--   <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Productos Añadidos:"
@@ -269,12 +267,12 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:tint="@color/red" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 
 
    <!--Boton Unidades y la suma y resta de unidades-->
-                <LinearLayout
+         <!--       <LinearLayout
                     android:id="@+id/llUnidades"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -319,11 +317,11 @@
                         android:layout_marginStart="20dp"
                         android:contentDescription="Mas"/>
 
-                </LinearLayout>
+                </LinearLayout>-->
 
 
      <!--Precio por unidad, Impuesto y Descuento -->
-                <LinearLayout
+             <!--   <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -445,10 +443,10 @@
                         android:layout_marginStart="30dp"
                         android:hint="@string/Articulos_por_caja"/>
 
-                </LinearLayout>
+                </LinearLayout>-->
 
                 <!--Precio por unidad, Impuesto y Descuento -->
-                <LinearLayout
+             <!--   <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -526,11 +524,11 @@
 
                 </LinearLayout>
 
-                </LinearLayout>
+                </LinearLayout>-->
 
                 <!--Texto de Contabilidad-->
 
-                    <LinearLayout
+            <!--        <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="horizontal">
@@ -614,16 +612,67 @@
 
                 </LinearLayout>
 
+                </LinearLayout>-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/bEscanearCodigoDeBarraAnadir"
+                        android:layout_width="150dp"
+                        android:layout_height="80dp"
+                        android:layout_marginVertical="30dp"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginEnd="50dp"
+                        android:backgroundTint="@color/light_green"
+                        android:text="@string/button_codigo_de_barra" />-
+
+                    <Button
+                        android:id="@+id/bAnadirNuevoProductoAnadir"
+                        android:layout_width="150dp"
+                        android:layout_height="80dp"
+                        android:layout_marginVertical="30dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:backgroundTint="@color/light_green"
+                        android:text="@string/buttom_añadir_producto" />
+
                 </LinearLayout>
 
-      <!--Botón de guardar y subir los datos al servidor-->
+                <TextView
+                    android:id="@+id/tvProductosAnadidosAnadir"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:text="Productos añadidos:"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvElegirProductoAnadir"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+                <Button
+                    android:id="@+id/bActualizarRecyclerViewAnadir"
+                    android:layout_width="130dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="5dp"
+                    android:backgroundTint="@color/light_green"
+                    android:text="Actualizar"/>
+
+
+                <!--Botón de guardar y subir los datos al servidor-->
 
                 <Button
                     android:id="@+id/FacturaEntradaButtonEnviar"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_gravity="center"
                     android:backgroundTint="@color/light_green"
-                    android:layout_marginHorizontal="160dp"
                     android:layout_marginVertical="40dp"
                     android:text="@string/anadir_inventario_send" />
             </androidx.appcompat.widget.LinearLayoutCompat>

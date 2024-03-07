@@ -25,12 +25,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainer
 import androidx.navigation.fragment.findNavController
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirDatosBinding
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AnadirProductoFragment
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaFragment
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaUpdater
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.ElegirProductoFragment
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.añadirDatos.AnadirDatosFragment
 import com.seba.mitantonavigationdrawer.ui.inicio.InicioFragment
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
     private val sharedViewModel: SharedViewModel by viewModels()
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -71,8 +75,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_inicio, R.id.nav_exportar_datos, R.id.nav_preferencias, R.id.nav_statistics,
                 R.id.nav_añadir_datos, R.id.nav_añadir_almacen, R.id.nav_añadir_producto, R.id.nav_añadir_proveedor,
                 R.id.nav_añadir_cliente,R.id.nav_añadir_tipo_de_producto,R.id.nav_añadir_inventario,R.id.nav_remover_inventario,
-                R.id.nav_añadir_transferencia, R.id.nav_mis_datos, R.id.nav_almacenes, R.id.tipos_de_productos, R.id.productos,
-                R.id.proveedores,R.id.clientes, R.id.nav_editar_almacen, R.id.nav_alertas_almacenes,R.id.nav_cliente_precio_venta,
+                R.id.nav_añadir_transferencia,R.id.nav_elegir_producto, R.id.nav_mis_datos, R.id.nav_almacenes,R.id.nav_productos,R.id.nav_proveedores,
+                R.id.nav_editar_almacen,R.id.nav_editar_cliente,R.id.nav_editar_proveedor,
+                R.id.tipos_de_productos, R.id.productos,R.id.nav_tipos_de_productos, R.id.nav_clientes,R.id.proveedores,
+                R.id.clientes, R.id.nav_editar_almacen, R.id.nav_alertas_almacenes,R.id.nav_cliente_precio_venta,
                 R.id.nav_proveedor_precio_compra
 
             ), drawerLayout
@@ -95,6 +101,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_añadir_inventario -> navController.navigate(R.id.nav_añadir_inventario)
                 R.id.nav_remover_inventario -> navController.navigate(R.id.nav_remover_inventario)
                 R.id.nav_añadir_transferencia -> navController.navigate(R.id.nav_añadir_transferencia)
+                R.id.nav_elegir_producto -> navController.navigate(R.id.nav_elegir_producto)
                 R.id.nav_mis_datos -> navController.navigate(R.id.nav_mis_datos)
                 R.id.nav_almacenes -> navController.navigate(R.id.nav_almacenes)
                 R.id.nav_tipos_de_productos -> navController.navigate(R.id.nav_tipos_de_productos)
@@ -123,6 +130,11 @@ class MainActivity : AppCompatActivity() {
         // val navController = findNavController(R.id.navHostFragment)
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun updateRecyclerView(dataCantidad: MutableList<String>,dataProducto: MutableList<String>) {
+        val anadirTransferenciaFragment = supportFragmentManager.findFragmentById(R.id.clAnadirTransferencia) as AnadirTransferenciaFragment?
+        anadirTransferenciaFragment?.updateData(dataCantidad, dataProducto)
     }
 
 

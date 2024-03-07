@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.GnssAntennaInfo
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +38,7 @@ import java.net.SocketTimeoutException
 
 
 class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes),
-    OnTextChangeListener,OnCheckBoxClickListener{
+    OnTextChangeListener,OnCheckBoxClickListener,OnTextChangeListener2{
    /* companion object {
         const val REQUEST_KEY_1 = "Prueba"
         const val REQUEST_KEY_2 = "AlertasAlmacen"
@@ -67,13 +69,13 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
         retrofit = getRetrofit()
         gestionarRecyclerView()
 
-        binding.bAlertaAlmacenVolver.setOnClickListener {
+       /* binding.bAlertaAlmacenVolver.setOnClickListener {
                 binding.rlAlertasAlmacenes.isVisible = false
                 val anadirProductoFragment = AnadirProductoFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlAlertasAlmacenes, anadirProductoFragment)
                     .commitNow()
-        }
+        }*/
         binding.rlAlertasAlmacenes.setOnClickListener {
                 binding.rlAlertasAlmacenes.isVisible = false
                 val anadirProductoFragment = AnadirProductoFragment()
@@ -102,7 +104,7 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
         return root
     }
     private fun gestionarRecyclerView(){
-        adapter = AlertasAlmacenesAdapter(listaDeAlmacenes,this,this)
+        adapter = AlertasAlmacenesAdapter(listaDeAlmacenes,sharedViewModel,this,this,this)
         val recyclerView = binding.rvAlmacenes.findViewById<RecyclerView>(R.id.rvAlmacenes)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -177,22 +179,36 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
         return ItemAlertBinding.bind(view)
     }*/
 
-    override fun onTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder) {
-     TODO("Not yet implemented")
-
+    override fun beforeTextChanged(text: String, viewHolder: AlertasAlmacenesViewHolder) {
+        if (!binding.bAgregarAlmacen.isPressed) {
+            Toast.makeText(requireContext(), "Se ha eliminado la alarma", Toast.LENGTH_SHORT).show()
+            sharedViewModel.listaDeAlertas.remove(sharedViewModel.listaDeAlertas[viewHolder.adapterPosition])
+            sharedViewModel.listaDeBodegas.remove(sharedViewModel.listaDeBodegas[viewHolder.adapterPosition])
+        }
     }
+    var codeExecuted = false
     override fun afterTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder) {
-        if (!binding.bAlertaAlmacenVolver.isPressed){
-        Toast.makeText(requireContext(), "Se he agregado la alarma", Toast.LENGTH_LONG).show()
-        sharedViewModel.listaDeAlertas.add(text)
-        sharedViewModel.listaDeBodegas.add(adapter.alertasAlmacenesList[viewHolder.adapterPosition].Nombre)}
-        binding.bAgregarAlmacen.setOnClickListener {
+        if (!binding.bAgregarAlmacen.isPressed && text.isNotEmpty()){
+            Toast.makeText(requireContext(), "Se he agregado la alarma", Toast.LENGTH_SHORT).show()
+            sharedViewModel.listaDeAlertas.add(text)
+            sharedViewModel.listaDeBodegas.add(adapter.alertasAlmacenesList[viewHolder.adapterPosition].Nombre)}
+        else if (!binding.bAgregarAlmacen.isPressed && text.isEmpty() && sharedViewModel.listaDeAlertas.isNotEmpty() &&
+            sharedViewModel.listaDeBodegas.isNotEmpty()){
+            Toast.makeText(requireContext(), "Se ha eliminado la alarma", Toast.LENGTH_SHORT).show()
+            sharedViewModel.listaDeAlertas.remove(sharedViewModel.listaDeAlertas[viewHolder.adapterPosition])
+            sharedViewModel.listaDeBodegas.remove(sharedViewModel.listaDeBodegas[viewHolder.adapterPosition])
+        }
+            binding.bAgregarAlmacen.setOnClickListener {
             if (sharedViewModel.listaDeAlertas.size > 0) {
                 for (i in 0..<sharedViewModel.listaDeAlertas.size) {
                     setFragmentResult("AlertaAlmacen$i", bundleOf("Almacen$i" to sharedViewModel.listaDeBodegas[i], "Alerta$i" to sharedViewModel.listaDeAlertas[i]))
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente los almacenes con las alarmas con un largo de ${sharedViewModel.listaDeAlertas.size}", Toast.LENGTH_LONG).show()
-
+                Toast.makeText(requireContext(), "Se han agregado exitosamente los almacenes y las alarmas", Toast.LENGTH_LONG).show()
+                binding.rlAlertasAlmacenes.isVisible = false
+                val anadirProductoFragment = AnadirProductoFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.rlAlertasAlmacenes, anadirProductoFragment)
+                    .commitNow()
             }
         }
     }

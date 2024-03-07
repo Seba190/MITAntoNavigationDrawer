@@ -6,9 +6,10 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.seba.mitantonavigationdrawer.databinding.ItemPrecioCompraBinding
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
 
-class ProveedorPrecioCompraViewHolder(view: View, private val listener: OnTextChangeListenerPrecioCompra): RecyclerView.ViewHolder(view) {
+class ProveedorPrecioCompraViewHolder(view: View, private val listener: OnTextChangeListenerPrecioCompra,private val sharedViewModel: SharedViewModel): RecyclerView.ViewHolder(view) {
     private val binding = ItemPrecioCompraBinding.bind(view)
     val listaDePreciosCompra: MutableList<String> = mutableListOf()
 
@@ -25,31 +26,49 @@ class ProveedorPrecioCompraViewHolder(view: View, private val listener: OnTextCh
             }
 
             override fun afterTextChanged(s: Editable?) {
+                var onFocusChanged = false
                 binding.etPrecioCompra.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-                    if(!hasFocus){
-                        if(binding.etPrecioCompra.text.length >=2){
-                            val texto = s.toString()
-                            // valoresDelRecyclerView.add(adapterPosition, s.toString())
-                            // textChangeListener?.invoke(s.toString(),adapterPosition)
-                            listener.afterTextChange(texto, this@ProveedorPrecioCompraViewHolder)
-                        }
+                    val texto = s.toString()
+                    if(!onFocusChanged && !hasFocus){
+                        // valoresDelRecyclerView.add(adapterPosition, s.toString())
+                        // textChangeListener?.invoke(s.toString(),adapterPosition)
+                        listener.afterTextChange(texto, this@ProveedorPrecioCompraViewHolder)
+                        onFocusChanged = true
+
                     }
                 }
-
-
             }
         })
     }
-
-    fun bind(proveedorPrecioCompraItemResponse: ProveedorPrecioCompraItemResponse) {
+    private var codeExecuted = false
+    fun bind(proveedorPrecioCompraItemResponse: ProveedorPrecioCompraItemResponse,listaAdapter:RecyclerView.Adapter<*>) {
         binding.tvSuppliers.text = proveedorPrecioCompraItemResponse.Nombre
         binding.cbSuppliers.setOnClickListener {
             binding.etPrecioCompra.isEnabled = binding.cbSuppliers.isChecked
         }
-        // Verificar si el CheckBox está marcado o no
-        //binding.etPrecioCompra.isVisible = binding.cbSuppliers.isChecked
-
+        for (i in 0..listaAdapter.itemCount) {
+            if (sharedViewModel.listaDeProveedores.size > i) {
+                if (sharedViewModel.listaDeProveedores.isNotEmpty()) {
+                    if (binding.etPrecioCompra.text.isBlank() && binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedores[i]) {
+                        binding.etPrecioCompra.setText(sharedViewModel.listaDePreciosCompra[i])
+                    }
+                }
+            } else {
+                break
+            }
+        }
+        /*if(!codeExecuted) {
+            for (i in 0..listaAdapter.itemCount) {
+                if (sharedViewModel.listaDeProveedores.size > i && sharedViewModel.listaDePreciosCompra.size > i) {
+                    if (sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeProveedores.isNotEmpty() && binding.etPrecioCompra.text.isNotBlank() && binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedores[i]) {
+                        sharedViewModel.listaDePreciosCompra.remove(sharedViewModel.listaDePreciosCompra[i])
+                        sharedViewModel.listaDeProveedores.remove(sharedViewModel.listaDeProveedores[i])
+                    }
+                }else {
+                    break
+                }
+            }
+            codeExecuted = true
+        }*/
     }
-
-
 }

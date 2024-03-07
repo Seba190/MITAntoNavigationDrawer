@@ -76,7 +76,7 @@
                     android:id="@+id/bAgregarAlmacen"
                     android:layout_width="110dp"
                     android:layout_height="50dp"
-                    android:layout_marginStart="5dp"
+                    android:layout_marginStart="55dp"
                     android:backgroundTint="@color/light_green"
                     android:text="Agregar" />
 
@@ -84,17 +84,11 @@
                         android:id="@+id/bAlertaAlmacenEliminar"
                         android:layout_width="110dp"
                         android:layout_height="50dp"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="20dp"
                         android:backgroundTint="@color/light_green"
                         android:text="Eliminar" />
 
-                    <Button
-                        android:id="@+id/bAlertaAlmacenVolver"
-                        android:layout_width="100dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="5dp"
-                        android:backgroundTint="@color/light_green"
-                        android:text="VOLVER" />
+
                 </LinearLayout>
             </androidx.appcompat.widget.LinearLayoutCompat>
 

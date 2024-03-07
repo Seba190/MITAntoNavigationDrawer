@@ -20,10 +20,13 @@ import java.io.IOException
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
+import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.navigation.fragment.findNavController
 import androidx.activity.addCallback
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
@@ -46,7 +49,7 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
     private lateinit var barcodeDetector: BarcodeDetector
     private lateinit var cameraSource: CameraSource
     var intentData = "algo"
-    var codigoDeBarra : String? = null
+    var codigoDeBarraTransferencia: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -103,8 +106,6 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
         })
         barcodeDetector.setProcessor(object : Detector.Processor<Barcode>{
             override fun release() {
-                Toast.makeText(requireContext()," El scanner del código de barra ha sido detenido",Toast.LENGTH_LONG).show()
-
 
             }
 
@@ -122,17 +123,17 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
                         intentData = barcodes.valueAt(0).displayValue
                         binding.txtBarcodeValue.setText(intentData)
                         //activity?.finish()
-                        codigoDeBarra = intentData
+                        codigoDeBarraTransferencia = intentData
                         /*val bundle = Bundle()
                         bundle.putString(CODIGO_DE_BARRA,codigoDeBarra)
                         arguments = bundle*/
-                        viewModel.CodigoDeBarraTransferencia.value = codigoDeBarra
-                        setFragmentResult("Codigo de barra transferencia", bundleOf("codigo" to codigoDeBarra))
+                        viewModel.CodigoDeBarraTransferencia.value = codigoDeBarraTransferencia
+                        setFragmentResult("Codigo de barra transferencia", bundleOf("codigo" to codigoDeBarraTransferencia))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
-                    codigo?.setText(codigoDeBarra)
+                    codigo?.setText(codigoDeBarraTransferencia)
                     activity?.runOnUiThread {
-                        Toast.makeText(requireContext(),codigoDeBarra,Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(),codigoDeBarraTransferencia,Toast.LENGTH_LONG).show()
                         //obtenerCodigo(codigoDeBarra!!)
                     }
 
@@ -144,6 +145,39 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
 
         })
     }
+
+   /* override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+       /* requireActivity().onBackPressedDispatcher
+            .addCallback(viewLifecycleOwner) {
+                activity?.runOnUiThread {Toast.makeText(requireContext(),codigoDeBarraTransferencia,Toast.LENGTH_LONG).show()}
+            }*/
+        (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }*/
+
+    /*override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                // binding.clBarcodeScanProducto.isVisible = false
+                /* val anadirProductoFragment = AnadirProductoFragment()
+                 parentFragmentManager.beginTransaction()
+                     .replace(R.id.clBarcodeScanProducto, anadirProductoFragment)
+                     .commitNow()*/
+                findNavController().navigate(R.id.action_nav_barcode_scan_to_nav_añadir_transferencia)
+                return true
+
+            }
+
+        }
+
+        return super.onOptionsItemSelected(item)
+
+    }*/
 
     override fun onPause(){
         super.onPause()
@@ -160,16 +194,6 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
         _binding = null
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        requireActivity().onBackPressedDispatcher
-            .addCallback(viewLifecycleOwner) {
-               activity?.runOnUiThread {Toast.makeText(requireContext(),codigoDeBarra,Toast.LENGTH_LONG).show()}
-            }
-
-
-
-    }
 
  //private fun obtenerCodigo(code: String){
  //    val action = BarcodeScanFragmentDirections.actionNavBarcodeScanToNavAñadirTransferencia(code)

@@ -77,9 +77,9 @@ class CamaraFragment : Fragment(R.layout.fragment_camara){
         binding.buttonGallery.setOnClickListener {
             galleryCheckPermission()
         }
-        binding.buttonVolver.setOnClickListener {
-            findNavController().navigate(R.id.action_nav_camara_to_nav_añadir_producto)
-        }
+       // binding.buttonVolver.setOnClickListener {
+        //    findNavController().navigate(R.id.action_nav_camara_to_nav_añadir_producto)
+       // }
 
        // sharedViewModel.setImageData(bitmap)
 

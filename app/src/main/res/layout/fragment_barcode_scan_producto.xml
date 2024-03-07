@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/clBarcodeScanProducto"
     android:layout_height="match_parent"
     tools:context=".ui.Formularios.añadirAlmacen.añadirProducto.BarcodeScanProductoFragment">
 
@@ -22,7 +23,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:text="Código de barra no detectado"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/bActionProducto"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:backgroundTint="@color/red"
-        android:text=""
+        android:text="Código de barra no detectado"
         app:layout_constraintBottom_toBottomOf="@+id/svSurfaceViewProducto"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
