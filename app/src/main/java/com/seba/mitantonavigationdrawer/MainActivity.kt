@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
                 R.id.nav_añadir_transferencia,R.id.nav_elegir_producto, R.id.nav_mis_datos, R.id.nav_almacenes,R.id.nav_productos,R.id.nav_proveedores,
                 R.id.nav_editar_almacen,R.id.nav_editar_cliente,R.id.nav_editar_proveedor,
                 R.id.tipos_de_productos, R.id.productos,R.id.nav_tipos_de_productos, R.id.nav_clientes,R.id.proveedores,
-                R.id.clientes, R.id.nav_editar_almacen, R.id.nav_alertas_almacenes,R.id.nav_cliente_precio_venta,
+                R.id.clientes, R.id.nav_editar_almacen,R.id.nav_editar_producto, R.id.nav_alertas_almacenes,R.id.nav_cliente_precio_venta,
                 R.id.nav_proveedor_precio_compra
 
             ), drawerLayout
@@ -112,6 +112,7 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
                 R.id.nav_alertas_almacenes ->navController.navigate(R.id.nav_alertas_almacenes)
                 R.id.nav_proveedor_precio_compra -> navController.navigate(R.id.nav_proveedor_precio_compra)
                 R.id.nav_cliente_precio_venta -> navController.navigate(R.id.nav_cliente_precio_venta)
+                R.id.nav_editar_producto ->navController.navigate(R.id.nav_editar_producto)
             }
             drawerLayout.closeDrawers()
             true

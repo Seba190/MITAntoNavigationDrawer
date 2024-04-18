@@ -290,6 +290,14 @@
             android:name="id"
             app:argType="string"
             android:defaultValue="id"/>
+        <action
+            android:id="@+id/action_nav_mis_datos_to_nav_editar_producto"
+            app:destination="@id/nav_editar_producto">
+        <argument
+            android:name="id"
+            app:argType="string"
+            android:defaultValue="id" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/nav_almacenes"
@@ -332,6 +340,33 @@
         android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.ProductosFragment"
         android:label="@string/menu_productos"
         tools:layout="@layout/fragment_productos" >
+        <action
+            android:id="@+id/action_nav_productos_to_nav_editar_producto"
+            app:destination="@id/nav_editar_producto" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_editar_producto"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.editarProducto.EditarProductoFragment"
+        android:label="@string/menu_editar_producto"
+        tools:layout="@layout/fragment_editar_producto" >
+        <action
+            android:id="@+id/action_nav_editar_producto_to_navigation"
+            app:destination="@id/navigation" />
+        <action
+            android:id="@+id/action_nav_editar_producto_to_nav_barcode_scan_producto"
+            app:destination="@id/nav_barcode_scan_producto" />
+        <action
+            android:id="@+id/action_nav_editar_producto_to_nav_barcode_scan_editar_producto"
+            app:destination="@id/nav_barcode_scan_editar_producto" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_barcode_scan_editar_producto"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.editarProducto.BarcodeScanEditarProductoFragment"
+        android:label="@string/menu_barcode_scan_producto"
+        tools:layout="@layout/fragment_barcode_scan_editar_producto" >
+        <action
+            android:id="@+id/action_nav_barcode_scan_editar_producto_to_nav_editar_producto"
+            app:destination="@id/nav_editar_producto" />
     </fragment>
     <fragment
         android:id="@+id/nav_proveedores"

@@ -8,7 +8,8 @@ import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
 class AnadirInventarioAdapter (var listaDeCantidadesAnadir: MutableList<String>
                                , var listaDeProductosAnadir: MutableList<String>
-                               , var listaDePreciosAnadir: MutableList<String>
+                               , var listaDePreciosAnadir: MutableList<String>,
+                                private val sharedViewModel: SharedViewModel
                                , private val onClickDelete:(Int) -> Unit)
     : RecyclerView.Adapter<AnadirInventarioViewHolder>() {
 
@@ -28,7 +29,7 @@ class AnadirInventarioAdapter (var listaDeCantidadesAnadir: MutableList<String>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnadirInventarioViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_anadir,parent,false)
-        return AnadirInventarioViewHolder(v)
+        return AnadirInventarioViewHolder(v,sharedViewModel)
     }
 
     override fun getItemCount(): Int {

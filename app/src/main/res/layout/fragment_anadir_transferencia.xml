@@ -246,10 +246,25 @@
                 android:textSize="16sp"
                 android:text="Productos añadidos:"/>
 
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nsvElegirProducto"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvElegirProducto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
 
                 <Button
                     android:id="@+id/bActualizarRecyclerView"

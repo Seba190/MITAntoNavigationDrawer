@@ -113,7 +113,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente) {
     private fun borrarRegistros(){
         val url = "http://186.64.123.248/Reportes/Clientes/borrar.php"
         val queue = Volley.newRequestQueue(requireContext())
-        var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+        val jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
             { response ->
                 //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
 

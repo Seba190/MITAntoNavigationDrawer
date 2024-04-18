@@ -9,49 +9,10 @@ import com.seba.mitantonavigationdrawer.databinding.ItemAlertBinding
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
 //Inserte sharedViewModel en AlertasAlmacenesAdapter
-class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeListener, private val listener2: OnTextChangeListener2,private val sharedViewModel: SharedViewModel): RecyclerView.ViewHolder(view) {
+class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeListener, private val sharedViewModel: SharedViewModel): RecyclerView.ViewHolder(view) {
     private val binding = ItemAlertBinding.bind(view)
-    private val valoresDelRecyclerView: MutableList<String> = mutableListOf()
-    private var textChangeListener: ((String, Int) -> Unit)? = null
     val listaDeAlertas: MutableList<String> = mutableListOf()
-
-    fun obtenerTextos(): List<String> {
-        return valoresDelRecyclerView.toList()
-    }
-
-    fun obtenerLista(): List<String> {
-        return listaDeAlertas
-    }
-
-    fun bindTextChangeListener(listener: (String, Int) -> Unit) {
-        textChangeListener = listener
-    }
-
-    // private val bindingAlert = FragmentAnadirProductoBinding.bind(view)
     init {
-        binding.etAlert.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                binding.etAlert.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-                    val texto = s?.toString() ?: ""
-                    if(texto in sharedViewModel.listaDeAlertas) {
-                        if (hasFocus /*!segundaVez*/) {
-                            if (sharedViewModel.listaDeBodegas.isNotEmpty() && sharedViewModel.listaDeAlertas.isNotEmpty()) {
-                                listener2.beforeTextChanged(texto, this@AlertasAlmacenesViewHolder)
-                            }
-                            //segundaVez = true
-                        }
-                    }
-                }
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-
-            }
-
-        })
         binding.etAlert.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
                 charSequence: CharSequence?,
@@ -69,22 +30,25 @@ class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeL
             }
 
             override fun afterTextChanged(s: Editable?) {
-                var onFocusChanged = false
-                binding.etAlert.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-                    val texto = s.toString()
-                    if (!onFocusChanged && !hasFocus) {
-                        if (binding.etAlert.text.isNotEmpty()) {
-                            // valoresDelRecyclerView.add(adapterPosition, s.toString())
-                            // textChangeListener?.invoke(s.toString(),adapterPosition)
-                            listener.afterTextChange(texto, this@AlertasAlmacenesViewHolder)
-                            onFocusChanged = true
-                        }
-                        else{
-                            listener.afterTextChange(texto, this@AlertasAlmacenesViewHolder)
-
-                        }
+                 var onFocusChanged = false
+                 binding.etAlert.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                val texto = s.toString()
+               // if(adapterPosition != RecyclerView.NO_POSITION){
+                //    listener.onEditTextValueChanged(adapterPosition,binding.etAlert.text.toString(), this@AlertasAlmacenesViewHolder)
+               // }
+                     for (i in 0..<100) {
+                         if (!onFocusChanged && !hasFocus) {
+                        listener.afterTextChange(texto, this@AlertasAlmacenesViewHolder,i)
+                        onFocusChanged = true
                     }
                 }
+                       // if (binding.etAlert.text.isNotEmpty()) {
+                            // valoresDelRecyclerView.add(adapterPosition, s.toString())
+                            // textChangeListener?.invoke(s.toString(),adapterPosition)
+                           // onFocusChanged = true
+                        //}
+                    }
+
             }
         })
 
@@ -100,14 +64,14 @@ class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeL
             binding.etAlert.isEnabled = binding.cbWarehouse.isChecked
         }
         for (i in 0..listaAdapter.itemCount) {
-            if (sharedViewModel.listaDeBodegas.size > i) {
-                if (sharedViewModel.listaDeBodegas.isNotEmpty()) {
+            if (sharedViewModel.listaDeAlertas.isNotEmpty()) {
+                if (sharedViewModel.listaDeAlertas.size > i) {
                     if (binding.etAlert.text.isBlank() && binding.tvWarehouse.text.toString() == sharedViewModel.listaDeBodegas[i]) {
                         binding.etAlert.setText(sharedViewModel.listaDeAlertas[i])
                     }
-                }
-            } else {
-                break
+                }else {
+                    break
+              }
             }
         }
         /*if(!codeExecuted) {

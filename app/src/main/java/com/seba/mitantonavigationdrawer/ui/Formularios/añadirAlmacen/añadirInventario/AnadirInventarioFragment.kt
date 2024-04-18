@@ -112,12 +112,6 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
 
         binding.FacturaEntradaButtonEnviar.setOnClickListener {
             ValidacionesIdInsertarDatos()
-            Handler(Looper.getMainLooper()).postDelayed({
-                InsertarPreciosYCantidades()
-            }, 2500)
-            Handler(Looper.getMainLooper()).postDelayed({
-                anadirInventario()
-            }, 5000)
         }
       /*  binding.llCajasDeProducto.isVisible = false
         binding.bUnidades.setOnClickListener {
@@ -152,28 +146,51 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         binding.tvProductosAnadidosAnadir.isVisible = false
         recyclerViewElegirProducto()
         binding.bActualizarRecyclerViewAnadir.setOnClickListener {
+            binding.tvProductosAnadidosAnadir.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+            binding.llMonto.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
             adapter.notifyDataSetChanged()
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.tvMonto.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
+            }, 300)
+            sharedViewModel.listaDePreciosDeProductos.clear()
             binding.rvElegirProductoAnadir.requestLayout()
         }
-
+        binding.nsvElegirProductoAnadir.isVisible = false
+        binding.llMonto.isVisible = false
         binding.bAnadirNuevoProductoAnadir.setOnClickListener {
-            if(DropDownProveedor?.text.toString() != "Eliga una opción"){
-                sharedViewModel.ListaDeProveedoresAnadir.add(DropDownProveedor?.text.toString())
+            if(DropDownProveedor?.text.toString() != "Eliga una opción" && DropDownAlmacen?.text.toString() != "Eliga una opción"){
+                sharedViewModel.proveedorAnadir = DropDownProveedor?.text.toString()
+                sharedViewModel.almacenAnadir = DropDownAlmacen?.text.toString()
+                binding.nsvElegirProductoAnadir.isVisible = true
+                binding.llMonto.isVisible = true
             //setFragmentResult("Proveedor", bundleOf("Proveedor" to DropDownProveedor?.text.toString()))
             //Toast.makeText(requireContext(),"Funciona el traspaso de información", Toast.LENGTH_LONG).show()
+                val elegirProductoAnadirFragment = ElegirProductoAnadirFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.clAnadirInventario, elegirProductoAnadirFragment)
+                    .commit()
+                binding.tvProductosAnadidosAnadir.isVisible = true
+               // binding.tvProductosAnadidosAnadir.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 && adapter.listaDeProductosAnadir.size == 0 && adapter.listaDePreciosAnadir.size == 0)
+            }else{
+                Toast.makeText(requireContext(),"Eliga el proveedor y el cliente", Toast.LENGTH_SHORT).show()
             }
-            val elegirProductoAnadirFragment = ElegirProductoAnadirFragment()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.clAnadirInventario, elegirProductoAnadirFragment)
-                .commit()
 
-
-            binding.tvProductosAnadidosAnadir.isVisible = true
         }
 
+      //  if(sharedViewModel.listaDePreciosDeProductos.isEmpty() && binding.llMonto.isVisible) {
+      //      binding.tvMonto.text = 0.toString()
+      //  }else{
+      //      binding.tvMonto.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
+      //  }
 
         return root
     }
+
+
+
+
+
+
     fun updateData(dataCantidad:MutableList<String>, dataProducto: MutableList<String>,dataPrecio: MutableList<String>){
         adapter.updateData(dataCantidad,dataProducto,dataPrecio)
         binding.rvElegirProductoAnadir.adapter?.notifyDataSetChanged()
@@ -181,7 +198,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
     }
 
     fun recyclerViewElegirProducto(){
-        adapter = AnadirInventarioAdapter(sharedViewModel.listaDeCantidadesAnadir,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosAnadir) { position ->
+        adapter = AnadirInventarioAdapter(sharedViewModel.listaDeCantidadesAnadir,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosAnadir,sharedViewModel) { position ->
             onDeletedItem(position)}
         binding.rvElegirProductoAnadir.setHasFixedSize(true)
         binding.rvElegirProductoAnadir.adapter = adapter
@@ -197,6 +214,12 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         adapter.notifyItemRemoved(position)
         adapter.notifyDataSetChanged()
         binding.rvElegirProductoAnadir.requestLayout()
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.tvMonto.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
+        }, 300)
+        sharedViewModel.listaDePreciosDeProductos.clear()
+        binding.tvProductosAnadidosAnadir.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+        binding.llMonto.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
     }
    /* private fun filtrar(texto: String) {
          var listaFiltrada = arrayListOf<ProductosItemResponse>()
@@ -237,6 +260,15 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                             Request.Method.POST,
                             url1,
                             { response ->
+                                if(binding.etNombreFacturaEntrada.text.isNotBlank() && binding.tvListaDesplegableProveedor.text.toString() != "Eliga una opción" && binding.tvListaDesplegableAlmacen.text.toString() != "Eliga una opción") {
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        InsertarPreciosYCantidades()
+                                    }, 2500)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        anadirInventario()
+                                    }, 5000)
+                                    binding.tvProductosAnadidosAnadir.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 && adapter.listaDeProductosAnadir.size == 0 && adapter.listaDePreciosAnadir.size == 0)
+                                }
                                 Toast.makeText(requireContext(), "Factura agregada exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
                                 /*TextNombre?.setText("")
                                 TextFecha?.setText("")
@@ -428,7 +460,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
 
     fun anadirInventario(){
         //Si el inventario es menor que la transferencia que no la haga y si el almacen de destino no existe, que lo cree
-        val url1 = "http://186.64.123.248/FacturaEntrada/anadirInventario.php" // Reemplaza esto con tu URL de la API
+        val url1 = "http://186.64.123.248/FacturaEntrada/anadirInventarioCompleta.php" // Reemplaza esto con tu URL de la API
         val queue1 =Volley.newRequestQueue(requireContext())
         val stringRequest = object: StringRequest(
             Request.Method.POST,
@@ -446,6 +478,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                 adapter.notifyDataSetChanged()
                 binding.rvElegirProductoAnadir.requestLayout()
                 binding.tvProductosAnadidosAnadir.isVisible = false
+                binding.nsvElegirProductoAnadir.isVisible = false
+                binding.llMonto.isVisible = false
             },
             { error ->
                 /*  TextNombre?.setText("")

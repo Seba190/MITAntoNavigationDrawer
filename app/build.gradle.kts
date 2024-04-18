@@ -101,4 +101,7 @@ dependencies {
     //Lector de codigó de barra
     implementation("com.google.android.gms:play-services-vision:20.1.3")
 
+    //Picasso Imagenes RecyclerView
+    implementation("com.squareup.picasso:picasso:2.8")
+
 }

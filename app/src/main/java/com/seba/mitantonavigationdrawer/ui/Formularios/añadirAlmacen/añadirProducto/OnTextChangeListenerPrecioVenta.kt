@@ -2,7 +2,7 @@ package com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirPr
 
 interface OnTextChangeListenerPrecioVenta {
 
-    fun afterTextChange(text: String, viewHolder: ClientePrecioVentaViewHolder)
+    fun afterTextChange(text: String, viewHolder: ClientePrecioVentaViewHolder, position: Int)
 
     fun onTextChange(text: String, viewHolder: ClientePrecioVentaViewHolder)
 }

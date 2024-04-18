@@ -133,7 +133,7 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
         _binding = null
     }
 
-    override fun afterTextChange(text: String, viewHolder: ProveedorPrecioCompraViewHolder) {
+    override fun afterTextChange(text: String, viewHolder: ProveedorPrecioCompraViewHolder, position: Int) {
         if (!binding.bAgregarProveedor.isPressed && text.isNotEmpty()){
             Toast.makeText(requireContext(), "Se he agregado el precio de compra", Toast.LENGTH_SHORT).show()
             sharedViewModel.listaDePreciosCompra.add(text)
@@ -141,15 +141,15 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
         else if (!binding.bAgregarProveedor.isPressed && text.isEmpty() && sharedViewModel.listaDePreciosCompra.isNotEmpty() &&
             sharedViewModel.listaDeProveedores.isNotEmpty()){
             Toast.makeText(requireContext(), "Se ha eliminado el precio de compra", Toast.LENGTH_SHORT).show()
-            sharedViewModel.listaDePreciosCompra.remove(sharedViewModel.listaDePreciosCompra[viewHolder.adapterPosition])
-            sharedViewModel.listaDeProveedores.remove(sharedViewModel.listaDeProveedores[viewHolder.adapterPosition])
+            sharedViewModel.listaDePreciosCompra.removeAt(position)
+            sharedViewModel.listaDeProveedores.removeAt(position)
         }
         binding.bAgregarProveedor.setOnClickListener {
             if (sharedViewModel.listaDePreciosCompra.size > 0) {
                 for (i in 0..<sharedViewModel.listaDePreciosCompra.size) {
                     setFragmentResult("PreciosCompraProveedores$i", bundleOf("Proveedores$i" to sharedViewModel.listaDeProveedores[i], "PreciosCompra$i" to sharedViewModel.listaDePreciosCompra[i]))
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente los proveedores y los precios de compra", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de compra", Toast.LENGTH_LONG).show()
                 binding.rlProveedorPrecioCompra.isVisible = false
                 val anadirProductoFragment = AnadirProductoFragment()
                 parentFragmentManager.beginTransaction()

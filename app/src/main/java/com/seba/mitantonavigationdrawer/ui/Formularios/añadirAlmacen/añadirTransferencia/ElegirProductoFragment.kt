@@ -126,7 +126,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                 { response ->
                     try {
                         if (binding.tvListaDesplegableElegirProducto.text.toString() != "Eliga una opción") {
-                            val cantidadUnidades = JSONObject(response).getString("Cantidad")
+                                val cantidadUnidades = JSONObject(response).getString("Cantidad")
                                 if (binding.llUnidadesElegirProducto.isVisible) {
                                     if (binding.etCantidad.text.isNotBlank()) {
                                         if (cantidadUnidades.toInt() < binding.etCantidad.text.toString().toInt()) {
@@ -191,18 +191,12 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                                             sharedViewModel.listaDeProductos
                                         )
                                         // refreshAdapterAnadirTransferenciaFragment()
-                                        binding.tvListaDesplegableElegirProducto.setText(
-                                            "Eliga una opción",
-                                            false
-                                        )
+                                        binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
                                         binding.etArticulosPorCaja.setText("")
                                         binding.etNumeroDeCajas.setText("")
                                         binding.etCodigoDeBarra.setText("")
                                         Toast.makeText(
-                                            requireContext(),
-                                            "Se ha agregado el producto a la factura",
-                                            Toast.LENGTH_LONG
-                                        ).show()
+                                            requireContext(), "Se ha agregado el producto a la factura", Toast.LENGTH_LONG).show()
                                     }
                                 } else {
                                     Toast.makeText(
@@ -223,7 +217,14 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                         Log.i("Sebastián", "$e")
                     }
                 },
-                { error -> Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_LONG).show()
+                { error ->
+                    Toast.makeText(requireContext(), "No hay producto para transferir en el almacén de origen", Toast.LENGTH_LONG).show()
+                    binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
+                    binding.etArticulosPorCaja.setText("")
+                    binding.etNumeroDeCajas.setText("")
+                    binding.etCodigoDeBarra.setText("")
+                    binding.etCantidad.setText("")
+
                     Log.i("Sebastián", "$error")
                 }) {
                 override fun getParams(): MutableMap<String, String> {
@@ -256,15 +257,19 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
 
 
            binding.etCantidad.addTextChangedListener {
-               preguntarInventario()
+               if(binding.etCantidad.text.isNotBlank()) {
+                   preguntarInventario()
+               }
            }
-
-
            binding.etNumeroDeCajas.addTextChangedListener{
-               preguntarInventario()
+               if(binding.etNumeroDeCajas.text.isNotBlank()) {
+                   preguntarInventario()
+               }
            }
            binding.etArticulosPorCaja.addTextChangedListener {
-               preguntarInventario()
+               if(binding.etArticulosPorCaja.text.isNotBlank()) {
+                   preguntarInventario()
+               }
            }
 
 
@@ -295,16 +300,17 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
     }
 
     val opcionesList = mutableListOf<String>()
-    private fun ListaDesplegableElegirProducto() {
+
+    private fun ListaDesplegableElegirProducto(){
         val queue1 = Volley.newRequestQueue(requireContext())
-        val url1 ="http://186.64.123.248/Transferencia/elegirProducto.php"
-        val jsonObjectRequest1 = JsonObjectRequest(
-            Request.Method.GET,url1, null,
+        val url1 ="http://186.64.123.248/Transferencia/elegirProductoCantidad.php"
+        val jsonObjectRequest = object : StringRequest(
+            Request.Method.POST, url1,
             { response ->
                 // Obtén el array de opciones desde el objeto JSON
-                val jsonArray = response.getJSONArray("Lista")
+                val jsonArray = JSONObject(response).getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                for (i in 0 until jsonArray.length()) {
+                for (i in 0..<jsonArray.length()) {
                     opcionesList.add(jsonArray.getString(i).replace("'",""))
                 }
                 //Crea un adpatador para el dropdown
@@ -325,11 +331,17 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                         }
                     }, 300)
                 }
-            }, { error ->
+            },
+            { error ->
                 Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+            }) {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ALMACEN_ORIGEN", sharedViewModel.almacen)
+                return parametros
             }
-        )
-        queue1.add(jsonObjectRequest1)
+        }
+        queue1.add(jsonObjectRequest)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -545,11 +557,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                 }
             },
             { error ->
-                Toast.makeText(
-                    requireContext(),
-                    "El error es $error",
-                    Toast.LENGTH_LONG
-                ).show()
+              //  Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_LONG).show()
                 Log.i("Sebastián", "$error")
             }) {
             override fun getParams(): MutableMap<String, String> {

@@ -14,8 +14,7 @@ class AlertasAlmacenesAdapter(var alertasAlmacenesList:
                               private val sharedViewModel: SharedViewModel,
                               private val onCheckBoxClickListener: OnCheckBoxClickListener,
                               // private val textChangeListener: (String,Int) -> Unit,
-                              private val listener: OnTextChangeListener,
-                              private val listener2: OnTextChangeListener2)
+                              private val listener: OnTextChangeListener)
                               : RecyclerView.Adapter<AlertasAlmacenesViewHolder>() {
 
 
@@ -43,7 +42,7 @@ class AlertasAlmacenesAdapter(var alertasAlmacenesList:
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlertasAlmacenesViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_alert,parent,false)
-        return AlertasAlmacenesViewHolder(view,listener,listener2,sharedViewModel)
+        return AlertasAlmacenesViewHolder(view,listener,sharedViewModel)
     }
     override fun onBindViewHolder(viewholder: AlertasAlmacenesViewHolder, position: Int) {
         val item = alertasAlmacenesList[position]

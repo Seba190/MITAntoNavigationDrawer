@@ -11,13 +11,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvUnidades"
+        <EditText
+            android:id="@+id/etUnidades"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:layout_marginStart="55dp"
-            android:layout_marginTop="18dp"/>
+            android:layout_marginTop="10dp"/>
 
         <TextView
             android:id="@+id/tvUnid"
@@ -26,7 +26,7 @@
             android:textColor="@color/black"
             android:text=" unid. "
             android:layout_marginStart="5dp"
-            android:layout_marginTop="18dp"/>
+            android:layout_marginTop="10dp"/>
 
         <TextView
             android:id="@+id/tvSeparador"
@@ -35,15 +35,15 @@
             android:text="-"
             android:textColor="@color/black"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="18dp"/>
+            android:layout_marginTop="10dp"/>
 
-        <TextView
-            android:id="@+id/tvProducto"
+        <EditText
+            android:id="@+id/etProducto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="18dp"/>
+            android:layout_marginTop="10dp"/>
 
     </LinearLayout>
 

@@ -160,7 +160,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
             PorterDuff.Mode.SRC_ATOP)
 
        // binding.tvAutoCompleteTipoDeProducto.setOnClickListener {
-            ListaDesplegableProducto()
+            ListaDesplegableTipoDeProducto()
         //}
 
         binding.buttonProducto.setOnClickListener {
@@ -228,6 +228,11 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         ///////El dialogo con alertas por almacen////////////
 
         binding.buttonAlerts.setOnClickListener {
+           /* for( i in 0 ..< sharedViewModel.listaDeAlertas.size){
+                if(sharedViewModel.listaDeAlertas[i] == "" && sharedViewModel.listaDeBodegas[i] == "")
+                    sharedViewModel.listaDeAlertas.removeAt(i)
+                    sharedViewModel.listaDeBodegas.removeAt(i)
+            }*/
            checkIfFragmentAttached { val alertasAlmacenesFragment = AlertasAlmacenesFragment()
             parentFragmentManager.beginTransaction()
                 .replace(R.id.rlAnadirProducto,alertasAlmacenesFragment,"tag_añadir_producto")
@@ -256,6 +261,8 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
             findNavController().navigate(R.id.action_nav_añadir_producto_to_nav_camara)
         }
 
+        retrofit = getRetrofit()
+
         sharedViewModel.selectedImage.observe(viewLifecycleOwner) { imageByteArray ->
             binding.ivImageSelectedProducto.setImageBitmap(
                 BitmapFactory.decodeByteArray(
@@ -266,9 +273,6 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                 )
             )
         }
-
-        retrofit = getRetrofit()
-
         requestCamara = registerForActivityResult(ActivityResultContracts.RequestPermission(),){
             if(it){
                 /*val barcodeScanProductoFragment = BarcodeScanProductoFragment()
@@ -546,7 +550,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         queuePrecioVenta.add(jsonObjectRequestPrecioVenta)
     }
 
-    private fun ListaDesplegableProducto() {
+    private fun ListaDesplegableTipoDeProducto() {
         val queue1 = Volley.newRequestQueue(requireContext())
         val url1 ="http://186.64.123.248/Producto/TipoDeProducto.php"
         val jsonObjectRequest1 = JsonObjectRequest(
@@ -825,23 +829,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         }
     }
 
-    private fun clear(){
-        sharedViewModel.listaDeAlertas.clear()
-        sharedViewModel.listaDeBodegas.clear()
-        sharedViewModel.listaDePreciosCompra.clear()
-        sharedViewModel.listaDeProveedores.clear()
-        sharedViewModel.listaDePreciosVenta.clear()
-        sharedViewModel.listaDeClientes.clear()
-        sharedViewModel.ListasDeAlertas.clear()
-        sharedViewModel.ListasDeAlmacenes.clear()
-        sharedViewModel.ListasDeProductosAlertas.clear()
-        sharedViewModel.ListasDePreciosDeCompra.clear()
-        sharedViewModel.ListasDeProveedores.clear()
-        sharedViewModel.ListasDeProductosPrecioCompra.clear()
-        sharedViewModel.ListasDePreciosDeVenta.clear()
-        sharedViewModel.ListasDeClientes.clear()
-        sharedViewModel.ListasDeProductosPrecioVenta.clear()
-    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

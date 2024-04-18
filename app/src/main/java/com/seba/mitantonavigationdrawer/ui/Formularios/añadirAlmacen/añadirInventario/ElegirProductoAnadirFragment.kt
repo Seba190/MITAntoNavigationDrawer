@@ -15,6 +15,7 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -153,7 +154,49 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
     }
 
     val opcionesList = mutableListOf<String>()
-    private fun ListaDesplegableElegirProducto() {
+    private fun ListaDesplegableElegirProducto(){
+        val queue1 = Volley.newRequestQueue(requireContext())
+        val url1 ="http://186.64.123.248/FacturaEntrada/elegirProductoCantidad.php"
+        val jsonObjectRequest = object : StringRequest(
+            Request.Method.POST, url1,
+            { response ->
+                // Obtén el array de opciones desde el objeto JSON
+                val jsonArray = JSONObject(response).getJSONArray("Lista")
+                // Convierte el array JSON a una lista mutable
+                for (i in 0..<jsonArray.length()) {
+                    opcionesList.add(jsonArray.getString(i).replace("'",""))
+                }
+                //Crea un adpatador para el dropdown
+                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
+                //binding.tvholaMundo?.setText(response.getString("Lista"))
+                DropDownProducto?.setAdapter(adapter)
+                DropDownProducto?.onItemClickListener = AdapterView.OnItemClickListener {
+                        parent, view, position, id ->
+                    if(binding.llCajasDeProductoElegirProductoAnadir.isVisible){
+                        precioYCantidad(parent.getItemAtPosition(position).toString())
+                    }
+                }
+                binding.etCodigoDeBarraAnadir.setOnClickListener {
+                    codigoDeBarra()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        if (DropDownProducto?.text.toString() != "Eliga una opción") {
+                            precioYCantidad(DropDownProducto?.text.toString())
+                        }
+                    }, 300)
+                }
+            },
+            { error ->
+                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+            }) {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ALMACEN", sharedViewModel.almacenAnadir)
+                return parametros
+            }
+        }
+        queue1.add(jsonObjectRequest)
+    }
+    /*private fun ListaDesplegableElegirProducto() {
         val queue1 = Volley.newRequestQueue(requireContext())
         val url1 ="http://186.64.123.248/FacturaEntrada/elegirProducto.php"
         val jsonObjectRequest1 = JsonObjectRequest(
@@ -188,7 +231,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
             }
         )
         queue1.add(jsonObjectRequest1)
-    }
+    }*/
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -234,7 +277,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
             override fun getParams(): MutableMap<String, String> {
                 val parametros = HashMap<String, String>()
                 // parametros.put("PRODUCTO", DropDownProducto?.text.toString())
-                parametros.put("PROVEEDOR", sharedViewModel.ListaDeProveedoresAnadir[0])
+                parametros.put("PROVEEDOR", sharedViewModel.proveedorAnadir)
                 parametros.put("PRODUCTO", producto)
                 return parametros
 

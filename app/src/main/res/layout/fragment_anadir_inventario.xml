@@ -650,10 +650,53 @@
                     android:textSize="16sp"
                     android:text="Productos añadidos:"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvElegirProductoAnadir"
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/nsvElegirProductoAnadir"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="180dp"
+                    android:fillViewport="true">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvElegirProductoAnadir"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+
+                    </LinearLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
+                <LinearLayout
+                    android:id="@+id/llMonto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvFacturaTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="5dp"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:text="Factura total: $ "/>
+
+                    <TextView
+                        android:id="@+id/tvMonto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="1dp"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:text="0"/>
+
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/bActualizarRecyclerViewAnadir"

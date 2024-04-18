@@ -9,6 +9,7 @@ import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 class RemoverInventarioAdapter (var listaDeCantidadesRemover: MutableList<String>
                                 , var listaDeProductosRemover: MutableList<String>
                                 , var listaDePreciosRemover: MutableList<String>
+                                , private val sharedViewModel: SharedViewModel
                                 , private val onClickDelete:(Int) -> Unit)
     : RecyclerView.Adapter<RemoverInventarioViewHolder>() {
 
@@ -28,7 +29,7 @@ class RemoverInventarioAdapter (var listaDeCantidadesRemover: MutableList<String
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RemoverInventarioViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_anadir,parent,false)
-        return RemoverInventarioViewHolder(v)
+        return RemoverInventarioViewHolder(v,sharedViewModel)
     }
 
     override fun getItemCount(): Int {

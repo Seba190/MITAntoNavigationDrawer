@@ -8,6 +8,7 @@ import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
 class AnadirTransferenciaAdapter (var listaDeCantidades: MutableList<String>
 ,var listaDeProductos: MutableList<String>
+, private val sharedViewModel: SharedViewModel
 ,private val onClickDelete:(Int) -> Unit)
     : RecyclerView.Adapter<AnadirTransferenciaViewHolder>() {
 
@@ -25,7 +26,7 @@ class AnadirTransferenciaAdapter (var listaDeCantidades: MutableList<String>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AnadirTransferenciaViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.item_elegir_producto,parent,false)
-        return AnadirTransferenciaViewHolder(v)
+        return AnadirTransferenciaViewHolder(v,sharedViewModel)
     }
 
     override fun getItemCount(): Int {
@@ -35,8 +36,15 @@ class AnadirTransferenciaAdapter (var listaDeCantidades: MutableList<String>
     override fun onBindViewHolder(holder: AnadirTransferenciaViewHolder, position: Int) {
         val itemCantidad = listaDeCantidades[position]
         val itemProducto = listaDeProductos[position]
-        holder.bind(itemCantidad,itemProducto,onClickDelete)
+        holder.bind(itemCantidad,itemProducto,position,onClickDelete)
 
+    }
+    fun getDataProductoAtPosition(position: Int): String {
+        return listaDeProductos[position]
+    }
+
+    fun getDataCantidadAtPosition(position: Int): String {
+        return listaDeCantidades[position]
     }
 
 

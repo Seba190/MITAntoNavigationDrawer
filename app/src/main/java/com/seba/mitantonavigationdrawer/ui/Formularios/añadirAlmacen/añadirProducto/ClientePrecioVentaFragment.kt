@@ -142,7 +142,7 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
         TODO("Not yet implemented")
     }
 
-    override fun afterTextChange(text: String, viewHolder: ClientePrecioVentaViewHolder) {
+    override fun afterTextChange(text: String, viewHolder: ClientePrecioVentaViewHolder,position: Int) {
         if (!binding.bAgregarCliente.isPressed && text.isNotEmpty()){
             Toast.makeText(requireContext(), "Se he agregado el precio de venta", Toast.LENGTH_SHORT).show()
             sharedViewModel.listaDePreciosVenta.add(text)
@@ -150,15 +150,15 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
         else if (!binding.bAgregarCliente.isPressed && text.isEmpty() && sharedViewModel.listaDePreciosVenta.isNotEmpty() &&
             sharedViewModel.listaDeClientes.isNotEmpty()){
             Toast.makeText(requireContext(), "Se ha eliminado el precio de venta", Toast.LENGTH_SHORT).show()
-            sharedViewModel.listaDePreciosVenta.remove(sharedViewModel.listaDePreciosVenta[viewHolder.adapterPosition])
-            sharedViewModel.listaDeClientes.remove(sharedViewModel.listaDeClientes[viewHolder.adapterPosition])
+            sharedViewModel.listaDePreciosVenta.removeAt(position)
+            sharedViewModel.listaDeClientes.removeAt(position)
         }
         binding.bAgregarCliente.setOnClickListener {
             if (sharedViewModel.listaDePreciosVenta.size > 0) {
                 for (i in 0..<sharedViewModel.listaDePreciosVenta.size) {
                     setFragmentResult("PreciosVentaClientes$i", bundleOf("Clientes$i" to sharedViewModel.listaDeClientes[i], "PreciosDeVenta$i" to sharedViewModel.listaDePreciosVenta[i]))
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente los clientes y los precios de venta", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de venta", Toast.LENGTH_LONG).show()
                 binding.rlPrecioVentaClientes.isVisible = false
                 val anadirProductoFragment = AnadirProductoFragment()
                 parentFragmentManager.beginTransaction()

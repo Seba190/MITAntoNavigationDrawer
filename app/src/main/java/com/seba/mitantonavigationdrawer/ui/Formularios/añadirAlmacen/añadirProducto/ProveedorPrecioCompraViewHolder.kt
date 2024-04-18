@@ -29,12 +29,11 @@ class ProveedorPrecioCompraViewHolder(view: View, private val listener: OnTextCh
                 var onFocusChanged = false
                 binding.etPrecioCompra.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
                     val texto = s.toString()
-                    if(!onFocusChanged && !hasFocus){
-                        // valoresDelRecyclerView.add(adapterPosition, s.toString())
-                        // textChangeListener?.invoke(s.toString(),adapterPosition)
-                        listener.afterTextChange(texto, this@ProveedorPrecioCompraViewHolder)
-                        onFocusChanged = true
-
+                    for (i in 0..<100) {
+                        if (!onFocusChanged && !hasFocus) {
+                            listener.afterTextChange(texto, this@ProveedorPrecioCompraViewHolder,i)
+                            onFocusChanged = true
+                        }
                     }
                 }
             }
