@@ -5,7 +5,7 @@ import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirPro
 interface OnTextChangeListener {
 
    // fun onEditTextValueChanged(position: Int, value: String ,viewHolder: AlertasAlmacenesViewHolder)
-    fun afterTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder ,position: Int)
+    fun afterTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder)
     fun getAllItems(): List<AlertasAlmacenesItemResponse>
 
    // fun obtenerListaEnPosicion(position: Int): List<String>

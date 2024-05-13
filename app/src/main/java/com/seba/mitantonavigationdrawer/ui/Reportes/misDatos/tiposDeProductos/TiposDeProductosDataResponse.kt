@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class TiposDeProductosDataResponse (
     @SerializedName("Respuesta")  val Respuesta: String,
-    @SerializedName("TiposDeProductos")  val TiposDeProductos: List<TiposDeProductosItemResponse>,
+    @SerializedName("Tipos De Productos")  val TiposDeProductos: List<TiposDeProductosItemResponse>,
 )
 data class TiposDeProductosItemResponse(
     @SerializedName("Id")  val Id: String,

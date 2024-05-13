@@ -40,6 +40,9 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.SocketTimeoutException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario) {
@@ -99,7 +102,12 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
        // searchByName()
 
         binding.FacturaSalidaButtonEnviar.setOnClickListener {
-            ValidacionesIdInsertarDatos()
+            if(sharedViewModel.listaDeCantidadesRemover.size > 0 && sharedViewModel.listaDeProductosRemover.size > 0 && sharedViewModel.listaDePreciosRemover.size >0) {
+                ValidacionesIdInsertarDatos()
+            }
+            else{
+                Toast.makeText(requireContext(),"Debe elegir al menos un producto para remover inventario", Toast.LENGTH_LONG).show()
+            }
         }
 
         binding.tvProductosAnadidosRemover.isVisible = false
@@ -148,6 +156,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         binding.ivTrashSalida.setOnClickListener {
             binding.llProductosSalida.isVisible = false
         }*/
+        binding.etFacturaSalidaFechaTransaccion.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time))
         return root
     }
 

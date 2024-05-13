@@ -7,6 +7,18 @@
             android:id="@+id/nav_inicio"
             android:icon="@drawable/ic_house"
             android:title="@string/menu_inicio" />
+        <item
+            android:id="@+id/nav_mis_datos"
+            android:icon="@drawable/ic_my_data"
+            android:title="@string/menu_mis_datos" />
+        <item
+            android:id="@+id/nav_mis_transacciones"
+            android:icon="@drawable/ic_add_transactions"
+            android:title="@string/menu_mis_transacciones" />
+        <item
+            android:id="@+id/nav_mis_transferencias"
+            android:icon="@drawable/ic_add_transfer"
+            android:title="@string/menu_mis_transferencias" />
     </group>
     <item android:title="@string/title_data">
         <menu>
@@ -34,13 +46,10 @@
     </group>
         </menu>
     </item>
+    <!--
     <item android:title="@string/title_statistics">
         <menu>
             <group>
-                <item
-                    android:id="@+id/nav_mis_datos"
-                    android:icon="@drawable/ic_my_data"
-                    android:title="@string/menu_mis_datos" />
                 <item
                     android:id="@+id/nav_statistics"
                     android:icon="@drawable/ic_statistics"
@@ -51,5 +60,5 @@
                     android:title="@string/menu_preferencias" />
             </group>
         </menu>
-    </item>
+    </item>-->
 </menu>

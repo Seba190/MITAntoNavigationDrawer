@@ -150,7 +150,46 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/color_list"
                     android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tvEstadoProveedorEditar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginVertical="30dp"
+                    android:text="@string/title_proveedor_editar"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioGroup
+                        android:id="@+id/radioGroupEstadoProveedor"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/EstadoProveedorRadioButton1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="30dp"
+                            android:text="Vigente" />
+
+                        <RadioButton
+                            android:id="@+id/EstadoProveedorRadioButton2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No vigente" />
+                    </RadioGroup>
+
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/buttonProveedor"

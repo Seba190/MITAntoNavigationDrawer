@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,7 +25,7 @@ import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArg
 import org.json.JSONObject
 
 
-class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor) {
+class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),RadioGroup.OnCheckedChangeListener {
     companion object {
         const val EXTRA_ID = "extra_id"
     }
@@ -39,7 +41,10 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor) {
     var TextRut: EditText? = null
     var TextCorreo: EditText? = null
     var TextTelefono: EditText? = null
-    val TextEstado: Int = 1
+    var TextEstado: Int = 1
+    var radioGroup: RadioGroup? = null
+    var radio1: RadioButton? = null
+    var radio2: RadioButton? = null
     //var TextId: EditText? = null
 
     override fun onCreateView(
@@ -58,6 +63,10 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor) {
         TextRut = binding.etRutProveedor.findViewById(R.id.etRutProveedor)
         TextCorreo = binding.etCorreoProveedor.findViewById(R.id.etCorreoProveedor)
         TextTelefono = binding.etTelefonoProveedor.findViewById(R.id.etTelefonoProveedor)
+        radio1 = binding.EstadoProveedorRadioButton1.findViewById(R.id.EstadoProveedorRadioButton1)
+        radio2 = binding.EstadoProveedorRadioButton2.findViewById(R.id.EstadoProveedorRadioButton2)
+        radioGroup = binding.radioGroupEstadoProveedor.findViewById(R.id.radioGroupEstadoProveedor)
+        radioGroup?.setOnCheckedChangeListener(this)
 
         binding.etNombreProveedor.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
@@ -102,6 +111,12 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor) {
                 TextCorreo?.setText(response.getString("CORREO_PROVEEDOR"))
                 TextTelefono?.setText(response.getString("TELEFONO_PROVEEDOR"))
                 TextDireccion?.setText(response.getString("DIRECCION_PROVEEDOR"))
+                TextEstado = response.getString("ESTADO_PROVEEDOR").toInt()
+                if (TextEstado == 1) {
+                    radio1?.isChecked = true
+                } else if (TextEstado == 0) {
+                    radio2?.isChecked = true
+                }
 
             }, { error ->
                 Toast.makeText(requireContext(), "El id es $id", Toast.LENGTH_LONG).show()
@@ -109,10 +124,7 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor) {
         )
         queue1.add(jsonObjectRequest1)
     }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+
     private fun borrarRegistros(){
         val url = "http://186.64.123.248/Reportes/Proveedores/borrar.php"
         val queue = Volley.newRequestQueue(requireContext())
@@ -245,6 +257,18 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor) {
             }
         }
         queue.add(jsonObjectRequest)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+        when(checkedId){
+            radio1?.id -> TextEstado = 1
+            radio2?.id -> TextEstado = 0
+        }
     }
 
 }

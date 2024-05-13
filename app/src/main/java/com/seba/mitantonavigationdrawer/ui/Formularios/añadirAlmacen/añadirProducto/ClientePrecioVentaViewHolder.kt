@@ -3,6 +3,7 @@ package com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirPr
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
@@ -32,14 +33,12 @@ class ClientePrecioVentaViewHolder(itemView: View, private val listener: OnTextC
                 var onFocusChanged = false
                 binding.etPrecioVenta.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
                     val texto = s.toString()
-                    for (i in 0..<100) {
                         if (!onFocusChanged && !hasFocus) {
-                            listener.afterTextChange(texto, this@ClientePrecioVentaViewHolder,i)
+                            listener.afterTextChange(texto, this@ClientePrecioVentaViewHolder)
                             onFocusChanged = true
                         }
                     }
                 }
-            }
         })
 
     }
@@ -52,10 +51,10 @@ class ClientePrecioVentaViewHolder(itemView: View, private val listener: OnTextC
             binding.etPrecioVenta.isEnabled = binding.cbCustomers.isChecked
         }
         for (i in 0..listaAdapter.itemCount) {
-            if (sharedViewModel.listaDeClientes.size > i) {
-                if (sharedViewModel.listaDeClientes.isNotEmpty()) {
-                    if (binding.etPrecioVenta.text.isBlank() && binding.tvCustomers.text.toString() == sharedViewModel.listaDeClientes[i]) {
-                        binding.etPrecioVenta.setText(sharedViewModel.listaDePreciosVenta[i])
+            if (sharedViewModel.listaDeClientesAnadir.size > i) {
+                if (sharedViewModel.listaDeClientesAnadir.isNotEmpty()) {
+                    if (binding.etPrecioVenta.text.isBlank() && binding.tvCustomers.text.toString() == sharedViewModel.listaDeClientesAnadir[i]) {
+                        binding.etPrecioVenta.setText(sharedViewModel.listaDePreciosVentaAnadir[i])
                     }
                 }
             } else {
@@ -75,6 +74,11 @@ class ClientePrecioVentaViewHolder(itemView: View, private val listener: OnTextC
             }
             codeExecuted = true
         }*/
+        if(sharedViewModel.listaDeClientesAnadir.size < listaAdapter.itemCount){
+           sharedViewModel.listaDeClientesAnadir.add("")
+           sharedViewModel.listaDePreciosVentaAnadir.add("")
+        }
+        Log.i("Sebastian", "${sharedViewModel.listaDeClientesAnadir} y ${sharedViewModel.listaDePreciosVentaAnadir}")
     }
     fun simulateButtonClick(){
        // buttonAgregar?.performClick()

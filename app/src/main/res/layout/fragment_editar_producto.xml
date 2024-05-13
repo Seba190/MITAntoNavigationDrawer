@@ -65,7 +65,7 @@
                     android:id="@+id/tvPesoProducto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_peso_producto"
                     android:textColor="@color/black"
@@ -79,6 +79,8 @@
                     android:layout_marginHorizontal="90dp"
                     android:backgroundTint="@color/color_list"
                     android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:hint="@string/placeholder_peso_producto"
                     android:inputType="numberDecimal"
                     android:textColor="@color/black"
@@ -91,7 +93,7 @@
                     android:id="@+id/tvVolumenProducto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_volumen_producto"
                     android:textColor="@color/black"
@@ -106,6 +108,8 @@
                     android:layout_marginHorizontal="90dp"
                     android:backgroundTint="@color/color_list"
                     android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:hint="@string/placeholder_volumen_producto"
                     android:inputType="numberDecimal"
                     android:textColor="@color/black"
@@ -114,10 +118,50 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tvEstadoProductoEditar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_marginVertical="30dp"
+                    android:text="@string/title_estado_producto_editar"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioGroup
+                        android:id="@+id/radioGroupEstadoProducto"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/EstadoProductoRadioButton1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="30dp"
+                            android:text="Vigente" />
+
+                        <RadioButton
+                            android:id="@+id/EstadoProductoRadioButton2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No vigente" />
+                    </RadioGroup>
+
+                </LinearLayout>
+
+
+                <TextView
                     android:id="@+id/tvTipoDeProducto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="120dp"
+                   android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_tipo_producto"
                     android:textColor="@color/black"
@@ -224,6 +268,8 @@
                     android:layout_marginHorizontal="90dp"
                     android:backgroundTint="@color/color_list"
                     android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:hint="@string/placeholder_codigo_barra_producto"
                     android:inputType="text"
                     android:textColor="@color/black"
@@ -250,6 +296,8 @@
                     android:layout_marginHorizontal="90dp"
                     android:backgroundTint="@color/color_list"
                     android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:hint="@string/placeholder_codigo_barra_embalaje"
                     android:inputType="text"
                     android:textColor="@color/black"
@@ -277,6 +325,8 @@
                     android:layout_marginHorizontal="90dp"
                     android:backgroundTint="@color/color_list"
                     android:gravity="center"
+                    android:maxLines="1"
+                    android:singleLine="true"
                     android:hint="@string/placeholder_unidades_embalaje"
                     android:inputType="number"
                     android:textColor="@color/black"
@@ -416,7 +466,7 @@
                 android:orientation="vertical"
                 android:layout_marginStart="25dp"
                 android:layout_marginBottom="30dp"
-                android:background="@color/orange">
+                android:background="@drawable/roundcorner">
 
                 <LinearLayout
                     android:layout_width="wrap_content"

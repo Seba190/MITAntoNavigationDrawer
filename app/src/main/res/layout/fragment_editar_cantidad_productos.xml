@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlEditarCantidadProductos"
+    android:tag="tag_elegir_producto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#80000000"
+    tools:context=".ui.Reportes.misDatos.productos.editarProducto.EditarCantidadProductosFragment">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cvEditarCantidadProductos"
+        android:layout_width="380dp"
+        app:cardCornerRadius="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:layout_marginStart="18dp"
+        app:cardBackgroundColor="@color/cream">
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cream"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvEditarProducto"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/title_editar_cantidad"
+                    android:gravity="center"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <!-- <Button
+                     android:id="@+id/bEscanearCodigoDeBarra"
+                     android:layout_width="150dp"
+                     android:layout_height="80dp"
+                     android:layout_marginVertical="10dp"
+                     android:layout_gravity="center"
+                     android:backgroundTint="@color/light_green"
+                     android:text="@string/button_codigo_de_barra"/>-->
+
+
+
+
+
+                <!--  <Button
+                      android:id="@+id/bAnadirParametros"
+                      android:layout_width="wrap_content"
+                      android:layout_height="match_parent"
+                      android:layout_gravity="center"
+                      android:layout_marginTop="15dp"
+                      android:layout_marginBottom="15dp"
+                      android:backgroundTint="@color/light_green"
+                      android:text="Añadir unidades de embalaje" /> -->
+
+                <LinearLayout
+                    android:id="@+id/llUnidadesElegirProducto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/bmenosEditarProducto"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_marginStart="60dp"
+                            android:layout_marginTop="20dp"
+                            android:backgroundTint="@color/light_green"
+                            android:contentDescription="Menos"
+                            android:src="@drawable/ic_remove" />
+
+                        <EditText
+                            android:id="@+id/etEditarCantidadProducto"
+                            android:layout_width="150dp"
+                            android:gravity="center"
+                            android:cursorVisible="true"
+                            android:focusable="true"
+                            android:hint="Unidades"
+                            android:textColorHint="@color/color_list"
+                            android:inputType="number"
+                            android:textColor="@color/black"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="20dp"/>
+
+                        <ImageButton
+                            android:id="@+id/bmasEditarProducto"
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_marginStart="15dp"
+                            android:layout_marginTop="20dp"
+                            android:backgroundTint="@color/light_green"
+                            android:contentDescription="Mas"
+                            android:src="@drawable/ic_add" />
+
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/bCambiarProducto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/orange"
+                        android:layout_marginVertical="20dp"
+                        android:layout_gravity="center"
+                        android:text="@string/button_change"/>
+
+                </LinearLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>
+
+

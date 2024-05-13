@@ -43,7 +43,9 @@ import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.Almacenes
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONArray
 import org.json.JSONObject
-
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferencia) {
@@ -193,8 +195,9 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 }
                 segundaVez = true
             }*/
-            preguntarInventario()
-            Handler(Looper.getMainLooper()).postDelayed({
+            if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
+              ValidacionesIdInsertarDatos()
+              Handler(Looper.getMainLooper()).postDelayed({
                 for (i in 0..<sharedViewModel.listaDeCantidades.size) {
                     if(sharedViewModel.listaDeCantidadesAntigua[i] != sharedViewModel.listaDeCantidades[i]){
                         sharedViewModel.listaDeCantidadesAntigua[i] = sharedViewModel.listaDeCantidades[i]
@@ -204,6 +207,9 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                     }
                 }
             }, 500)
+            }else{
+                Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
+            }
 
         }
 
@@ -251,8 +257,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 }
                 segundaVez = true
             }
-
-            preguntarInventario()
+            //preguntarInventario()
             Handler(Looper.getMainLooper()).postDelayed({
                 for (i in 0..<sharedViewModel.listaDeCantidades.size) {
                     if(sharedViewModel.listaDeCantidadesAntigua[i] != sharedViewModel.listaDeCantidades[i]){
@@ -269,7 +274,9 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}")*/
 
         }
+        binding.tvProductosAnadidos.isVisible = sharedViewModel.listaDeCantidades.isNotEmpty()
 
+        binding.etFechaTransferencia.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
         return root
     }
 
@@ -399,8 +406,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                         Handler(Looper.getMainLooper()).postDelayed({
                                             modificarInventario()
                                         }, 5000)
-                                        binding.tvProductosAnadidos.isVisible =
-                                            !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
+                                        binding.tvProductosAnadidos.isVisible = !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
                                     }
 
                                 Toast.makeText(
@@ -419,20 +425,11 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                             override fun getParams(): MutableMap<String, String> {
                                 val parametros = HashMap<String, String>()
                                 parametros.put("ID_TRANSFERENCIA", id.toString())
-                                parametros.put(
-                                    "TRANSFERENCIA",
-                                    TextNombre?.text.toString().uppercase()
-                                )
-                                parametros.put(
-                                    "FECHA_TRANSFERENCIA",
-                                    TextFecha?.text.toString().uppercase()
-                                )
+                                parametros.put("TRANSFERENCIA", TextNombre?.text.toString().uppercase())
+                                parametros.put("FECHA_TRANSFERENCIA", TextFecha?.text.toString().uppercase())
                                 parametros.put("ALMACEN_ORIGEN", DropDownOrigen?.text.toString())
                                 parametros.put("ALMACEN_DESTINO", DropDownDestino?.text.toString())
-                                parametros.put(
-                                    "COMENTARIOS",
-                                    TextComentarios?.text.toString().uppercase()
-                                )
+                                parametros.put("COMENTARIOS", TextComentarios?.text.toString().uppercase())
                                 /* parametros.put("NUMERO_DE_PRODUCTOS",sharedViewModel.listaDeProductos.size.toString())
                                 for (i in 0..<sharedViewModel.listaDeProductos.size) {
                                     parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
@@ -570,12 +567,13 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                     Toast.LENGTH_SHORT
                 ).show()
                 TextNombre?.setText("")
-                TextFecha?.setText("")
+                TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
                 DropDownOrigen?.setText("Eliga una opción", false)
                 DropDownDestino?.setText("Eliga una opción", false)
                 TextComentarios?.setText("")
                 sharedViewModel.listaDeCantidades.removeAll(sharedViewModel.listaDeCantidades)
                 sharedViewModel.listaDeProductos.removeAll(sharedViewModel.listaDeProductos)
+                sharedViewModel.listaDeProductosAntigua.removeAll(sharedViewModel.listaDeProductosAntigua)
                 adapter.notifyDataSetChanged()
                 binding.rvElegirProducto.requestLayout()
                 binding.tvProductosAnadidos.isVisible = false
@@ -701,13 +699,17 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                              Log.i("Sebastian", "Mensaje 2")
                                          }
                                     else {
-                                            Log.i("Sebastian", "Mensaje 6")
-                                            binding.TransferenciaButtonEnviar.setOnTouchListener { _, motionEvent ->
-                                                if (motionEvent.action == MotionEvent.ACTION_DOWN) {
-                                                    ValidacionesIdInsertarDatos()
-                                                }
-                                                return@setOnTouchListener false
-                                            }
+                                        Log.i("Sebastian", "Mensaje 6")
+                                         //binding.TransferenciaButtonEnviar.setOnTouchListener { _, motionEvent ->
+                                         //  if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                                         if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
+                                             ValidacionesIdInsertarDatos()
+                                         }else{
+                                             Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
+                                         }
+                                            //   }
+                                            //    return@setOnTouchListener false
+                                          //  }
                                      }
                                 Log.i(
                                     "Sebastian",
@@ -809,12 +811,17 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 }
             }, { error ->
                 Log.i("Sebastian", "Mensaje 5")
-                binding.TransferenciaButtonEnviar.setOnTouchListener { _ , motionEvent ->
-                    if(motionEvent.action == MotionEvent.ACTION_DOWN) {
-                        ValidacionesIdInsertarDatos()
-                    }
-                    return@setOnTouchListener false
+
+              //  binding.TransferenciaButtonEnviar.setOnTouchListener { _ , motionEvent ->
+              //      if(motionEvent.action == MotionEvent.ACTION_DOWN) {
+                if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
+                    ValidacionesIdInsertarDatos()
+                }else{
+                    Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
                 }
+             //       }
+             //       return@setOnTouchListener false
+              //  }
                // Toast.makeText(requireContext(),"Aquí esta el error de la api validacionProductos",Toast.LENGTH_LONG).show()
             }) {
             // Ejemplo: "PRODUCTO" :***AGUA CON GAS**

@@ -76,6 +76,8 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
             obtenerPreciosCompra()
             segundaVez = true
         }
+
+        Log.i("Sebastian", "${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDeProveedores}")
     }
     private fun obtenerPrecioCompra(proveedor: String, position: Int){
         val queue1 = Volley.newRequestQueue(itemView.context)
@@ -90,9 +92,8 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
                /* if(sharedViewModel.listaDePreciosCompra.lastIndexOf("") != -1){
                     sharedViewModel.listaDePreciosCompra.removeAt(sharedViewModel.listaDePreciosCompra.lastIndexOf(""))
                 }*/
-                Toast.makeText(itemView.context,"${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDeProveedores}",
-                    Toast.LENGTH_LONG).show()
-                Log.i("Sebastian", "${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDeProveedores}")
+                //Toast.makeText(itemView.context,"${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDeProveedores}",
+                //    Toast.LENGTH_LONG).show()
             },
             { error ->
                 //Toast.makeText(itemView.context, "$error", Toast.LENGTH_LONG).show()
@@ -111,6 +112,7 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
         queue1.add(stringRequest)
     }
 
+    var segundaVez2 = false
     private fun obtenerPreciosCompra() {
         val queue1 = Volley.newRequestQueue(itemView.context)
         val url1 ="http://186.64.123.248/Reportes/Productos/proveedorPreciosCompra.php"
@@ -121,8 +123,15 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
                 for (i in 0 until jsonArray.length()) {
                     sharedViewModel.proveedoresList.add(jsonArray.getString(i))
                 }
-                sharedViewModel.listaDePreciosCompra.add("")
-                sharedViewModel.listaDeProveedores = sharedViewModel.proveedoresList.toSet().toMutableList()
+
+
+                    sharedViewModel.listaDeProveedores = sharedViewModel.proveedoresList.toSet().toMutableList()
+                if(sharedViewModel.listaDePreciosCompra.size < sharedViewModel.listaDeProveedores.size){
+                    sharedViewModel.listaDePreciosCompra.add("")
+                }
+                //if(sharedViewModel.listaDePreciosCompra.size > sharedViewModel.listaDeProveedores.size){
+                 //   sharedViewModel.listaDePreciosCompra.dropLast(sharedViewModel.listaDePreciosCompra.size - sharedViewModel.listaDeProveedores.size)
+               // }
 
                 for (i in 0..<sharedViewModel.proveedoresList.toSet().size) {
                     if (binding.etPrecioCompra.text.isBlank() && sharedViewModel.listaDeProveedores[i] == binding.tvSuppliers.text.toString() ) {

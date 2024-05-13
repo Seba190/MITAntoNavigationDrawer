@@ -298,6 +298,14 @@
             app:argType="string"
             android:defaultValue="id" />
         </action>
+        <action
+            android:id="@+id/action_nav_mis_datos_to_nav_editar_tipos_de_productos"
+            app:destination="@id/nav_editar_tipos_de_productos">
+            <argument
+                android:name="id"
+                app:argType="string"
+                android:defaultValue="id" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/nav_almacenes"
@@ -391,6 +399,27 @@
         android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.tiposDeProductos.TiposDeProductosFragment"
         android:label="@string/menu_tipos_de_productos"
         tools:layout="@layout/fragment_tipos_de_productos" >
+        <action
+            android:id="@+id/action_nav_tipos_de_productos_to_nav_editar_tipos_de_productos"
+            app:destination="@id/nav_editar_tipos_de_productos" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_editar_tipos_de_productos"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.tiposDeProductos.editarTiposDeProductos.EditarTiposDeProductosFragment"
+        android:label="@string/menu_editar_tipos_de_productos"
+        tools:layout="@layout/fragment_editar_tipos_de_productos" >
+        <action
+            android:id="@+id/action_nav_editar_tipos_de_productos_to_nav_editar_cantidad_tipos_de_productos"
+            app:destination="@id/nav_editar_cantidad_tipos_de_productos" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_editar_cantidad_tipos_de_productos"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.tiposDeProductos.editarTiposDeProductos.EditarCantidadTiposDeProductosFragment"
+        android:label="@string/menu_editar_cantidad_tipos_de_productos"
+        tools:layout="@layout/fragment_editar_cantidad_tipos_de_productos">
+        <action
+            android:id="@+id/action_nav_editar_cantidad_tipos_de_productos_to_nav_editar_tipos_de_productos"
+            app:destination="@id/nav_editar_tipos_de_productos" />
     </fragment>
     <fragment
         android:id="@+id/nav_editar_almacen"

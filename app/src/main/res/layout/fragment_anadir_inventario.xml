@@ -185,6 +185,7 @@
                     android:layout_height="100dp"
                     android:layout_marginHorizontal="90dp"
                     android:gravity="top"
+                    android:singleLine="true"
                     android:hint="@string/placeholder_factura_entrada_comentarios"
                     android:inputType="text"
                     android:textSize="15sp"

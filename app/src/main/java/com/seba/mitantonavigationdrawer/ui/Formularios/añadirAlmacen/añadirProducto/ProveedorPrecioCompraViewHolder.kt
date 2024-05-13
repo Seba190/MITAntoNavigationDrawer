@@ -2,6 +2,7 @@ package com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirPr
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -29,11 +30,9 @@ class ProveedorPrecioCompraViewHolder(view: View, private val listener: OnTextCh
                 var onFocusChanged = false
                 binding.etPrecioCompra.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
                     val texto = s.toString()
-                    for (i in 0..<100) {
-                        if (!onFocusChanged && !hasFocus) {
-                            listener.afterTextChange(texto, this@ProveedorPrecioCompraViewHolder,i)
-                            onFocusChanged = true
-                        }
+                    if (!onFocusChanged && !hasFocus) {
+                        listener.afterTextChange(texto, this@ProveedorPrecioCompraViewHolder)
+                        onFocusChanged = true
                     }
                 }
             }
@@ -46,10 +45,10 @@ class ProveedorPrecioCompraViewHolder(view: View, private val listener: OnTextCh
             binding.etPrecioCompra.isEnabled = binding.cbSuppliers.isChecked
         }
         for (i in 0..listaAdapter.itemCount) {
-            if (sharedViewModel.listaDeProveedores.size > i) {
-                if (sharedViewModel.listaDeProveedores.isNotEmpty()) {
-                    if (binding.etPrecioCompra.text.isBlank() && binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedores[i]) {
-                        binding.etPrecioCompra.setText(sharedViewModel.listaDePreciosCompra[i])
+            if (sharedViewModel.listaDeProveedoresAnadir.size > i) {
+                if (sharedViewModel.listaDeProveedoresAnadir.isNotEmpty()) {
+                    if (binding.etPrecioCompra.text.isBlank() && binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedoresAnadir[i]) {
+                        binding.etPrecioCompra.setText(sharedViewModel.listaDePreciosCompraAnadir[i])
                     }
                 }
             } else {
@@ -69,5 +68,11 @@ class ProveedorPrecioCompraViewHolder(view: View, private val listener: OnTextCh
             }
             codeExecuted = true
         }*/
+        if(sharedViewModel.listaDeProveedoresAnadir.size < listaAdapter.itemCount) {
+            sharedViewModel.listaDeProveedoresAnadir.add("")
+            sharedViewModel.listaDePreciosCompraAnadir.add("")
+        }
+
+        Log.i("Sebastian", "${sharedViewModel.listaDeProveedoresAnadir} y ${sharedViewModel.listaDePreciosCompraAnadir}")
     }
 }

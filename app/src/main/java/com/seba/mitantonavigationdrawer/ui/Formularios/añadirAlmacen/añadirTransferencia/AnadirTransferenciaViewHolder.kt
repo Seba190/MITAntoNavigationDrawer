@@ -13,11 +13,11 @@ class AnadirTransferenciaViewHolder(view: View, private val sharedViewModel: Sha
    // val adapter = (view.context as RecyclerView).adapter as AnadirTransferenciaAdapter
    // private val editTextCanidad : EditText = view.findViewById(R.id.etUnidades)
     fun bind(cantidad:String,producto: String, position : Int, onClickDelete: (Int) -> Unit){
-        binding.etUnidades.setText(cantidad)
-        binding.etProducto.setText(producto.substringBefore('(',producto))
+       binding.etUnidades.text = cantidad
+       binding.etProducto.text = producto.substringBefore('(',producto)
         binding.cvTrash.setOnClickListener {
             onClickDelete(adapterPosition)  }
-        var onFocusChanged1 = false
+      /*  var onFocusChanged1 = false
         var onFocusChanged2 = false
         var onFocusChanged3 = false
         var onFocusChanged4 = false
@@ -94,7 +94,7 @@ class AnadirTransferenciaViewHolder(view: View, private val sharedViewModel: Sha
                 Log.i("Sebastian", "Se ha eliminado el producto")
                 onFocusChanged4 = true
             }
-        }
+        }*/
 
     }
 }

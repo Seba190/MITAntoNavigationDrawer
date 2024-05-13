@@ -84,6 +84,7 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
             obtenerClientes()
             segundaVez = true
         }
+        Log.i("Sebastian", "${sharedViewModel.listaDeClientes} y ${sharedViewModel.listaDePreciosVenta}")
     }
     private fun obtenerClientes() {
         val queue1 = Volley.newRequestQueue(itemView.context)
@@ -96,8 +97,11 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
                 for (i in 0 until jsonArray.length()) {
                     sharedViewModel.clientesList.add(jsonArray.getString(i))
                 }
-                sharedViewModel.listaDePreciosVenta.add("")
                 sharedViewModel.listaDeClientes = sharedViewModel.clientesList.toSet().toMutableList()
+
+                if(sharedViewModel.listaDePreciosVenta.size < sharedViewModel.listaDeClientes.size) {
+                    sharedViewModel.listaDePreciosVenta.add("")
+                }
                 for (i in 0..<sharedViewModel.clientesList.toSet().size) {
                     if (binding.etPrecioVenta.text.isBlank() && binding.tvCustomers.text.toString() == sharedViewModel.listaDeClientes[i]) {
                         obtenerCliente(sharedViewModel.listaDeClientes[i],i)
@@ -121,8 +125,8 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
                 val precioVenta = JSONObject(response).getString("PRECIO_VENTA")
                 binding.etPrecioVenta.setText(precioVenta)
                 sharedViewModel.listaDePreciosVenta[position]= precioVenta
-                Toast.makeText(itemView.context,"${sharedViewModel.listaDePreciosVenta} y ${sharedViewModel.listaDeClientes}",Toast.LENGTH_LONG).show()
-                Log.i("Sebastian", "${sharedViewModel.listaDeClientes} y ${sharedViewModel.listaDePreciosVenta}")
+               // Toast.makeText(itemView.context,"${sharedViewModel.listaDePreciosVenta} y ${sharedViewModel.listaDeClientes}",Toast.LENGTH_LONG).show()
+
             },
             { error ->
                 //Toast.makeText(itemView.context, "$error", Toast.LENGTH_LONG).show()

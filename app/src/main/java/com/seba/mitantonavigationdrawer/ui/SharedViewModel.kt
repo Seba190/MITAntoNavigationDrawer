@@ -25,6 +25,13 @@ class SharedViewModel : ViewModel() {
     val listaDePreciosVenta: MutableList<String> = mutableListOf()
     var listaDeClientes : MutableList<String> = mutableListOf()
 
+    val listaDeAlertasAnadir: MutableList<String> = mutableListOf()
+    var listaDeBodegasAnadir : MutableList<String> = mutableListOf()
+    val listaDePreciosCompraAnadir: MutableList<String> = mutableListOf()
+    var listaDeProveedoresAnadir : MutableList<String> = mutableListOf()
+    val listaDePreciosVentaAnadir: MutableList<String> = mutableListOf()
+    var listaDeClientesAnadir : MutableList<String> = mutableListOf()
+
     // Mini formularios añadir productos
      val ListasDeAlmacenes : MutableList<String> = mutableListOf()
      val ListasDeAlertas : MutableList<String> = mutableListOf()
@@ -71,6 +78,14 @@ class SharedViewModel : ViewModel() {
 
     //Elegir producto de formulario añadir transferencia
     var almacen : String = ""
+
+
+    //Editar cantidad tipo de producto
+    val inventario : MutableList<String> = mutableListOf()
+    //Editar cantidad producto
+    val almacenes : MutableList<String> = mutableListOf()
+    //Editar cantidad Almacenes
+    val productos : MutableList<String> = mutableListOf()
 
 }
 

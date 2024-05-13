@@ -3,18 +3,25 @@ package com.seba.mitantonavigationdrawer.ui.inicio
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.fragment.findNavController
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
+import com.seba.mitantonavigationdrawer.databinding.FragmentEditarTiposDeProductosBinding
 import com.seba.mitantonavigationdrawer.databinding.FragmentInicioBinding
 import com.seba.mitantonavigationdrawer.ui.añadirDatos.AnadirDatosFragment
 
@@ -40,15 +47,15 @@ class InicioFragment : Fragment() {
 
       //  _binding = FragmentInicioBinding.inflate(inflater, container, false)
        // val root: View = binding.root
-        val root = inflater.inflate(R.layout.fragment_inicio, container, false)
-        val estadistics = root.findViewById<TextView>(R.id.tvStatistics)
+        _binding = FragmentInicioBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+        //val estadistics = root.findViewById<TextView>(R.id.tvStatistics)
         val addInventory = root.findViewById<CardView>(R.id.cvAddInventory)
         val removeInventory = root.findViewById<CardView>(R.id.cvRemoveInventory)
        // val inicio = root.findViewById<ViewGroup>(R.id.nav_inicio)
-        val currentActivity = activity
-        estadistics.setOnClickListener {
-                findNavController().navigate(R.id.action_nav_inicio_to_nav_statistics)
-            }
+       // estadistics.setOnClickListener {
+         //       findNavController().navigate(R.id.action_nav_inicio_to_nav_statistics)
+          //  }
         addInventory.setOnClickListener {
             findNavController().navigate(R.id.action_nav_inicio_to_nav_añadir_inventario)
         }
@@ -65,8 +72,11 @@ class InicioFragment : Fragment() {
       /*  home.setOnClickListener {
             showFragment()
         }*/
-
-              // Agregar o mostrar el fragmento en el contenedor
+       try {
+           inventarioTotal()
+       }catch(e:Exception){
+           binding.tvAInventoryNumber.text = 0.toString()
+       }
         return root
 
         }
@@ -99,6 +109,25 @@ class InicioFragment : Fragment() {
        //  Navigation.createNavigateOnClickListener(R.id.fragment_estadisticas, null)
         findNavController().navigate(R.id.action_nav_inicio_to_nav_statistics2)
       }*/
+
+    private fun inventarioTotal(){
+        val queue2 = Volley.newRequestQueue(requireContext())
+        val url2 = "http://186.64.123.248/Inicio/inventarioTotal.php"
+        val jsonObjectRequest2 = JsonObjectRequest(
+            Request.Method.GET, url2, null,
+            { response ->
+                try {
+                    val inventario = response.getString("Inventario Total")
+                    binding.tvAInventoryNumber.text = inventario.toString()
+                }catch(e:Exception){
+
+                }
+            },{error ->
+                Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
+
+            } )
+        queue2.add(jsonObjectRequest2)
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

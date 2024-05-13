@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlEditarTiposDeProductos"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.Reportes.misDatos.tiposDeProductos.editarTiposDeProductos.EditarTiposDeProductosFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:longClickable="true"
+            android:orientation="vertical"
+            android:focusableInTouchMode="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+
+            <TextView
+                android:id="@+id/tvNombreTipoDeProductoEditar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_nombre_tipo_de_producto"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etNombreTipoDeProductoEditar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:gravity="center"
+                android:hint="@string/placeholder_nombre_tipo_de_producto"
+                android:inputType="text"
+                android:backgroundTint="@color/color_list"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvEstadoTipoDeProductoEditar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="90dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/title_estado_tipo_de_producto_editar"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioGroup
+                    android:id="@+id/radioGroupEstado"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/EstadoRadioButton1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="30dp"
+                        android:text="Vigente" />
+
+                    <RadioButton
+                        android:id="@+id/EstadoRadioButton2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No vigente" />
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvDescripcionTipoDeProductoEditar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="70dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/textView_descripcion_tipo_de_producto"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+
+            <EditText
+                android:id="@+id/etDescripcionTipoDeProductoEditar"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginHorizontal="90dp"
+                android:hint="@string/placeholder_descripcion_tipo_de_producto"
+                android:backgroundTint="@color/color_list"
+                android:inputType="text"
+                android:gravity="top"
+                android:textColor="@color/black"
+                android:textColorHint="@color/color_list"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/buttonTipoDeProductoEditar"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/light_green"
+                android:layout_marginHorizontal="150dp"
+                android:layout_marginVertical="30dp"
+                android:text="@string/send_cliente" />
+
+            <!-- RecyclerView Productos por tipo de producto -->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvProductos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"/>
+
+            <LinearLayout
+                android:id="@+id/llInventariosDeProducto"
+                android:layout_width="360dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginStart="25dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/roundcorner">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginStart="35dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:text="Producto"
+                        android:textColor="@color/black"
+                        android:paddingEnd="95dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:text="Inventario" />
+
+                </LinearLayout>
+
+                <TableLayout
+                    android:id="@+id/tlInventariosDeProducto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:gravity="center"
+                    android:background="@color/orange">
+
+                </TableLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llExistenciasPorAlmacen"
+                android:layout_width="360dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginStart="25dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/roundcorner">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:text="Almacén"
+                        android:textColor="@color/black"
+                        android:paddingEnd="90dp"
+                        android:layout_marginStart="10dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:text="Inventario" />
+
+                </LinearLayout>
+
+                <TableLayout
+                    android:id="@+id/tlExistenciasPorAlmacen"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:gravity="center"
+                    android:background="@color/orange">
+
+                </TableLayout>
+
+
+            </LinearLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </ScrollView>
+
+    </RelativeLayout>

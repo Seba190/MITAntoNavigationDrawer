@@ -20,6 +20,8 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
@@ -45,6 +47,7 @@ import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirPro
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.ClientePrecioVentaFragment
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.ProveedorPrecioCompraFragment
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.tiposDeProductos.editarTiposDeProductos.EditarCantidadTiposDeProductosFragment
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONObject
 import retrofit2.Retrofit
@@ -53,7 +56,7 @@ import java.io.ByteArrayOutputStream
 import kotlin.Exception
 
 
-class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
+class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),RadioGroup.OnCheckedChangeListener {
     private var _binding: FragmentEditarProductoBinding? = null
     private val args: MisDatosFragmentArgs by navArgs()
     private val binding get() = _binding!!
@@ -75,6 +78,9 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
     var TablaAlmacenes: TableLayout? = null
     var Imagen: ImageView? = null
     var TextEstado :Int = 1
+    var radioGroup: RadioGroup? = null
+    var radio1: RadioButton? = null
+    var radio2: RadioButton? = null
     private var requestCamara: ActivityResultLauncher<String>? = null
     private val sharedViewModel : SharedViewModel by activityViewModels()
     private lateinit var retrofit: Retrofit
@@ -105,6 +111,10 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
         ButtonProducto = binding.buttonProducto.findViewById(R.id.buttonProducto)
         TablaAlmacenes = binding.tablaAlmacenes.findViewById(R.id.tablaAlmacenes)
         TablaAlmacenes?.removeAllViews()
+        radio1 = binding.EstadoProductoRadioButton1.findViewById(R.id.EstadoProductoRadioButton1)
+        radio2 = binding.EstadoProductoRadioButton2.findViewById(R.id.EstadoProductoRadioButton2)
+        radioGroup = binding.radioGroupEstadoProducto.findViewById(R.id.radioGroupEstadoProducto)
+        radioGroup?.setOnCheckedChangeListener(this)
 
 
         TextNombre?.getBackground()?.setColorFilter(getResources().getColor(R.color.color_list),
@@ -317,7 +327,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
         // val id3 = id2?.get(EXTRA_ID)
         //val id4 = almacenesItemResponse.Id
         val url1 = "http://186.64.123.248/Reportes/Productos/registroInsertar.php?ID_PRODUCTO=${sharedViewModel.id.last()}"
-        val jsonObjectRequest1 = JsonObjectRequest(
+         val jsonObjectRequest1 = JsonObjectRequest(
             Request.Method.GET, url1, null,
             { response ->
                 tablaInventario()
@@ -329,11 +339,17 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
                 TextCodigoDeBarraEmbalaje?.setText(response.getString("CODIGO_BARRA_EMBALAJE"))
                 TextUnidadesEmbalaje?.setText(response.getString("UNIDADES_EMBALAJE"))
                 DropwDownTipoDeProducto?.setText(response.getString("TIPO_PRODUCTO"), false)
+                TextEstado = response.getString("ESTADO_PRODUCTO").toInt()
+                if (TextEstado == 1) {
+                    radio1?.isChecked = true
+                } else if (TextEstado == 0) {
+                    radio2?.isChecked = true
+                }
             }, { error ->
                 Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_LONG).show()
             }
         )
-                queue1.add(jsonObjectRequest1)
+        queue1.add(jsonObjectRequest1)
 
          //   segundaVez = true
        // }
@@ -373,7 +389,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Alertas actualizadas exitosamente. El id de ingreso es el número ${args.id} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Alertas actualizadas exitosamente.", Toast.LENGTH_LONG).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
                 //   TextDropdown?.setText("Eliga una opción",false)
@@ -433,7 +449,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Precios de compra actualizados exitosamente. El id de ingreso es el número ${args.id} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Precios de compra actualizados exitosamente.", Toast.LENGTH_LONG).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
                 //   TextDropdown?.setText("Eliga una opción",false)
@@ -494,7 +510,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Precios de venta actualizados exitosamente. El id de ingreso es el número ${args.id} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Precios de venta actualizados exitosamente.", Toast.LENGTH_LONG).show()
                 TextNombre?.setText("")
                 TextPeso?.setText("")
                 TextVolumen?.setText("")
@@ -623,20 +639,110 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
                         tv0.gravity = Gravity.CENTER
                         tv1.gravity = Gravity.CENTER
                         TablaAlmacenes?.addView(registro)
-                    }
+                            registro.findViewById<TableRow>(R.id.trFilaTabla).setOnClickListener {
+                                //  binding.clEditarTiposDeProductos.isVisible = false
+                                sharedViewModel.inventario.add(listaInventario[i])
+                                sharedViewModel.almacenes.add(listaAlmacenes[i])
+                                val editarCantidadProductosFragment =
+                                    EditarCantidadProductosFragment()
+                                parentFragmentManager.beginTransaction()
+                                    .replace(
+                                        R.id.rlAnadirProductoEditar,
+                                        editarCantidadProductosFragment
+                                    )
+                                    .commit()
+                            }
+                        }
+
                 }catch(e:Exception){
-                    binding.llInventario.isVisible = false
+                    val queue2 = Volley.newRequestQueue(requireContext())
+                    val url2 = "http://186.64.123.248/Reportes/Productos/almacenAlertas.php"
+                    val jsonObjectRequest2 = JsonObjectRequest(
+                        Request.Method.GET, url2, null,
+                        { response ->
+                            val almacenes2 = response.getJSONArray("Lista")
+                            val listaAlmacenes2 = mutableListOf<String>()
+                            for (i in (0 until almacenes2.length())) {
+                                listaAlmacenes2.add(almacenes2.getString(i))
+                            }
+                            for (i in (0 until listaAlmacenes2.count())) {
+                                val registro = LayoutInflater.from(requireContext())
+                                    .inflate(R.layout.filas_inventario, null, false)
+                                val tv0 = registro.findViewById<View>(R.id.tv0) as TextView
+                                val tv1 = registro.findViewById<View>(R.id.tv1) as TextView
+                                tv0.text = listaAlmacenes2[i]
+                                tv1.text = "0"
+                                tv0.setTextColor(Color.DKGRAY)
+                                tv1.setTextColor(Color.DKGRAY)
+                                tv0.gravity = Gravity.CENTER
+                                tv1.gravity = Gravity.CENTER
+                                TablaAlmacenes?.addView(registro)
+                                registro.findViewById<TableRow>(R.id.trFilaTabla).setOnClickListener {
+                                    //  binding.clEditarTiposDeProductos.isVisible = false
+                                    sharedViewModel.inventario.add(0.toString())
+                                    sharedViewModel.almacenes.add(listaAlmacenes2[i])
+                                    val editarCantidadProductosFragment =
+                                        EditarCantidadProductosFragment()
+                                    parentFragmentManager.beginTransaction()
+                                        .replace(
+                                            R.id.rlAnadirProductoEditar,
+                                            editarCantidadProductosFragment
+                                        )
+                                        .commit()
+                                }
+                            }
+                        },{error ->
+
+                        } )
+                    queue2.add(jsonObjectRequest2)
                 }
                         //Toast.makeText(requireContext(),"${listaAlmacenes[0][0]} y $listaAlmacenes",Toast.LENGTH_LONG).show()
 
                     }, { error ->
-                       binding.llInventario.isVisible = false
+                val queue3 = Volley.newRequestQueue(requireContext())
+                val url3 = "http://186.64.123.248/Reportes/Productos/almacenAlertas.php"
+                val jsonObjectRequest3 = JsonObjectRequest(
+                    Request.Method.GET, url3, null,
+                    { response ->
+                        val almacenes3 = response.getJSONArray("Lista")
+                        val listaAlmacenes3 = mutableListOf<String>()
+                        for (i in (0 until almacenes3.length())) {
+                            listaAlmacenes3.add(almacenes3.getString(i))
+                        }
+                        for (i in (0 until listaAlmacenes3.count())) {
+                            val registro = LayoutInflater.from(requireContext())
+                                .inflate(R.layout.filas_inventario, null, false)
+                            val tv0 = registro.findViewById<View>(R.id.tv0) as TextView
+                            val tv1 = registro.findViewById<View>(R.id.tv1) as TextView
+                            tv0.text = listaAlmacenes3[i]
+                            tv1.text = "0"
+                            tv0.setTextColor(Color.DKGRAY)
+                            tv1.setTextColor(Color.DKGRAY)
+                            tv0.gravity = Gravity.CENTER
+                            tv1.gravity = Gravity.CENTER
+                            TablaAlmacenes?.addView(registro)
+                            registro.findViewById<TableRow>(R.id.trFilaTabla).setOnClickListener {
+                                //  binding.clEditarTiposDeProductos.isVisible = false
+                                sharedViewModel.inventario.add(tv1.text.toString())
+                                sharedViewModel.almacenes.add(listaAlmacenes3[i])
+                                val editarCantidadProductosFragment =
+                                    EditarCantidadProductosFragment()
+                                parentFragmentManager.beginTransaction()
+                                    .replace(
+                                        R.id.rlAnadirProductoEditar,
+                                        editarCantidadProductosFragment
+                                    )
+                                    .commit()
+                            }
+                        }
+                    },{error ->
+
+                    } )
+                queue3.add(jsonObjectRequest3)
                     }
                 )
-                 queue1.add(jsonObjectRequest1)
+        queue1.add(jsonObjectRequest1)
             }
-
-
 
     private fun insertarProducto2() {
         //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
@@ -749,7 +855,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
             },
             { error ->
             //Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
-            Toast.makeText(requireContext(),"$error",Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(),"Producto agregado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()}",Toast.LENGTH_LONG).show()
             Log.i("Sebastian", "$error")
             //Toast.makeText(requireContext(),"Error $fotoBase64", Toast.LENGTH_LONG).show()
 
@@ -1033,6 +1139,13 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto) {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
         val byteArray = stream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
+    }
+
+    override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+        when(checkedId){
+            radio1?.id -> TextEstado = 1
+            radio2?.id -> TextEstado = 0
+        }
     }
     override fun onDestroyView() {
         super.onDestroyView()

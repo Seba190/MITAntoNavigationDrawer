@@ -107,7 +107,7 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
             obtenerAlertas()
             segundaVez = true
         }
-
+        Log.i("Sebastian", "${sharedViewModel.listaDeBodegas} y ${sharedViewModel.listaDeAlertas}")
     }
 
     private fun obtenerAlertas() {
@@ -121,12 +121,15 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
                     sharedViewModel.almacenesList.add(jsonArray.getString(i))
                 }
 
-                sharedViewModel.listaDeAlertas.add("")
+
                             // sharedViewModel.listaDeBodegas.add(almacenesList[i])
                     /*else if (binding.etAlert.text.isBlank() && binding.tvWarehouse.text.toString() != almacenesList[i]){
                            sharedViewModel.listaDeAlertas.add("")
                     }*/
                 sharedViewModel.listaDeBodegas = sharedViewModel.almacenesList.toSet().toMutableList()
+                if(sharedViewModel.listaDeAlertas.size < sharedViewModel.listaDeBodegas.size){
+                    sharedViewModel.listaDeAlertas.add("")
+                }
                 for (i in 0 ..<sharedViewModel.almacenesList.toSet().size){
                     if (sharedViewModel.listaDeBodegas[i] == binding.tvWarehouse.text.toString() && binding.etAlert.text.isBlank()) {
                         obtenerAlerta(sharedViewModel.listaDeBodegas[i],i)
@@ -164,8 +167,7 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
                /* if(sharedViewModel.listaDeAlertas.lastIndexOf("") != -1){
                     sharedViewModel.listaDeAlertas.removeAt(sharedViewModel.listaDeAlertas.lastIndexOf(""))
                 }*/
-                Toast.makeText(itemView.context,"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
-                Log.i("Sebastian", "${sharedViewModel.listaDeBodegas} y ${sharedViewModel.listaDeAlertas}")
+                //Toast.makeText(itemView.context,"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
             },
             { error ->
                 //Toast.makeText(itemView.context, "$error", Toast.LENGTH_LONG).show()

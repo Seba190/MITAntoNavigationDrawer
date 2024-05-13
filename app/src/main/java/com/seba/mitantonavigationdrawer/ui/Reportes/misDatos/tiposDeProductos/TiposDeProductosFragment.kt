@@ -52,7 +52,7 @@ class TiposDeProductosFragment : Fragment(R.layout.fragment_tipos_de_productos) 
 
     private fun initUI() {
         searchByName()
-        adapter = TiposDeProductosAdapter{navigateToEditarProveedor(it)}
+        adapter = TiposDeProductosAdapter{navigateToEditarTiposDeProductos(it)}
         binding.rvTiposDeProductos.setHasFixedSize(true)
         binding.rvTiposDeProductos.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTiposDeProductos.adapter = adapter
@@ -89,8 +89,8 @@ class TiposDeProductosFragment : Fragment(R.layout.fragment_tipos_de_productos) 
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-    private fun navigateToEditarProveedor(id:String){
-        val action = MisDatosFragmentDirections.actionNavMisDatosToNavEditarProveedor(id = id)
+    private fun navigateToEditarTiposDeProductos(id:String){
+        val action = MisDatosFragmentDirections.actionNavMisDatosToNavEditarTiposDeProductos(id = id)
         findNavController().navigate(action)
     }
 

@@ -48,6 +48,9 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.SocketTimeoutException
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
@@ -111,7 +114,11 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         //searchByName()
 
         binding.FacturaEntradaButtonEnviar.setOnClickListener {
-            ValidacionesIdInsertarDatos()
+            if(sharedViewModel.listaDeCantidadesAnadir.size > 0 && sharedViewModel.listaDeCantidadesAnadir.size>0 && sharedViewModel.listaDePreciosAnadir.size >0) {
+                ValidacionesIdInsertarDatos()
+            }else{
+                Toast.makeText(requireContext(),"Debe elegir al menos un producto para añadir inventario", Toast.LENGTH_LONG).show()
+            }
         }
       /*  binding.llCajasDeProducto.isVisible = false
         binding.bUnidades.setOnClickListener {
@@ -182,7 +189,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
       //  }else{
       //      binding.tvMonto.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
       //  }
-
+      binding.etFechaTransaccion.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time))
         return root
     }
 

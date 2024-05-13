@@ -71,13 +71,28 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
                 .commitNow()
         }
         binding.bPrecioVentaClientesEliminar.setOnClickListener {
-            sharedViewModel.listaDeClientes.clear()
-            sharedViewModel.listaDePreciosVenta.clear()
+            sharedViewModel.listaDeClientesAnadir.clear()
+            sharedViewModel.listaDePreciosVentaAnadir.clear()
             sharedViewModel.ListasDeClientes.clear()
             sharedViewModel.ListasDePreciosDeVenta.clear()
             sharedViewModel.ListasDeProductosPrecioVenta.clear()
             Toast.makeText(requireContext(), "Se han eliminado los precios exitosamente", Toast.LENGTH_LONG).show()
         }
+
+        binding.bAgregarCliente.setOnClickListener {
+            for (i in 0..<sharedViewModel.listaDePreciosVentaAnadir.size) {
+                if(sharedViewModel.listaDePreciosVentaAnadir[i] != "" && sharedViewModel.listaDeClientesAnadir[i] != "") {
+                    setFragmentResult("PreciosVentaClientes$i", bundleOf("Clientes$i" to sharedViewModel.listaDeClientesAnadir[i], "PreciosDeVenta$i" to sharedViewModel.listaDePreciosVentaAnadir[i]))
+                    }
+                }
+                Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de venta", Toast.LENGTH_LONG).show()
+                binding.rlPrecioVentaClientes.isVisible = false
+                val anadirProductoFragment = AnadirProductoFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.rlPrecioVentaClientes, anadirProductoFragment)
+                    .commitNow()
+            }
+
 
         return root
     }
@@ -142,29 +157,19 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
         TODO("Not yet implemented")
     }
 
-    override fun afterTextChange(text: String, viewHolder: ClientePrecioVentaViewHolder,position: Int) {
+    override fun afterTextChange(text: String, viewHolder: ClientePrecioVentaViewHolder) {
         if (!binding.bAgregarCliente.isPressed && text.isNotEmpty()){
             Toast.makeText(requireContext(), "Se he agregado el precio de venta", Toast.LENGTH_SHORT).show()
-            sharedViewModel.listaDePreciosVenta.add(text)
-            sharedViewModel.listaDeClientes.add(adapterPrecioVenta.clientePrecioVentaList[viewHolder.adapterPosition].Nombre)}
-        else if (!binding.bAgregarCliente.isPressed && text.isEmpty() && sharedViewModel.listaDePreciosVenta.isNotEmpty() &&
-            sharedViewModel.listaDeClientes.isNotEmpty()){
+            sharedViewModel.listaDePreciosVentaAnadir[viewHolder.adapterPosition] = text
+            sharedViewModel.listaDeClientesAnadir[viewHolder.adapterPosition] = adapterPrecioVenta.clientePrecioVentaList[viewHolder.adapterPosition].Nombre
+            Log.i("Sebastian", "${sharedViewModel.listaDePreciosVentaAnadir} y ${sharedViewModel.listaDeClientesAnadir}")}
+        else if (!binding.bAgregarCliente.isPressed && text.isEmpty() && sharedViewModel.listaDePreciosVentaAnadir.isNotEmpty() &&
+            sharedViewModel.listaDeClientesAnadir.isNotEmpty()){
             Toast.makeText(requireContext(), "Se ha eliminado el precio de venta", Toast.LENGTH_SHORT).show()
-            sharedViewModel.listaDePreciosVenta.removeAt(position)
-            sharedViewModel.listaDeClientes.removeAt(position)
+            sharedViewModel.listaDePreciosVentaAnadir[viewHolder.adapterPosition] = ""
+            sharedViewModel.listaDeClientesAnadir[viewHolder.adapterPosition] = ""
+            Log.i("Sebastian", "${sharedViewModel.listaDePreciosVentaAnadir} y ${sharedViewModel.listaDeClientesAnadir}")
         }
-        binding.bAgregarCliente.setOnClickListener {
-            if (sharedViewModel.listaDePreciosVenta.size > 0) {
-                for (i in 0..<sharedViewModel.listaDePreciosVenta.size) {
-                    setFragmentResult("PreciosVentaClientes$i", bundleOf("Clientes$i" to sharedViewModel.listaDeClientes[i], "PreciosDeVenta$i" to sharedViewModel.listaDePreciosVenta[i]))
-                }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de venta", Toast.LENGTH_LONG).show()
-                binding.rlPrecioVentaClientes.isVisible = false
-                val anadirProductoFragment = AnadirProductoFragment()
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.rlPrecioVentaClientes, anadirProductoFragment)
-                    .commitNow()
-            }
-        }
+
     }
 }

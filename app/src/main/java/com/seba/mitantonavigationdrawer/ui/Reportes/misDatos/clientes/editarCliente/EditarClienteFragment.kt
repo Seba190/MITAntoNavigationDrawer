@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -23,7 +25,7 @@ import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArg
 import org.json.JSONObject
 
 
-class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente) {
+class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioGroup.OnCheckedChangeListener  {
     companion object {
         const val EXTRA_ID = "extra_id"
     }
@@ -39,7 +41,10 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente) {
     var TextRut: EditText? = null
     var TextCorreo: EditText? = null
     var TextTelefono: EditText? = null
-    val TextEstado: Int = 1
+    var TextEstado: Int = 1
+    var radioGroup: RadioGroup? = null
+    var radio1: RadioButton? = null
+    var radio2: RadioButton? = null
     //var TextId: EditText? = null
 
     override fun onCreateView(
@@ -58,6 +63,10 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente) {
         TextRut = binding.etRutCliente.findViewById(R.id.etRutCliente)
         TextCorreo = binding.etCorreoCliente.findViewById(R.id.etCorreoCliente)
         TextTelefono = binding.etTelefonoCliente.findViewById(R.id.etTelefonoCliente)
+        radio1 = binding.EstadoClienteRadioButton1.findViewById(R.id.EstadoClienteRadioButton1)
+        radio2 = binding.EstadoClienteRadioButton2.findViewById(R.id.EstadoClienteRadioButton2)
+        radioGroup = binding.radioGroupEstadoCliente.findViewById(R.id.radioGroupEstadoCliente)
+        radioGroup?.setOnCheckedChangeListener(this)
 
         binding.etNombreCliente.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
@@ -100,6 +109,12 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente) {
                 TextCorreo?.setText(response.getString("CORREO_CLIENTE"))
                 TextTelefono?.setText(response.getString("TELEFONO_CLIENTE"))
                 TextDireccion?.setText(response.getString("DIRECCION_CLIENTE"))
+                TextEstado = response.getString("ESTADO_CLIENTE").toInt()
+                if (TextEstado == 1) {
+                    radio1?.isChecked = true
+                } else if (TextEstado == 0) {
+                    radio2?.isChecked = true
+                }
             }, { error ->
                 Toast.makeText(requireContext(), "El id es $id", Toast.LENGTH_LONG).show()
             }
@@ -242,6 +257,13 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente) {
             }
         }
         queue.add(jsonObjectRequest)
+    }
+
+    override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
+        when(checkedId){
+            radio1?.id -> TextEstado = 1
+            radio2?.id -> TextEstado = 0
+        }
     }
 
 }

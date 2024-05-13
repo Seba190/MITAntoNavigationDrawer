@@ -2,6 +2,7 @@ package com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirPr
 
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -30,18 +31,14 @@ class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeL
             }
 
             override fun afterTextChanged(s: Editable?) {
-                 var onFocusChanged = false
-                 binding.etAlert.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
-                val texto = s.toString()
-               // if(adapterPosition != RecyclerView.NO_POSITION){
-                //    listener.onEditTextValueChanged(adapterPosition,binding.etAlert.text.toString(), this@AlertasAlmacenesViewHolder)
-               // }
-                     for (i in 0..<100) {
-                         if (!onFocusChanged && !hasFocus) {
-                        listener.afterTextChange(texto, this@AlertasAlmacenesViewHolder,i)
-                        onFocusChanged = true
-                    }
-                }
+                var onFocusChanged = false
+                binding.etAlert.onFocusChangeListener = View.OnFocusChangeListener { v, hasFocus ->
+                    val texto = s.toString()
+                     if (!onFocusChanged && !hasFocus) {
+                         listener.afterTextChange(texto, this@AlertasAlmacenesViewHolder)
+                         onFocusChanged = true
+                     }
+
                        // if (binding.etAlert.text.isNotEmpty()) {
                             // valoresDelRecyclerView.add(adapterPosition, s.toString())
                             // textChangeListener?.invoke(s.toString(),adapterPosition)
@@ -64,10 +61,10 @@ class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeL
             binding.etAlert.isEnabled = binding.cbWarehouse.isChecked
         }
         for (i in 0..listaAdapter.itemCount) {
-            if (sharedViewModel.listaDeAlertas.isNotEmpty()) {
-                if (sharedViewModel.listaDeAlertas.size > i) {
-                    if (binding.etAlert.text.isBlank() && binding.tvWarehouse.text.toString() == sharedViewModel.listaDeBodegas[i]) {
-                        binding.etAlert.setText(sharedViewModel.listaDeAlertas[i])
+            if (sharedViewModel.listaDeAlertasAnadir.isNotEmpty()) {
+                if (sharedViewModel.listaDeAlertasAnadir.size > i) {
+                    if (binding.etAlert.text.isBlank() && binding.tvWarehouse.text.toString() == sharedViewModel.listaDeBodegasAnadir[i]) {
+                        binding.etAlert.setText(sharedViewModel.listaDeAlertasAnadir[i])
                     }
                 }else {
                     break
@@ -87,5 +84,11 @@ class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeL
             }
             codeExecuted = true
         }*/
+        if(sharedViewModel.listaDeBodegasAnadir.size < listaAdapter.itemCount) {
+            sharedViewModel.listaDeBodegasAnadir.add("")
+            sharedViewModel.listaDeAlertasAnadir.add("")
+        }
+
+        Log.i("Sebastian", "${sharedViewModel.listaDeBodegasAnadir} y ${sharedViewModel.listaDeAlertasAnadir}")
     }
 }
