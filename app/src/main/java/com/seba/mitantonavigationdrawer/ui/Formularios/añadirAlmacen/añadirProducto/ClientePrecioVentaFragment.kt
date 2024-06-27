@@ -80,12 +80,15 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
         }
 
         binding.bAgregarCliente.setOnClickListener {
+            if(!sharedViewModel.listaDePreciosVentaAnadir.all { it.isBlank() }){
             for (i in 0..<sharedViewModel.listaDePreciosVentaAnadir.size) {
                 if(sharedViewModel.listaDePreciosVentaAnadir[i] != "" && sharedViewModel.listaDeClientesAnadir[i] != "") {
                     setFragmentResult("PreciosVentaClientes$i", bundleOf("Clientes$i" to sharedViewModel.listaDeClientesAnadir[i], "PreciosDeVenta$i" to sharedViewModel.listaDePreciosVentaAnadir[i]))
                     }
                 }
                 Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de venta", Toast.LENGTH_LONG).show()
+            }
+
                 binding.rlPrecioVentaClientes.isVisible = false
                 val anadirProductoFragment = AnadirProductoFragment()
                 parentFragmentManager.beginTransaction()

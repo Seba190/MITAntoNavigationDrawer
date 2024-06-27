@@ -36,9 +36,9 @@
 
                 <TextView
                     android:id="@+id/tvCategoryNamePrecioCompraEditar"
-                    android:layout_width="250dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="55dp"
+                    android:gravity="center"
                     android:layout_marginVertical="10dp"
                     android:text="@string/title_suppliers_buy_price"
                     android:textAllCaps="true"

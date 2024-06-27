@@ -13,6 +13,7 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.android.volley.Request
@@ -22,6 +23,7 @@ import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentEditarProveedorBinding
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONObject
 
 
@@ -32,6 +34,7 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
 
     private var _binding: FragmentEditarProveedorBinding? = null
     private val args: MisDatosFragmentArgs by navArgs()
+    private val sharedViewModel : SharedViewModel by activityViewModels()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -81,15 +84,53 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
 
         //   Mostrar los usuarios responsables en la lista desplegable
         binding.buttonProveedor.setOnClickListener {
-            borrarRegistros()
+          /*  borrarRegistros()
             Handler(Looper.getMainLooper()).postDelayed({
                 actualizarRegistros()
-            },500)
-
-
-
+            },500)*/
+            actualizarProveedor()
+        }
+        try {
+            sharedViewModel.id.add(args.id)
+        }
+        catch(e:Exception){
         }
         return root
+    }
+
+    private fun actualizarProveedor() {
+        val url1 = "http://186.64.123.248/Reportes/Proveedores/actualizarProveedor.php"
+        val queue1 =Volley.newRequestQueue(requireContext())
+        val stringRequest = object: StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+                Toast.makeText(requireContext(), "Proveedor actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
+                //   TextNombre?.setText("")
+                //   TextDireccion?.setText("")
+                //   TextDropdown?.setText("Eliga una opción",false)
+            },
+            { error ->
+                Log.i("Sebastian","Error: $error")
+                Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+            }
+        )
+
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_PROVEEDOR", sharedViewModel.id.last())
+                parametros.put("PROVEEDOR", TextNombre?.text.toString().uppercase())
+                parametros.put("RUT_PROVEEDOR", TextRut?.text.toString())
+                parametros.put("CORREO_PROVEEDOR", TextCorreo?.text.toString())
+                parametros.put("TELEFONO_PROVEEDOR", TextTelefono?.text.toString())
+                parametros.put("DIRECCION_PROVEEDOR", TextDireccion?.text.toString().uppercase())
+                parametros.put("ESTADO_PROVEEDOR", TextEstado.toString())
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
     }
 
 
@@ -97,12 +138,12 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
         super.onViewCreated(view, savedInstanceState)
         val queue1 = Volley.newRequestQueue(requireContext())
         //val id = arguments?.getString(EXTRA_ID).toString()
-        val id = args.id
-        Log.i("Sebastian", "Valor de Id de destino es: $id")
+        //val id = args.id
+        Log.i("Sebastian", "Valor de Id de destino es: ${sharedViewModel.id.last()}")
         //  val id2 = this.arguments
         // val id3 = id2?.get(EXTRA_ID)
         //val id4 = almacenesItemResponse.Id
-        val url1 = "http://186.64.123.248/Reportes/Proveedores/registroInsertar.php?ID_PROVEEDOR=$id"
+        val url1 = "http://186.64.123.248/Reportes/Proveedores/registroInsertar.php?ID_PROVEEDOR=${sharedViewModel.id.last()}"
         val jsonObjectRequest1 = JsonObjectRequest(
             Request.Method.GET, url1, null,
             { response ->

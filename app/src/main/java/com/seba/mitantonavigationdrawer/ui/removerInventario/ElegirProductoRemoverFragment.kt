@@ -127,6 +127,7 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                                         )
                                         binding.etCantidadRemover.setText("")
                                         binding.etPrecioRemover.setText("")
+                                        sharedViewModel.opcionesListRemover.removeAll(sharedViewModel.listaDeProductosRemover)
                                         Toast.makeText(
                                             requireContext(),
                                             "Se ha agregado el producto a la factura",
@@ -166,6 +167,7 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                                         binding.etArticulosPorCajaRemover.setText("")
                                         binding.etNumeroDeCajasRemover.setText("")
                                         binding.etPrecioRemover.setText("")
+                                        sharedViewModel.opcionesListRemover.removeAll(sharedViewModel.listaDeProductosRemover)
                                         Toast.makeText(
                                             requireContext(),
                                             "Se ha agregado el producto a la factura",
@@ -230,7 +232,7 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
     }
 
     //Te muestra los productos en inventario de cada almacen
-    val opcionesList = mutableListOf<String>()
+
     private fun ListaDesplegableElegirProducto(){
         val queue1 = Volley.newRequestQueue(requireContext())
         val url1 ="http://186.64.123.248/FacturaSalida/elegirProductoCantidad.php"
@@ -241,17 +243,18 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                 val jsonArray = JSONObject(response).getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
                 for (i in 0..<jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).replace("'",""))
+                    if (!sharedViewModel.opcionesListRemover.contains(jsonArray.getString(i).replace("'", ""))) {
+                        sharedViewModel.opcionesListRemover.add(jsonArray.getString(i).replace("'", "")
+                        )
+                    }
                 }
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
+                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,sharedViewModel.opcionesListRemover)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownProducto?.setAdapter(adapter)
                 DropDownProducto?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
-                    if(binding.llCajasDeProductoElegirProductoRemover.isVisible){
                         precioYCantidad(parent.getItemAtPosition(position).toString())
-                    }
                 }
                 binding.etCodigoDeBarraRemover.setOnClickListener {
                     codigoDeBarra()
@@ -377,11 +380,11 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                         if (codigoBarraEmbalaje == "") {
                             Toast.makeText(
                                 requireContext(),
-                                "EL código de barra pertenece al producto $codigoBarraProducto y ${opcionesList.indexOf("$codigoBarraProducto ( 0 unid. )")}",
+                                "EL código de barra pertenece al producto $codigoBarraProducto y ${sharedViewModel.opcionesListRemover.indexOf("$codigoBarraProducto ( 0 unid. )")}",
                                 Toast.LENGTH_SHORT
                             ).show()
                             binding.tvListaDesplegableElegirProductoRemover.postDelayed({
-                                binding.tvListaDesplegableElegirProductoRemover.setSelection(opcionesList.indexOf("$codigoBarraProducto ( 0 unid. )"))
+                                binding.tvListaDesplegableElegirProductoRemover.setSelection(sharedViewModel.opcionesListRemover.indexOf("$codigoBarraProducto ( 0 unid. )"))
                                 binding.tvListaDesplegableElegirProductoRemover.setText("$codigoBarraProducto ( 0 unid. )",false)
                             },100)
 

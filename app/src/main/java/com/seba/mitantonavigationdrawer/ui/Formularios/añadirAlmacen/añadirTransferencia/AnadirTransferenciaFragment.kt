@@ -197,7 +197,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
             }*/
             if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
               ValidacionesIdInsertarDatos()
-              Handler(Looper.getMainLooper()).postDelayed({
+             /* Handler(Looper.getMainLooper()).postDelayed({
                 for (i in 0..<sharedViewModel.listaDeCantidades.size) {
                     if(sharedViewModel.listaDeCantidadesAntigua[i] != sharedViewModel.listaDeCantidades[i]){
                         sharedViewModel.listaDeCantidadesAntigua[i] = sharedViewModel.listaDeCantidades[i]
@@ -206,7 +206,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                         sharedViewModel.listaDeProductosAntigua[i] = sharedViewModel.listaDeProductos[i]
                     }
                 }
-            }, 500)
+            }, 500)*/
             }else{
                 Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
             }
@@ -240,12 +240,12 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
            }*/
         binding.tvProductosAnadidos.isVisible = false
         recyclerViewElegirProducto()
-        var segundaVez = false
+        //var segundaVez = false
         binding.bActualizarRecyclerView.setOnClickListener {
-            binding.tvProductosAnadidos.isVisible = !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
+            binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
             adapter.notifyDataSetChanged()
             binding.rvElegirProducto.requestLayout()
-            if(!segundaVez) {
+           /* if(!segundaVez) {
                 for (i in 0..<sharedViewModel.listaDeCantidades.size) {
                     if ((sharedViewModel.listaDeCantidadesAntigua.size < sharedViewModel.listaDeCantidades.size) ||
                         (sharedViewModel.listaDeProductosAntigua.size < sharedViewModel.listaDeProductos.size)
@@ -256,9 +256,9 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
 
                 }
                 segundaVez = true
-            }
+            }*/
             //preguntarInventario()
-            Handler(Looper.getMainLooper()).postDelayed({
+         /*   Handler(Looper.getMainLooper()).postDelayed({
                 for (i in 0..<sharedViewModel.listaDeCantidades.size) {
                     if(sharedViewModel.listaDeCantidadesAntigua[i] != sharedViewModel.listaDeCantidades[i]){
                         sharedViewModel.listaDeCantidadesAntigua[i] = sharedViewModel.listaDeCantidades[i]
@@ -267,14 +267,16 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                         sharedViewModel.listaDeProductosAntigua[i] = sharedViewModel.listaDeProductos[i]
                     }
                 }
-            }, 500)
+            }, 500)*/
 
-           /* Log.i(
+            Log.i(
                 "Sebastian",
-                "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}")*/
+                "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}")
 
         }
+
         binding.tvProductosAnadidos.isVisible = sharedViewModel.listaDeCantidades.isNotEmpty()
+        binding.tvProductosAnadidos.isVisible = false
 
         binding.etFechaTransferencia.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
         return root
@@ -292,13 +294,8 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
     }*/
 
     fun recyclerViewElegirProducto() {
-        adapter = AnadirTransferenciaAdapter(
-            sharedViewModel.listaDeCantidades,
-            sharedViewModel.listaDeProductos,
-            sharedViewModel
-        ) { position ->
-            onDeletedItem(position)
-        }
+        adapter = AnadirTransferenciaAdapter(sharedViewModel.listaDeCantidades,
+            sharedViewModel.listaDeProductos,sharedViewModel) { position -> onDeletedItem(position)}
         binding.rvElegirProducto.setHasFixedSize(true)
         binding.rvElegirProducto.adapter = adapter
         binding.rvElegirProducto.layoutManager = LinearLayoutManager(requireContext())
@@ -406,7 +403,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                         Handler(Looper.getMainLooper()).postDelayed({
                                             modificarInventario()
                                         }, 5000)
-                                        binding.tvProductosAnadidos.isVisible = !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
+                                        binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
                                     }
 
                                 Toast.makeText(
@@ -492,7 +489,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                     //no unico = 0
                     //Aqui va el código para validar el almacen
                     val url1 =
-                        "http://186.64.123.248/Transferencia/insertarProductos.php" // Reemplaza esto con tu URL de la API
+                        "http://186.64.123.248/Transferencia/insertarProductosTotal.php" // Reemplaza esto con tu URL de la API
                     val queue1 = Volley.newRequestQueue(requireContext())
                     val stringRequest = object : StringRequest(
                         Request.Method.POST,
@@ -850,6 +847,10 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
     }
     override fun onDestroyView() {
         super.onDestroyView()
+       /* sharedViewModel.listaDeProductos.clear()
+        sharedViewModel.listaDeCantidades.clear()*/
+        adapter.notifyDataSetChanged()
+        binding.rvElegirProducto.requestLayout()
         _binding = null
     }
 }

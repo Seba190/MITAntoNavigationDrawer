@@ -16,6 +16,7 @@ class SharedViewModel : ViewModel() {
     fun setImageData(data: ByteArray?) {
         selectedImage.value = data
     }
+
     val sharedData = MutableLiveData<String>()
 
     val listaDeAlertas: MutableList<String> = mutableListOf()
@@ -52,11 +53,12 @@ class SharedViewModel : ViewModel() {
     val numeroPreciosVenta: MutableList<String> = mutableListOf()
 
 
-    //Mini formulario añadir transferencia
+    //Mini formulario añadir transferencia y añadir transferencia
     val listaDeCantidades : MutableList<String> = mutableListOf()
     val listaDeProductos  : MutableList<String> = mutableListOf()
     val listaDeCantidadesAntigua : MutableList<String> = mutableListOf()
     val listaDeProductosAntigua : MutableList<String> = mutableListOf()
+    val opcionesListTransferencia: MutableList<String> = mutableListOf()
 
     //Mini formulario añadir inventario y añadir inventario
     val listaDeCantidadesAnadir : MutableList<String> = mutableListOf()
@@ -64,6 +66,7 @@ class SharedViewModel : ViewModel() {
     val listaDePreciosAnadir : MutableList<String> = mutableListOf()
     var almacenAnadir : String = ""
     var proveedorAnadir : String = ""
+    val opcionesListAnadir : MutableList<String> = mutableListOf()
 
     //Añadir inventario view holder
     val listaDePreciosDeProductos : MutableList<Int> = mutableListOf()
@@ -75,6 +78,7 @@ class SharedViewModel : ViewModel() {
     var clienteRemover : String = ""
     var almacenRemover : String = ""
     val listaDePreciosDeProductosRemover : MutableList<Int> = mutableListOf()
+    val opcionesListRemover : MutableList<String> = mutableListOf()
 
     //Elegir producto de formulario añadir transferencia
     var almacen : String = ""
@@ -86,7 +90,17 @@ class SharedViewModel : ViewModel() {
     val almacenes : MutableList<String> = mutableListOf()
     //Editar cantidad Almacenes
     val productos : MutableList<String> = mutableListOf()
+    //Editar transferencia
+    val transferenciasId : MutableList<String> = mutableListOf()
+    val opcionesListEditarTransferencia : MutableList<String> = mutableListOf()
 
+    //Editar factura de entrada
+    val opcionesListEntrada : MutableList<String> = mutableListOf()
+
+    //Editar factura de salida
+    val opcionesListSalida : MutableList<String> = mutableListOf()
+
+    //Editar producto
 }
 
 

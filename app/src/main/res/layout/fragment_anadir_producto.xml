@@ -40,7 +40,7 @@
                     android:id="@+id/tvNombreProducto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_nombre_producto"
                     android:textColor="@color/black"
@@ -65,7 +65,7 @@
                     android:id="@+id/tvPesoProducto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_peso_producto"
                     android:textColor="@color/black"
@@ -93,7 +93,7 @@
                     android:id="@+id/tvVolumenProducto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_volumen_producto"
                     android:textColor="@color/black"
@@ -121,7 +121,7 @@
                     android:id="@+id/tvTipoDeProducto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="120dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_tipo_producto"
                     android:textColor="@color/black"
@@ -160,7 +160,7 @@
                     android:id="@+id/tvImagenProducto"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="120dp"
+                    android:gravity="center"
                     android:layout_marginTop="30dp"
                     android:text="@string/textView_imagen"
                     android:textColor="@color/black"
@@ -174,7 +174,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
                     android:backgroundTint="@color/cream"
-                    android:src="@drawable/android_logo" />
+                    android:src="@drawable/android_logo"/>
 
 
                 <EditText
@@ -202,9 +202,9 @@
 
                 <Button
                     android:id="@+id/bEscanearCodigoDeBarraProducto"
-                    android:layout_width="130dp"
+                    android:layout_width="140dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="135dp"
+                    android:layout_gravity="center"
                     android:backgroundTint="@color/light_green"
                     android:text="@string/button_codigo_de_barra" />
 
@@ -213,7 +213,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_marginHorizontal="130dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_codigo_barra_producto"
                     android:textColor="@color/black"
@@ -241,7 +241,7 @@
                     android:id="@+id/tvCodigoBarraEmbalaje"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="90dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_codigo_barra_embalaje"
                     android:textColor="@color/black"
@@ -269,7 +269,7 @@
                     android:id="@+id/tvUnidadesEmbalaje"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_unidades_embalaje"
                     android:textColor="@color/black"
@@ -301,28 +301,29 @@
 
                     <Button
                         android:id="@+id/buttonAlerts"
-                        android:layout_width="108dp"
+                        android:layout_width="110dp"
                         android:layout_height="match_parent"
                         android:layout_marginVertical="20dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="8dp"
                         android:backgroundTint="@color/light_green"
                         android:text="@string/Alerts_per_warehouses" />
 
                     <Button
                         android:id="@+id/buttonBuyPrice"
-                        android:layout_width="145dp"
+                        android:layout_width="150dp"
                         android:layout_height="match_parent"
                         android:layout_marginVertical="20dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="5dp"
                         android:backgroundTint="@color/light_green"
                         android:text="@string/Buy_price_per_suppliers" />
 
                     <Button
                         android:id="@+id/buttonSellPrice"
-                        android:layout_width="110dp"
+                        android:layout_width="125dp"
                         android:layout_height="match_parent"
                         android:layout_marginVertical="20dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
                         android:backgroundTint="@color/light_green"
                         android:text="@string/Sell_price_per_customers" />
 
@@ -336,7 +337,7 @@
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginVertical="30dp"
-                    android:layout_marginStart="145dp"
+                    android:layout_gravity="center"
                     android:backgroundTint="@color/light_green"
                     android:text="@string/button_send" />
 

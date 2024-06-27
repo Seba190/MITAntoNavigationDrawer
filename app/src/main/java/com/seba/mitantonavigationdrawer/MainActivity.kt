@@ -19,11 +19,13 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.seba.mitantonavigationdrawer.databinding.ActivityMainBinding
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainer
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.appbar.AppBarLayout
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirDatosBinding
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AnadirProductoFragment
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaFragment
@@ -61,6 +63,12 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
         //val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main)
         val navView: NavigationView = findViewById(R.id.nav_view)
+        val actionBar = supportActionBar
+        if (actionBar != null) {
+            val lp = binding.appBarMain.toolbar.layoutParams as AppBarLayout.LayoutParams
+            lp.height = resources.getDimensionPixelSize(R.dimen.custom_action_bar_size)
+            binding.appBarMain.toolbar.layoutParams = lp
+        }
 
         NavigationUI.setupWithNavController(navView, navController)
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -79,7 +87,9 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
                 R.id.nav_editar_almacen,R.id.nav_editar_cliente,R.id.nav_editar_proveedor,R.id.nav_editar_tipos_de_productos,
                 R.id.tipos_de_productos, R.id.productos,R.id.nav_tipos_de_productos, R.id.nav_clientes,R.id.proveedores,
                 R.id.clientes, R.id.nav_editar_almacen,R.id.nav_editar_producto, R.id.nav_alertas_almacenes,R.id.nav_cliente_precio_venta,
-                R.id.nav_proveedor_precio_compra
+                R.id.nav_proveedor_precio_compra, R.id.nav_transferencias, R.id.nav_editar_transferencias,R.id.nav_transacciones,
+                R.id.nav_sin_factura,R.id.nav_editar_sin_factura,R.id.nav_factura_entrada,R.id.nav_editar_factura_entrada,
+                R.id.nav_factura_salida,R.id.nav_editar_factura_salida,R.id.nav_inventory
 
             ), drawerLayout
         )
@@ -114,12 +124,26 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
                 R.id.nav_cliente_precio_venta -> navController.navigate(R.id.nav_cliente_precio_venta)
                 R.id.nav_editar_producto ->navController.navigate(R.id.nav_editar_producto)
                 R.id.nav_editar_tipos_de_productos ->navController.navigate(R.id.nav_editar_tipos_de_productos)
+                R.id.nav_transferencias ->navController.navigate(R.id.nav_transferencias)
+                R.id.nav_editar_transferencias ->navController.navigate(R.id.nav_editar_transferencias)
+                R.id.nav_transacciones ->navController.navigate(R.id.nav_transacciones)
+                R.id.nav_sin_factura -> navController.navigate(R.id.nav_sin_factura)
+                R.id.nav_editar_sin_factura -> navController.navigate(R.id.nav_editar_sin_factura)
+                R.id.nav_factura_entrada -> navController.navigate(R.id.nav_factura_entrada)
+                R.id.nav_editar_factura_entrada -> navController.navigate(R.id.nav_editar_factura_entrada)
+                R.id.nav_factura_salida -> navController.navigate(R.id.nav_factura_salida)
+                R.id.nav_editar_factura_salida -> navController.navigate(R.id.nav_editar_factura_salida)
+                R.id.nav_inventory ->navController.navigate(R.id.nav_inventory)
+                R.id.nav_salir ->{
+                    finishAffinity()
+                    Toast.makeText(this,"Saliendo de la aplicación...",Toast.LENGTH_SHORT).show()
+                }
             }
             drawerLayout.closeDrawers()
             true
 
         }
-
+        setupDrawerListener()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -139,11 +163,62 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
         anadirTransferenciaFragment?.updateData(dataCantidad, dataProducto)
     }
 
+    private fun setupDrawerListener(){
+        drawerLayout.addDrawerListener(object :DrawerLayout.DrawerListener{
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
 
-    /* fun onMyButtonClick(view : View) {
-         view.setOnClickListener {
-             findNavController(R.id.nav_search).navigate(R.id.action_nav_inicio_to_searchFragment)
-         }
-    }*/
+            }
 
+            override fun onDrawerOpened(drawerView: View) {
+
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+                when (newState) {
+                    DrawerLayout.STATE_IDLE -> {
+                        // El drawer está en reposo
+                        // Puedes realizar acciones cuando el drawer no está siendo interactuado
+                    }
+                    DrawerLayout.STATE_DRAGGING -> {
+                        // El drawer está siendo arrastrado por el usuario
+                        // Puedes realizar acciones cuando el usuario empieza a interactuar con el drawer
+                    }
+                    DrawerLayout.STATE_SETTLING -> {
+                        // El drawer está asentándose a una posición final
+                        // Puedes realizar acciones cuando el drawer está en el proceso de abrirse o cerrarse completamente
+                        sharedViewModel.listaDeProductos.clear()
+                        sharedViewModel.listaDeCantidades.clear()
+                        sharedViewModel.listaDeProductosAnadir.clear()
+                        sharedViewModel.listaDeCantidadesAnadir.clear()
+                        sharedViewModel.listaDePreciosAnadir.clear()
+                        sharedViewModel.listaDePreciosDeProductos.clear()
+                        sharedViewModel.listaDeProductosRemover.clear()
+                        sharedViewModel.listaDeCantidadesRemover.clear()
+                        sharedViewModel.listaDePreciosRemover.clear()
+                        sharedViewModel.listaDePreciosDeProductosRemover.clear()
+                        sharedViewModel.listaDeBodegasAnadir.clear()
+                        sharedViewModel.listaDeAlertasAnadir.clear()
+                        sharedViewModel.ListasDeAlertas.clear()
+                        sharedViewModel.ListasDeAlmacenes.clear()
+                        sharedViewModel.ListasDeProductosAlertas.clear()
+                        sharedViewModel.listaDeClientesAnadir.clear()
+                        sharedViewModel.listaDePreciosVentaAnadir.clear()
+                        sharedViewModel.ListasDeClientes.clear()
+                        sharedViewModel.ListasDePreciosDeVenta.clear()
+                        sharedViewModel.ListasDeProductosPrecioVenta.clear()
+                        sharedViewModel.listaDePreciosCompraAnadir.clear()
+                        sharedViewModel.listaDeProveedoresAnadir.clear()
+                        sharedViewModel.ListasDeProveedores.clear()
+                        sharedViewModel.ListasDePreciosDeCompra.clear()
+                        sharedViewModel.ListasDeProductosPrecioCompra.clear()
+
+                    }
+                }
+            }
+    })
+    }
 }

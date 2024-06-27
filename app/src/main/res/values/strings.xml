@@ -10,6 +10,7 @@
     <!-- Activity_main_drawer-->
     <string name="title_data">Datos</string>
     <string name="title_statistics">Estadísticas</string>
+    <string name="title_others">Otros</string>
 
     <!-- Menu -->
     <string name="menu_inicio">Inicio</string>
@@ -32,6 +33,11 @@
     <string name ="menu_clientes">Clientes</string>
     <string name ="menu_productos">Productos</string>
     <string name ="menu_proveedores">Proveedores</string>
+    <string name="menu_transferencias">Transferencias</string>
+    <string name="menu_transacciones">Transacciones</string>
+    <string name="menu_sin_factura">Sin Factura</string>
+    <string name="menu_factura_entrada">Factura Entrada</string>
+    <string name="menu_factura_salida">Factura Salida</string>
     <string name ="menu_tipos_de_productos">Tipos de Productos</string>
     <string name ="menu_editar_almacen">Editar almacén</string>
     <string name ="menu_editar_tipos_de_productos">Editar Tipo de Producto</string>
@@ -40,9 +46,17 @@
     <string name ="menu_editar_proveedor">Editar Proveedor</string>
     <string name ="menu_editar_cliente">Editar Cliente</string>
     <string name ="menu_editar_inventario">Editar Inventario</string>
+    <string name ="menu_editar_transferencia">Editar Transferencia</string>
+    <string name ="menu_elegir_producto_editar_transferencia">Elegir Producto</string>
     <string name ="menu_editar_alerta">Editar Alerta</string>
+    <string name="menu_editar_sin_factura">Editar Factura</string>
+    <string name="menu_editar_factura_entrada">Editar Factura Entrada</string>
+    <string name="menu_editar_factura_salida">Editar Factura Salida</string>
     <string name="menu_barcode_scan">Barcode Scan del Producto</string>
     <string name="menu_barcode_scan_producto">Barcode Scan del Producto</string>
+    <string name="menu_barcode_scan_editar_transferencia">Barcode Scan Transferencia</string>
+    <string name="menu_barcode_scan_factura_entrada">Escaner Factura de Entrada</string>
+    <string name="menu_barcode_scan_factura_salida">Escaner Factura de Salida</string>
     <string name="menu_alertas_almacenes">Alertas por almacén</string>
     <string name="menu_proveedor_precio_compra">Precio de compra por proveedor</string>
     <string name="menu_cliente_precio_venta">Precio de venta por cliente</string>
@@ -51,9 +65,13 @@
     <string name="menu_barcode_scan_anadir">Barcode Scan del Producto</string>
     <string name="menu_elegir_producto_remover">Elegir Producto</string>
     <string name="menu_barcode_scan_remover">Barcode Scan del Producto</string>
+    <string name="menu_elegir_producto_factura_entrada">Elegir Producto</string>
+    <string name="menu_elegir_producto_factura_salida">Elegir Producto</string>
+    <string name="menu_salir">Salir</string>
 
 
     <string name="menu_camara">Camara</string>
+    <string name ="menu_inventario">Inventario</string>
 
     <!--activity_main-->
     <string name="Inventory_items">Articulos en Inventario</string>
@@ -62,6 +80,7 @@
     <string name="Add_inventory">Añadir Inventario</string>
     <string name="Add_data">Añadir Datos</string>
     <string name="remove_inventory">Remover Inventario</string>
+    <string name="Inventory">Inventario</string>
 
     <!--dialog_list -->
     <string name="add_data">Agregar datos</string>
@@ -332,6 +351,53 @@
     <string name="title_editar_cantidad">EDITAR CANTIDAD</string>
     <string name="button_change">CAMBIAR</string>
 
+    <!--nav_factura -->
+
+    <string name="factura_entrada">Factura Entrada</string>
+    <string name="factura_salida">Factura Salida</string>
+    <string name="sin_factura">Sin Factura</string>
+    
+    <!--Editar Sin Factura -->
+    
+    <string name="title_nombre_sin_factura">NOMBRE DE LA FACTURA</string>
+    <string name="placeholder_nombre_sin_factura">Escriba el nombre de la factura</string>
+    <string name="title_almacen_sin_factura">NOMBRE DEL ALMACÉN</string>
+    <string name="placeholder_almacen_sin_factura">Escriba el nombre del almacén</string>
+    <string name="title_producto_sin_factura">NOMBRE DEL PRODUCTO</string>
+    <string name="placeholder_producto_sin_factura">Escriba el nombre del producto</string>
+    <string name="title_cantidad_sin_factura">CANTIDAD DEL PRODUCTO</string>
+    <string name="placeholder_cantidad_sin_factura">Escriba la cantidad del producto</string>
+    <string name="title_fecha_sin_factura">FECHA DE LA FACTURA</string>
+    <string name="placeholder_fecha_sin_factura">Escriba la fecha de la factura</string>
+    <string name="title_estado_factura">ESTADO DE LA FACTURA</string>
+
+    <!--Editar Factura Entrada
+
+    <string name="title_nombre_sin_factura">NOMBRE DE LA FACTURA</string>
+    <string name="placeholder_nombre_sin_factura">Escriba el nombre de la factura</string>
+    <string name="title_almacen_sin_factura">NOMBRE DEL ALMACÉN</string>
+    <string name="placeholder_almacen_sin_factura">Escriba el nombre del almacén</string>
+    <string name="title_producto_sin_factura">NOMBRE DEL PRODUCTO</string>
+    <string name="placeholder_producto_sin_factura">Escriba el nombre del producto</string>
+    <string name="title_cantidad_sin_factura">CANTIDAD DEL PRODUCTO</string>
+    <string name="placeholder_cantidad_sin_factura">Escriba la cantidad del producto</string>
+    <string name="title_fecha_sin_factura">FECHA DE LA FACTURA</string>
+    <string name="placeholder_fecha_sin_factura">Escriba la fecha de la factura</string>
+    <string name="title_estado_factura">ESTADO DE LA FACTURA</string>-->
+
+    <!--Editar Factura Salida
+
+    <string name="title_nombre_sin_factura">NOMBRE DE LA FACTURA</string>
+    <string name="placeholder_nombre_sin_factura">Escriba el nombre de la factura</string>
+    <string name="title_almacen_sin_factura">NOMBRE DEL ALMACÉN</string>
+    <string name="placeholder_almacen_sin_factura">Escriba el nombre del almacén</string>
+    <string name="title_producto_sin_factura">NOMBRE DEL PRODUCTO</string>
+    <string name="placeholder_producto_sin_factura">Escriba el nombre del producto</string>
+    <string name="title_cantidad_sin_factura">CANTIDAD DEL PRODUCTO</string>
+    <string name="placeholder_cantidad_sin_factura">Escriba la cantidad del producto</string>
+    <string name="title_fecha_sin_factura">FECHA DE LA FACTURA</string>
+    <string name="placeholder_fecha_sin_factura">Escriba la fecha de la factura</string>
+    <string name="title_estado_factura">ESTADO DE LA FACTURA</string>-->
 
 
 </resources>

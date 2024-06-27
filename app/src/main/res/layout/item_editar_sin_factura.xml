@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    app:cardBackgroundColor="@color/cream"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="80dp"
+        android:layout_height="90dp"
+        app:cardBackgroundColor="@color/orange"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="25dp">
+
+        <TextView
+            android:id="@+id/tvDiaSinFactura"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            tools:text = "Dia"
+            android:textSize="25sp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"/>
+
+        <TextView
+            android:id="@+id/tvFechaSinFactura"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            tools:text = "factura"
+            android:textSize="15sp"
+            android:layout_marginStart="11dp"
+            android:layout_marginTop="55dp"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/tvNombreSinFactura"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/light_green"
+        tools:text ="Nombre Factura"
+        android:layout_marginStart="110dp"
+        android:layout_marginTop="15dp"
+        android:textSize="22sp"/>
+
+    <TextView
+        android:id="@+id/tvUnidadesSinFactura"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        tools:text ="1000"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="50dp"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:text =" units. del almacén "
+        android:layout_marginStart="150dp"
+        android:layout_marginTop="50dp"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/tvNombreAlmacenSinFactura"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        tools:text ="Nombre Almacén"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="80dp"
+        android:textSize="18sp"/>
+
+
+
+
+</androidx.cardview.widget.CardView>

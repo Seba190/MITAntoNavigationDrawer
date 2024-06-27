@@ -85,10 +85,11 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
         //   Mostrar los usuarios responsables en la lista desplegable
          ListaDesplegable()
         binding.buttonEditable.setOnClickListener {
-            borrarRegistros()
+         /*   borrarRegistros()
             Handler(Looper.getMainLooper()).postDelayed({
                 actualizarRegistros()
-            },500)
+            },500)*/
+            actualizarAlmacen()
         }
         try {
             sharedViewModel.id.add(args.id)
@@ -156,10 +157,40 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
         )
         queue1.add(jsonObjectRequest1)
     }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+
+    private fun actualizarAlmacen() {
+        val url1 = "http://186.64.123.248/Reportes/Almacenes/actualizarAlmacen.php" // Reemplaza esto con tu URL de la API
+        val queue1 =Volley.newRequestQueue(requireContext())
+        val stringRequest = object: StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+                Toast.makeText(requireContext(), "Almacén actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
+                //   TextNombre?.setText("")
+                //   TextDireccion?.setText("")
+                //   TextDropdown?.setText("Eliga una opción",false)
+            },
+            { error ->
+                Log.i("Sebastian","Error: $error")
+                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+            }
+        )
+
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_ALMACEN", sharedViewModel.id.last())
+                parametros.put("ALMACEN", TextNombre?.text.toString().uppercase())
+                parametros.put("DIRECCION_ALMACEN", TextDireccion?.text.toString().uppercase())
+                parametros.put("ESTADO_ALMACEN", TextEstado.toString())
+                parametros.put("USUARIO", TextDropdown?.text.toString())
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
     }
+
     private fun borrarRegistros(){
         val url = "http://186.64.123.248/Reportes/Almacenes/borrar.php"
         val queue = Volley.newRequestQueue(requireContext())
@@ -186,7 +217,7 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Almacén actualizado exitosamente. El id de ingreso es el número ${args.id} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Almacén actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
              //   TextNombre?.setText("")
              //   TextDireccion?.setText("")
              //   TextDropdown?.setText("Eliga una opción",false)
@@ -200,7 +231,7 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
         {
             override fun getParams(): MutableMap<String, String> {
                 val parametros = HashMap<String, String>()
-                parametros.put("ID_ALMACEN", args.id)
+                parametros.put("ID_ALMACEN", sharedViewModel.id.last())
                 parametros.put("ALMACEN", TextNombre?.text.toString().uppercase())
                 parametros.put("DIRECCION_ALMACEN", TextDireccion?.text.toString().uppercase())
                 parametros.put("ESTADO_ALMACEN", TextEstado.toString())
@@ -424,4 +455,8 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

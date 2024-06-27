@@ -153,8 +153,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         binding.tvProductosAnadidosAnadir.isVisible = false
         recyclerViewElegirProducto()
         binding.bActualizarRecyclerViewAnadir.setOnClickListener {
-            binding.tvProductosAnadidosAnadir.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
-            binding.llMonto.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+            binding.tvProductosAnadidosAnadir.isVisible = !(sharedViewModel.listaDeCantidadesAnadir.size == 0 || sharedViewModel.listaDeProductosAnadir.size == 0 || sharedViewModel.listaDePreciosAnadir.size == 0)
+            binding.llMonto.isVisible = !(sharedViewModel.listaDeCantidadesAnadir.size == 0 || sharedViewModel.listaDeProductosAnadir.size == 0 || sharedViewModel.listaDePreciosAnadir.size == 0)
             adapter.notifyDataSetChanged()
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.tvMonto.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
@@ -216,6 +216,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
     }
 
     private fun onDeletedItem(position: Int){
+        sharedViewModel.opcionesListAnadir.add(position,sharedViewModel.listaDeProductosAnadir[position])
         sharedViewModel.listaDeCantidadesAnadir.removeAt(position)
         sharedViewModel.listaDeProductosAnadir.removeAt(position)
         adapter.notifyItemRemoved(position)
@@ -584,6 +585,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        adapter.notifyDataSetChanged()
+        binding.rvElegirProductoAnadir.requestLayout()
         _binding = null
     }
 }

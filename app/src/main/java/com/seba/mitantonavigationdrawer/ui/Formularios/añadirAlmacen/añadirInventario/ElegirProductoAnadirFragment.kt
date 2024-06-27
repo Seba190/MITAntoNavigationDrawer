@@ -106,6 +106,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                         binding.tvListaDesplegableElegirProductoAnadir.setText("Eliga una opción",false)
                         binding.etCantidadAnadir.setText("")
                         binding.etPrecioAnadir.setText("")
+                        sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
                         Toast.makeText(
                             requireContext(),
                             "Se ha agregado el producto a la factura",
@@ -127,6 +128,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                         binding.etArticulosPorCajaAnadir.setText("")
                         binding.etNumeroDeCajasAnadir.setText("")
                         binding.etPrecioAnadir.setText("")
+                        sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
                         Toast.makeText(
                             requireContext(), "Se ha agregado el producto a la factura",
                             Toast.LENGTH_LONG).show()
@@ -153,7 +155,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
         return root
     }
 
-    val opcionesList = mutableListOf<String>()
+    //val opcionesList = mutableListOf<String>()
     private fun ListaDesplegableElegirProducto(){
         val queue1 = Volley.newRequestQueue(requireContext())
         val url1 ="http://186.64.123.248/FacturaEntrada/elegirProductoCantidad.php"
@@ -164,17 +166,19 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                 val jsonArray = JSONObject(response).getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
                 for (i in 0..<jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).replace("'",""))
+                    if (!sharedViewModel.opcionesListAnadir.contains(jsonArray.getString(i).replace("'", ""))) {
+                        sharedViewModel.opcionesListAnadir.add(jsonArray.getString(i).replace("'", ""))
+                    }
                 }
+
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
+                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,sharedViewModel.opcionesListAnadir)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownProducto?.setAdapter(adapter)
                 DropDownProducto?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
-                    if(binding.llCajasDeProductoElegirProductoAnadir.isVisible){
                         precioYCantidad(parent.getItemAtPosition(position).toString())
-                    }
+
                 }
                 binding.etCodigoDeBarraAnadir.setOnClickListener {
                     codigoDeBarra()
@@ -299,11 +303,11 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                         if (codigoBarraEmbalaje == "") {
                             Toast.makeText(
                                 requireContext(),
-                                "EL código de barra pertenece al producto $codigoBarraProducto y ${opcionesList.indexOf("$codigoBarraProducto ( 0 unid. )")}",
+                                "EL código de barra pertenece al producto $codigoBarraProducto y ${sharedViewModel.opcionesListAnadir.indexOf("$codigoBarraProducto ( 0 unid. )")}",
                                 Toast.LENGTH_SHORT
                             ).show()
                             binding.tvListaDesplegableElegirProductoAnadir.postDelayed({
-                                binding.tvListaDesplegableElegirProductoAnadir.setSelection(opcionesList.indexOf("$codigoBarraProducto ( 0 unid. )"))
+                                binding.tvListaDesplegableElegirProductoAnadir.setSelection(sharedViewModel.opcionesListAnadir.indexOf("$codigoBarraProducto ( 0 unid. )"))
                                 binding.tvListaDesplegableElegirProductoAnadir.setText("$codigoBarraProducto ( 0 unid. )",false)
                             },100)
 

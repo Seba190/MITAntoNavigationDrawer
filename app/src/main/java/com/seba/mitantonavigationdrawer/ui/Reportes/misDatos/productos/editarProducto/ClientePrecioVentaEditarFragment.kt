@@ -91,6 +91,7 @@ class ClientePrecioVentaEditarFragment : Fragment(R.layout.fragment_cliente_prec
         }
 
         binding.bAgregarClienteEditar.setOnClickListener {
+            if(!sharedViewModel.listaDePreciosVenta.all { it.isBlank() }){
             if (sharedViewModel.listaDePreciosVenta.size > 0) {
                 for (i in 0..<sharedViewModel.listaDePreciosVenta.size) {
                     if(sharedViewModel.listaDePreciosVenta[i] != "") {
@@ -99,12 +100,13 @@ class ClientePrecioVentaEditarFragment : Fragment(R.layout.fragment_cliente_prec
                         }
                 }
                 Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de venta", Toast.LENGTH_LONG).show()
+            }}
                 binding.rlPrecioVentaClientesEditar.isVisible = false
                 val editarProductoFragment = EditarProductoFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlPrecioVentaClientesEditar, editarProductoFragment)
                     .commitNow()
-            }
+
         }
 
         return root

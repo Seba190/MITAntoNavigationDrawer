@@ -5,6 +5,9 @@ import retrofit2.Response
 import retrofit2.http.GET
 
 interface ApiServiceTransferencias {
-    @GET("Transferencias/transferenciaFinal.php")
-    suspend fun getTransfernecias(): Response<TransferenciasDataResponse>
+   // @GET("Transferencias/transferenciaFinalCompleta.php")
+    //suspend fun getTransferencias(): Response<TransferenciasDataResponse>
+
+    @GET("Transferencias/transferenciaAjustada.php")
+    suspend fun getTransferencias(): Response<TransferenciasDataResponse>
 }

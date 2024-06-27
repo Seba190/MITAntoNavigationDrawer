@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,8 @@ import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentDir
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ApiServiceClientes
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesAdapter
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesDataResponse
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.editarProducto.AlertasAlmacenesItemResponseEditar
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.estadística.EstadisticaViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +34,8 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
     private val binding get() = _binding!!
     private lateinit var retrofit: Retrofit
     private lateinit var adapter: TransferenciasAdapter
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
+    private var listaDeTransferencias : List<TransferenciasItemResponse> = emptyList()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,12 +49,13 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
         //Aquí se programa
         retrofit = getRetrofit()
         initUI()
+        sharedViewModel.transferenciasId.removeAll(sharedViewModel.transferenciasId)
         return root
     }
 
     private fun initUI() {
         searchByName()
-        adapter = TransferenciasAdapter{navigateToEditarCliente(it)}
+        adapter = TransferenciasAdapter(listaDeTransferencias,sharedViewModel){navigateToEditarTransferencia(it)}
         // adapter2 = CaracteristicasAdapter()
         binding.rvTransferencias.setHasFixedSize(true)
         binding.rvTransferencias.layoutManager = LinearLayoutManager(requireContext())
@@ -60,16 +66,16 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
     private fun searchByName() {
         binding.progressBarTransferencias.isVisible = true
         CoroutineScope(Dispatchers.IO).launch{
-            val myResponse : Response<ClientesDataResponse> = retrofit.create(ApiServiceClientes::class.java).getClientes()
+            val myResponse : Response<TransferenciasDataResponse> = retrofit.create(ApiServiceTransferencias::class.java).getTransferencias()
             if(myResponse.isSuccessful){
                 Log.i("Sebastian", "Funciona!!")
-                val response: ClientesDataResponse? = myResponse.body()
+                val response: TransferenciasDataResponse? = myResponse.body()
                 // val response2: AlmacenesItemResponse? = myResponse2.body()
                 if(response != null){
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapter.updateList(response.Clientes)
+                        adapter.updateList(response.Transferencias)
                         binding.progressBarTransferencias.isVisible = false
                     }
                 }
@@ -87,8 +93,8 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-    private fun navigateToEditarCliente(id:String){
-        val action = MisDatosFragmentDirections.actionNavMisDatosToNavEditarCliente(id = id)
+    private fun navigateToEditarTransferencia(id:String){
+        val action = TransferenciasFragmentDirections.actionNavTransferenciasToNavEditarTransferencias(id = id)
         findNavController().navigate(action)
     }
 

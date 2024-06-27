@@ -13,6 +13,7 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.android.volley.Request
@@ -22,6 +23,7 @@ import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentEditarClienteBinding
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONObject
 
 
@@ -32,6 +34,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
 
     private var _binding: FragmentEditarClienteBinding? = null
     private val args: MisDatosFragmentArgs by navArgs()
+    private val sharedViewModel : SharedViewModel by activityViewModels()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -81,13 +84,16 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
         //   Mostrar los usuarios responsables en la lista desplegable
 
         binding.buttonCliente.setOnClickListener {
-            borrarRegistros()
+          /*  borrarRegistros()
             Handler(Looper.getMainLooper()).postDelayed({
                 actualizarRegistros()
-            },500)
-
-
-
+            },500)*/
+            actualizarCliente()
+        }
+        try {
+            sharedViewModel.id.add(args.id)
+        }
+        catch(e:Exception){
         }
         return root
     }
@@ -95,12 +101,12 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
         super.onViewCreated(view, savedInstanceState)
         val queue1 = Volley.newRequestQueue(requireContext())
         //val id = arguments?.getString(EXTRA_ID).toString()
-        val id = args.id
-        Log.i("Sebastian", "Valor de Id de destino es: $id")
+        //val id = args.id
+        Log.i("Sebastian", "Valor de Id de destino es: ${sharedViewModel.id.last()}")
         //  val id2 = this.arguments
         // val id3 = id2?.get(EXTRA_ID)
         //val id4 = almacenesItemResponse.Id
-        val url1 = "http://186.64.123.248/Reportes/Clientes/registroInsertar.php?ID_CLIENTE=$id"
+        val url1 = "http://186.64.123.248/Reportes/Clientes/registroInsertar.php?ID_CLIENTE=${sharedViewModel.id.last()}"
         val jsonObjectRequest1 = JsonObjectRequest(
             Request.Method.GET, url1, null,
             { response ->
@@ -116,15 +122,46 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
                     radio2?.isChecked = true
                 }
             }, { error ->
-                Toast.makeText(requireContext(), "El id es $id", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_LONG).show()
             }
         )
         queue1.add(jsonObjectRequest1)
     }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun actualizarCliente() {
+        val url1 = "http://186.64.123.248/Reportes/Clientes/actualizarCliente.php"
+        val queue1 =Volley.newRequestQueue(requireContext())
+        val stringRequest = object: StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+                Toast.makeText(requireContext(), "Cliente actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
+                //   TextNombre?.setText("")
+                //   TextDireccion?.setText("")
+                //   TextDropdown?.setText("Eliga una opción",false)
+            },
+            { error ->
+                Log.i("Sebastian","Error: $error")
+                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+            }
+        )
+
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_CLIENTE", sharedViewModel.id.last())
+                parametros.put("CLIENTE", TextNombre?.text.toString().uppercase())
+                parametros.put("RUT_CLIENTE", TextRut?.text.toString())
+                parametros.put("CORREO_CLIENTE", TextCorreo?.text.toString())
+                parametros.put("TELEFONO_CLIENTE", TextTelefono?.text.toString())
+                parametros.put("DIRECCION_CLIENTE", TextDireccion?.text.toString().uppercase())
+                parametros.put("ESTADO_CLIENTE", TextEstado.toString())
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
     }
+
     private fun borrarRegistros(){
         val url = "http://186.64.123.248/Reportes/Clientes/borrar.php"
         val queue = Volley.newRequestQueue(requireContext())
@@ -264,6 +301,11 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
             radio1?.id -> TextEstado = 1
             radio2?.id -> TextEstado = 0
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

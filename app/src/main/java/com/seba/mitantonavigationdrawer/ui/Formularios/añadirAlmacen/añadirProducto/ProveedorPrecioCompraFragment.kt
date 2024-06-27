@@ -79,12 +79,14 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
         }
 
         binding.bAgregarProveedor.setOnClickListener {
+            if(!sharedViewModel.listaDePreciosCompraAnadir.all { it.isBlank() }){
             for (i in 0..<sharedViewModel.listaDePreciosCompraAnadir.size) {
                 if(sharedViewModel.listaDePreciosCompraAnadir[i] != "" && sharedViewModel.listaDeProveedoresAnadir[i] != "") {
                     setFragmentResult("PreciosCompraProveedores$i", bundleOf("Proveedores$i" to sharedViewModel.listaDeProveedoresAnadir[i], "PreciosCompra$i" to sharedViewModel.listaDePreciosCompraAnadir[i]))
                     }
                 }
                 Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de compra", Toast.LENGTH_LONG).show()
+            }
                 binding.rlProveedorPrecioCompra.isVisible = false
                 val anadirProductoFragment = AnadirProductoFragment()
                 parentFragmentManager.beginTransaction()

@@ -49,7 +49,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
     private var _binding: FragmentElegirProductoBinding? = null
     private lateinit var anadirTransferenciaUpdater: AnadirTransferenciaUpdater
     private var requestCamara: ActivityResultLauncher<String>? = null
-
+    private lateinit var adapter: AnadirTransferenciaAdapter
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -82,7 +82,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
        binding.etCodigoDeBarra.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
            PorterDuff.Mode.SRC_ATOP)
 
-
+       adapter = AnadirTransferenciaAdapter(sharedViewModel.listaDeCantidades, sharedViewModel.listaDeProductos,sharedViewModel) { position -> onDeletedItem(position)}
         ListaDesplegableElegirProducto()
        // ListaDesplegableElegirProveedor()
 
@@ -103,7 +103,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.rlElegirProducto,anadirTransferenciaFragment)
                 .commit()
-
+            adapter.notifyDataSetChanged()
         }
 
 
@@ -148,13 +148,11 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                                             sharedViewModel.listaDeProductos
                                         )
                                         //  refreshAdapterAnadirTransferenciaFragment()
-                                        binding.tvListaDesplegableElegirProducto.setText(
-                                            "Eliga una opción",
-                                            false
-                                        )
-                                        binding.etCodigoDeBarra.setText("")
-                                        binding.etCantidad.setText("")
-                                        Toast.makeText(requireContext(), "Se ha agregado el producto a la factura", Toast.LENGTH_LONG).show()
+                                            binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
+                                            binding.etCodigoDeBarra.setText("")
+                                            binding.etCantidad.setText("")
+                                            adapter.notifyDataSetChanged()
+                                            Toast.makeText(requireContext(), "Se ha agregado el producto a la transferencia", Toast.LENGTH_LONG).show()
                                         }
                                     } else {
                                         Toast.makeText(
@@ -195,8 +193,9 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                                         binding.etArticulosPorCaja.setText("")
                                         binding.etNumeroDeCajas.setText("")
                                         binding.etCodigoDeBarra.setText("")
+                                        adapter.notifyDataSetChanged()
                                         Toast.makeText(
-                                            requireContext(), "Se ha agregado el producto a la factura", Toast.LENGTH_LONG).show()
+                                            requireContext(), "Se ha agregado el producto a la transferencia", Toast.LENGTH_LONG).show()
                                     }
                                 } else {
                                     Toast.makeText(
@@ -243,6 +242,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
            parentFragmentManager.beginTransaction()
                .replace(R.id.rlElegirProducto,anadirTransferenciaFragment)
                .commit()
+           adapter.notifyDataSetChanged()
        }
       /* requestCamara = registerForActivityResult(ActivityResultContracts.RequestPermission(),){
            if(it){
@@ -290,6 +290,12 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
         sendDataToAnadirTransferenciaFragment(newDataCantidad,newDataProducto)
     }
 
+    private fun onDeletedItem(position: Int) {
+        sharedViewModel.listaDeCantidades.removeAt(position)
+        sharedViewModel.listaDeProductos.removeAt(position)
+        adapter.notifyItemRemoved(position)
+        adapter.notifyDataSetChanged()}
+
    /* fun refreshAdapterAnadirTransferenciaFragment(){
         val fragmentAnadirTransferencia = requireActivity().supportFragmentManager.findFragmentById(R.id.clAnadirTransferencia) as AnadirTransferenciaFragment?
         fragmentAnadirTransferencia?.refreshAdapter()!!
@@ -298,8 +304,6 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
     private fun setCantidad() {
       //  binding.etCantidad.text.toString().toIntOrNull() = cantidad.toString().toIntOrNull()
     }
-
-    val opcionesList = mutableListOf<String>()
 
     private fun ListaDesplegableElegirProducto(){
         val queue1 = Volley.newRequestQueue(requireContext())
@@ -311,10 +315,12 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                 val jsonArray = JSONObject(response).getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
                 for (i in 0..<jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).replace("'",""))
+                    if (!sharedViewModel.opcionesListTransferencia.contains(jsonArray.getString(i).replace("'", ""))) {
+                        sharedViewModel.opcionesListTransferencia.add(jsonArray.getString(i).replace("'", ""))
+                    }
                 }
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
+                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,sharedViewModel.opcionesListTransferencia)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownProducto?.setAdapter(adapter)
                 DropDownProducto?.onItemClickListener = AdapterView.OnItemClickListener {
@@ -462,11 +468,11 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                             if (codigoBarraEmbalaje == "") {
                                 Toast.makeText(
                                     requireContext(),
-                                    "EL código de barra pertenece al producto $codigoBarraProducto y ${opcionesList.indexOf("$codigoBarraProducto ( 0 unid. )")}",
+                                    "EL código de barra pertenece al producto $codigoBarraProducto y ${sharedViewModel.opcionesListTransferencia.indexOf("$codigoBarraProducto ( 0 unid. )")}",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 binding.tvListaDesplegableElegirProducto.postDelayed({
-                                    binding.tvListaDesplegableElegirProducto.setSelection(opcionesList.indexOf("$codigoBarraProducto ( 0 unid. )"))
+                                    binding.tvListaDesplegableElegirProducto.setSelection(sharedViewModel.opcionesListTransferencia.indexOf("$codigoBarraProducto ( 0 unid. )"))
                                     binding.tvListaDesplegableElegirProducto.setText("$codigoBarraProducto ( 0 unid. )",false)
                                 },100)
 

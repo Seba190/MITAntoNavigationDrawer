@@ -102,12 +102,14 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
         }*/
 
         binding.bAgregarAlmacen.setOnClickListener {
+            if(!sharedViewModel.listaDeAlertasAnadir.all { it.isBlank() }){
             for (i in 0..<sharedViewModel.listaDeAlertasAnadir.size) {
                 if(sharedViewModel.listaDeAlertasAnadir[i] != "" && sharedViewModel.listaDeBodegasAnadir[i] != "") {
                     setFragmentResult("AlertaAlmacen$i", bundleOf("Almacen$i" to sharedViewModel.listaDeBodegasAnadir[i], "Alerta$i" to sharedViewModel.listaDeAlertasAnadir[i]))
                     }
                 }
                 Toast.makeText(requireContext(), "Se han agregado exitosamente las alertas", Toast.LENGTH_LONG).show()
+            }
                 binding.rlAlertasAlmacenes.isVisible = false
                 val anadirProductoFragment = AnadirProductoFragment()
                 parentFragmentManager.beginTransaction()

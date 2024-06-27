@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
@@ -23,6 +24,7 @@ import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentEditarTiposDeProductosBinding
 import com.seba.mitantonavigationdrawer.databinding.FragmentInicioBinding
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.añadirDatos.AnadirDatosFragment
 
 
@@ -31,6 +33,7 @@ class InicioFragment : Fragment() {
     private var _binding: FragmentInicioBinding? = null
     private lateinit var container_layout: FrameLayout
     private var fragmentVisible = false
+    private val sharedViewModel : SharedViewModel by activityViewModels()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -62,7 +65,7 @@ class InicioFragment : Fragment() {
         removeInventory.setOnClickListener {
             findNavController().navigate(R.id.action_nav_inicio_to_nav_remover_inventario)
         }
-
+        sharedViewModel.selectedImage.value = ByteArray(0)
        // addData.setOnClickListener {
         //    findNavController().navigate(R.id.action_nav_inicio_to_nav_añadir_datos)
        // }

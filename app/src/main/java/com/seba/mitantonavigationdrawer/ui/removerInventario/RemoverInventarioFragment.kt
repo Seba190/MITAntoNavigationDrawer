@@ -113,13 +113,14 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         binding.tvProductosAnadidosRemover.isVisible = false
         recyclerViewElegirProducto()
         binding.bActualizarRecyclerViewRemover.setOnClickListener {
-            binding.tvProductosAnadidosRemover.isVisible = !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
-            binding.llMontoRemover.isVisible = !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
+            binding.tvProductosAnadidosRemover.isVisible = !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
+            binding.llMontoRemover.isVisible = !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
             adapter.notifyDataSetChanged()
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.tvMontoRemover.text = sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
             }, 300)
             sharedViewModel.listaDePreciosDeProductosRemover.clear()
+            binding.nsvElegirProductoRemover.isVisible = !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
             binding.rvElegirProductoRemover.requestLayout()
         }
         binding.nsvElegirProductoRemover.isVisible = false
@@ -178,6 +179,11 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
     }
 
     private fun onDeletedItem(position: Int){
+      //Lo comentado no funciona
+      //  if(sharedViewModel.listaDeProductosRemover.isEmpty() && sharedViewModel.listaDeCantidadesRemover.isEmpty()){
+      //      binding.nsvElegirProductoRemover.isVisible = false
+      //  }
+        sharedViewModel.opcionesListRemover.add(position,sharedViewModel.listaDeProductosRemover[position])
         sharedViewModel.listaDeCantidadesRemover.removeAt(position)
         sharedViewModel.listaDeProductosRemover.removeAt(position)
         adapter.notifyItemRemoved(position)

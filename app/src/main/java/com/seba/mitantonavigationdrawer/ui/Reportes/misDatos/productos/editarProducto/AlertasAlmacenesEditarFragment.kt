@@ -86,8 +86,9 @@ class AlertasAlmacenesEditarFragment() : Fragment(R.layout.fragment_alertas_alma
         }
 
         binding.bAgregarAlmacenEditar.setOnClickListener {
-            Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
             Log.i("Sebastian", "${sharedViewModel.listaDeBodegas} y ${sharedViewModel.listaDeAlertas}")
+            if(!sharedViewModel.listaDeAlertas.all { it.isBlank() }){
             if (sharedViewModel.listaDeAlertas.size > 0 && sharedViewModel.listaDeBodegas.size >0) {
                 for (i in 0..<sharedViewModel.listaDeAlertas.size) {
                     if(sharedViewModel.listaDeAlertas[i] != "") {
@@ -98,12 +99,13 @@ class AlertasAlmacenesEditarFragment() : Fragment(R.layout.fragment_alertas_alma
                     }
                 }
                 Toast.makeText(requireContext(), "Se han agregado exitosamente las alertas", Toast.LENGTH_LONG).show()
+            }}
                 binding.rlAlertasAlmacenesEditar.isVisible = false
                 val editarProductoFragment = EditarProductoFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlAlertasAlmacenesEditar, editarProductoFragment)
                     .commit()
-            }
+
         }
 
         /* binding.bAgregarAlmacen.setOnClickListener {

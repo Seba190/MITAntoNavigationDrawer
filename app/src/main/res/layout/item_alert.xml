@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="300dp"
+    android:layout_width="330dp"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     app:cardBackgroundColor="@color/cream"
     android:layout_marginVertical="4dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+
 
         <CheckBox
             android:id="@+id/cbWarehouse"
@@ -20,10 +17,12 @@
 
         <TextView
             android:id="@+id/tvWarehouse"
-            android:layout_width="wrap_content"
+            android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="9sp"
+            android:layout_gravity="center|start"
+            android:layout_marginStart="50dp"
+            android:textSize="11sp"
             tools:text="Prueba"/>
 
         <EditText
@@ -33,9 +32,10 @@
             android:gravity="center"
             android:singleLine="true"
             android:maxLines="1"
+            android:layout_marginStart="225dp"
             android:imeOptions="actionDone"
             android:inputType="number"
-            android:textSize="9sp"
+            android:textSize="11sp"
             android:hint="@string/hint_alerts"/>
 
        <!-- <Button
@@ -46,7 +46,5 @@
             android:text="Agregar"
             android:textSize="7.5sp"
             android:backgroundTint="@color/light_green"/>-->
-
-    </LinearLayout>
 
 </androidx.cardview.widget.CardView>

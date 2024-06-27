@@ -1,0 +1,896 @@
+package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transferencias.editarTransferencia
+
+import android.annotation.SuppressLint
+import android.graphics.PorterDuff
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.cardview.widget.CardView
+import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.seba.mitantonavigationdrawer.R
+import com.seba.mitantonavigationdrawer.databinding.FragmentEditarTransferenciaBinding
+import com.seba.mitantonavigationdrawer.databinding.FragmentEstadisticaBinding
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaAdapter
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.ElegirProductoFragment
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transferencias.TransferenciasFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
+import com.seba.mitantonavigationdrawer.ui.estadística.EstadisticaViewModel
+import org.json.JSONArray
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+
+class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferencia) {
+    private var _binding: FragmentEditarTransferenciaBinding? = null
+    private val binding get() = _binding!!
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
+    private val args: TransferenciasFragmentArgs by navArgs()
+    var TextNombre: EditText? = null
+    var TextFecha: EditText? = null
+    var TextComentarios: EditText? = null
+    var DropDownOrigen: AutoCompleteTextView? = null
+    var DropDownDestino: AutoCompleteTextView? = null
+    private var requestCamara: ActivityResultLauncher<String>? = null
+    private var CodigoDeBarra: EditText? = null
+    private val ListaDeProductos: MutableList<String> = mutableListOf()
+    private val ListaDeCantidades: MutableList<String> = mutableListOf()
+    private val ListaDePreciosUnidad: MutableList<String> = mutableListOf()
+    private val ListaDePreciosCajas: MutableList<String> = mutableListOf()
+    private val ListaDeProductosAnadidos: MutableList<CardView> = mutableListOf()
+    //Me lanza una excepcion si descomento estas dos listas
+    // private val listaAntiguaProductos = sharedViewModel.listaDeProductos
+    // private val listaAntiguaCantidades = sharedViewModel.listaDeCantidades
+    private lateinit var adapter: AnadirTransferenciaAdapter
+    private var cantidad: String = ""
+    private var exceso: String? = ""
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val editarTransferenciaViewModel =
+            ViewModelProvider(this).get(EditarTransferenciaViewModel::class.java)
+
+        _binding = FragmentEditarTransferenciaBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+        //Aquí se programa
+        TextNombre = binding.etNombreTransferencia.findViewById(R.id.etNombreTransferencia)
+        TextFecha = binding.etFechaTransferencia.findViewById(R.id.etFechaTransferencia)
+        TextComentarios =
+            binding.etTransferenciaComentarios.findViewById(R.id.etTransferenciaComentarios)
+        DropDownOrigen =
+            binding.tvListaDesplegableAlmacenOrigen.findViewById(R.id.tvListaDesplegableAlmacenOrigen)
+        DropDownDestino =
+            binding.tvListaDesplegableAlmacenDestino.findViewById(R.id.tvListaDesplegableAlmacenDestino)
+
+        //Poner los edit text con sombra gris
+        binding.etNombreTransferencia.getBackground().setColorFilter(
+            getResources().getColor(R.color.color_list),
+            PorterDuff.Mode.SRC_ATOP
+        )
+        binding.etFechaTransferencia.getBackground().setColorFilter(
+            getResources().getColor(R.color.color_list),
+            PorterDuff.Mode.SRC_ATOP
+        )
+        binding.etTransferenciaComentarios.getBackground().setColorFilter(
+            getResources().getColor(R.color.color_list),
+            PorterDuff.Mode.SRC_ATOP
+        )
+        ListaDesplegableOrigen()
+        ListaDesplegableDestino()
+
+        binding.nsvElegirProducto.isVisible = true
+        binding.bAnadirNuevoProducto.setOnClickListener {
+            if (DropDownOrigen?.text.toString() != "Eliga una opción" && DropDownDestino?.text.toString() != "Eliga una opción") {
+                sharedViewModel.almacen = DropDownOrigen?.text.toString()
+                binding.nsvElegirProducto.isVisible = true
+                //Aquí se obtiene el id de la transferencia actual
+                if (TextNombre?.text.toString().isNotBlank()) {
+                    val queue = Volley.newRequestQueue(requireContext())
+                    val url = "http://186.64.123.248/Reportes/Transferencias/registro.php"
+                    val jsonObjectRequest = object : StringRequest(
+                        Request.Method.POST, url,
+                        { response ->
+                            if (TextNombre?.text.toString().isNotBlank()) {
+                                val id = JSONObject(response).getString("ID_TRANSFERENCIA")
+                                setFragmentResult(
+                                    "ID_TRANSFERENCIA", bundleOf(
+                                        "id_transferencia" to id.toString()
+                                    )
+                                )
+                                //unico = 1
+                                //no unico = 0
+                              //  val unico = JSONObject(response).getString("TRANSFERENCIA_UNICA")
+                                Toast.makeText(requireContext(), "El id de ingreso es $id", Toast.LENGTH_SHORT).show()
+                            }
+                        }, { error ->
+                            Toast.makeText(
+                                requireContext(),
+                                "Esta cambiando la transferencia a ${TextNombre?.text.toString().uppercase()}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                        }
+                    ) {
+                        override fun getParams(): MutableMap<String, String> {
+                            val parametros = HashMap<String, String>()
+                            parametros.put("TRANSFERENCIA", TextNombre?.text.toString().uppercase())
+                            return parametros
+                        }
+                    }
+                    queue.add(jsonObjectRequest)
+
+                }
+                val elegirProductoEditarTransferenciaFragment = ElegirProductoEditarTransferenciaFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.clEditarTransferencia, elegirProductoEditarTransferenciaFragment)
+                    .commit()
+                binding.tvProductosAnadidos.isVisible = true
+
+                // binding.tvProductosAnadidos.isVisible = !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Eliga el almacén de origen y de destino",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+        }
+        binding.TransferenciaButtonEnviar.setOnClickListener {
+            /*if(!segundaVez) {
+                for (i in 0..<sharedViewModel.listaDeCantidades.size) {
+                    if ((sharedViewModel.listaDeCantidadesAntigua.size < sharedViewModel.listaDeCantidades.size) ||
+                        (sharedViewModel.listaDeProductosAntigua.size < sharedViewModel.listaDeProductos.size)
+                    ) {
+                        sharedViewModel.listaDeCantidadesAntigua.add(sharedViewModel.listaDeCantidades[i])
+                        sharedViewModel.listaDeProductosAntigua.add(sharedViewModel.listaDeProductos[i])
+                    }
+
+                }
+                segundaVez = true
+            }*/
+            if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
+                ValidacionesIdInsertarDatos()
+               /* Handler(Looper.getMainLooper()).postDelayed({
+                    for (i in 0..<sharedViewModel.listaDeCantidades.size) {
+                        if(sharedViewModel.listaDeCantidadesAntigua[i] != sharedViewModel.listaDeCantidades[i]){
+                            sharedViewModel.listaDeCantidadesAntigua[i] = sharedViewModel.listaDeCantidades[i]
+                        }
+                        if(sharedViewModel.listaDeProductosAntigua[i] != sharedViewModel.listaDeProductos[i]){
+                            sharedViewModel.listaDeProductosAntigua[i] = sharedViewModel.listaDeProductos[i]
+                        }
+                    }
+                }, 500)*/
+            }else{
+                Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
+            }
+
+        }
+
+        requestCamara = registerForActivityResult(ActivityResultContracts.RequestPermission(),) {
+            if (it) {
+                findNavController().navigate(R.id.action_nav_editar_transferencias_to_nav_barcode_scan_editar_transferencia)
+            } else {
+                Toast.makeText(requireContext(), "Permiso denegado", Toast.LENGTH_LONG).show()
+            }
+        }
+        binding.bEscanearCodigoDeBarra.setOnClickListener {
+            requestCamara?.launch(android.Manifest.permission.CAMERA)
+        }
+
+        //  CodigoDeBarra = activity?.findViewById(R.id.txtBarcodeValue)
+        // if(CodigoDeBarra?.text!!.isNullOrBlank()){
+
+        //    binding.etCodigoDeBarra.setText(CodigoDeBarra!!.text)
+
+        // }
+        // var EditTextEmpty = binding.etCodigoDeBarra.text.toString()
+        // val action = AnadirTransferenciaFragmentDirections.actionNavAñadirTransferenciaToNavBarcodeScan(EditTextEmpty)
+        // findNavController().navigate(action)
+        /* parentFragmentManager.setFragmentResultListener("Codigo de barra transferencia",this) { key, bundle ->
+            binding.bAnadirNuevoProducto.setOnClickListener {
+                binding.etCodigoDeBarra.setText(bundle.getString("codigo"))
+            }
+           }*/
+        binding.tvProductosAnadidos.isVisible = false
+
+        recyclerViewElegirProducto()
+       // var segundaVez = false
+        binding.bActualizarRecyclerView.setOnClickListener {
+            binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
+            adapter.notifyDataSetChanged()
+            binding.rvElegirProducto.requestLayout()
+           /* if(!segundaVez) {
+                for (i in 0..<sharedViewModel.listaDeCantidades.size) {
+                    if ((sharedViewModel.listaDeCantidadesAntigua.size < sharedViewModel.listaDeCantidades.size) ||
+                        (sharedViewModel.listaDeProductosAntigua.size < sharedViewModel.listaDeProductos.size)
+                    ) {
+                        sharedViewModel.listaDeCantidadesAntigua.add(sharedViewModel.listaDeCantidades[i])
+                        sharedViewModel.listaDeProductosAntigua.add(sharedViewModel.listaDeProductos[i])
+                    }
+
+                }
+                segundaVez = true
+            }
+            //preguntarInventario()
+            Handler(Looper.getMainLooper()).postDelayed({
+                for (i in 0..<sharedViewModel.listaDeCantidades.size) {
+                    if(sharedViewModel.listaDeCantidadesAntigua[i] != sharedViewModel.listaDeCantidades[i]){
+                        sharedViewModel.listaDeCantidadesAntigua[i] = sharedViewModel.listaDeCantidades[i]
+                    }
+                    if(sharedViewModel.listaDeProductosAntigua[i] != sharedViewModel.listaDeProductos[i]){
+                        sharedViewModel.listaDeProductosAntigua[i] = sharedViewModel.listaDeProductos[i]
+                    }
+                }
+            }, 500)*/
+
+            /* Log.i(
+                 "Sebastian",
+                 "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}")*/
+
+        }
+        binding.tvProductosAnadidos.isVisible = sharedViewModel.listaDeCantidades.isNotEmpty()
+
+        if (TextFecha?.text?.isBlank() == true) {
+            val fecha = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time)
+            binding.etFechaTransferencia.setText(fecha.format(Date()))
+        }
+        try {
+            sharedViewModel.id.add(args.id)
+        }
+        catch(e:Exception){
+        }
+
+        return root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val queue1 = Volley.newRequestQueue(requireContext())
+        Log.i("Sebastian", "Valor de Id de destino es: ${sharedViewModel.id.last()}")
+        val url1 = "http://186.64.123.248/Reportes/Transferencias/registroInsertarTransferencia.php?ID_TRANSFERENCIA=${sharedViewModel.id.last()}"
+        val jsonObjectRequest1 = JsonObjectRequest(
+            Request.Method.GET, url1, null,
+            { response ->
+                Log.i("Sebastian","ID: ${sharedViewModel.id.last()}" )
+                TextNombre?.setText(response.getString("TRANSFERENCIA"))
+                TextFecha?.setText(response.getString("FECHA_TRANSFERENCIA"))
+                DropDownOrigen?.setText(response.getString("ALMACEN_ORIGEN"),false)
+                DropDownDestino?.setText(response.getString("ALMACEN_DESTINO"),false)
+                TextComentarios?.setText(response.getString("COMENTARIOS"))
+
+                val ListaDeProductos = response.getJSONArray("PRODUCTOS")
+
+                val productosList = mutableListOf<String>()
+                for (i in 0 until ListaDeProductos.length()) {
+                    productosList.add(ListaDeProductos.getString(i))
+                }
+
+                val jsonArray = JSONArray(ListaDeProductos.toString())
+                // Convierte el array JSON a una lista mutable
+                for (i in 0 until productosList.size) {
+                    val jsonObject: JSONObject = jsonArray.getJSONObject(i)
+                    val producto: String = jsonObject.getString("PRODUCTO")
+                    val cantidad: String = jsonObject.getString("CANTIDAD")
+                    Log.i("Sebastian", "PRODUCTO: $producto")
+                    Log.i("Sebastian", "CANTIDAD: $cantidad")
+                    if(!sharedViewModel.listaDeProductos.contains("$producto ( 0 unid. )")) {
+                        sharedViewModel.listaDeProductos.add("$producto ( 0 unid. )")
+                        sharedViewModel.listaDeCantidades.add(cantidad)
+                    }
+                }
+                /*if(!sharedViewModel.listaDeProductos.contains(response.getString("PRODUCTO").toString()) &&
+                    !sharedViewModel.listaDeCantidades.contains(response.getString("CANTIDAD").toString())) {
+                    sharedViewModel.listaDeCantidades.add(response.getString("CANTIDAD").toString())
+                    sharedViewModel.listaDeProductos.add("${response.getString("PRODUCTO")} ( 0 unid. )")
+                }*/
+
+                Handler(Looper.getMainLooper()).postDelayed({
+                    binding.nsvElegirProducto.isVisible = true
+                    binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
+                    adapter.updateList(sharedViewModel.listaDeCantidades, sharedViewModel.listaDeProductos)
+                    adapter.notifyDataSetChanged()
+                    binding.rvElegirProducto.requestLayout()
+
+                }, 500)
+
+
+            }, { error ->
+                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_LONG).show()
+            }
+        )
+        queue1.add(jsonObjectRequest1)
+    }
+
+    fun updateData(dataCantidad: MutableList<String>, dataProducto: MutableList<String>) {
+        adapter.updateList(dataCantidad, dataProducto)
+        binding.rvElegirProducto.adapter?.notifyDataSetChanged()
+        binding.rvElegirProducto.requestLayout()
+    }
+
+    /* fun refreshAdapter(){
+       adapter.notifyDataSetChanged()
+        binding.rvElegirProducto.requestLayout()
+    }*/
+
+    fun recyclerViewElegirProducto() {
+        adapter = AnadirTransferenciaAdapter(sharedViewModel.listaDeCantidades, sharedViewModel.listaDeProductos, sharedViewModel) { position ->onDeletedItem(position) }
+        binding.rvElegirProducto.setHasFixedSize(true)
+        binding.rvElegirProducto.adapter = adapter
+        binding.rvElegirProducto.layoutManager = LinearLayoutManager(requireContext())
+        activity?.runOnUiThread{
+            adapter.notifyDataSetChanged()
+            binding.rvElegirProducto.requestLayout()
+        }
+        binding.tvProductosAnadidos.isVisible =
+            !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
+    }
+
+    private fun onDeletedItem(position: Int) {
+        sharedViewModel.listaDeCantidades.removeAt(position)
+        sharedViewModel.listaDeProductos.removeAt(position)
+        adapter.notifyItemRemoved(position)
+        adapter.notifyDataSetChanged()
+        binding.rvElegirProducto.requestLayout()
+    }
+
+    private fun ListaDesplegableDestino() {
+        val queue1 = Volley.newRequestQueue(requireContext())
+        val url1 = "http://186.64.123.248/Transferencia/almacenDestino.php"
+        val jsonObjectRequest1 = JsonObjectRequest(
+            Request.Method.GET, url1, null,
+            { response ->
+                // Obtén el array de opciones desde el objeto JSON
+                val jsonArray = response.getJSONArray("Lista")
+                // Convierte el array JSON a una lista mutable
+                val opcionesList = mutableListOf<String>()
+                for (i in 0 until jsonArray.length()) {
+                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                }
+                //Crea un adpatador para el dropdown
+                val adapter = ArrayAdapter(requireContext(), R.layout.list_item, opcionesList)
+                //binding.tvholaMundo?.setText(response.getString("Lista"))
+                DropDownDestino?.setAdapter(adapter)
+
+                DropDownDestino?.onItemClickListener =
+                    AdapterView.OnItemClickListener { parent, view, position, id ->
+                        val itemSelected = parent.getItemAtPosition(position)
+                    }
+            }, { error ->
+                Toast.makeText(
+                    requireContext(),
+                    " La aplicación no se ha conectado con el servidor",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        )
+        queue1.add(jsonObjectRequest1)
+    }
+
+    private fun ListaDesplegableOrigen() {
+        val queue1 = Volley.newRequestQueue(requireContext())
+        val url1 = "http://186.64.123.248/Transferencia/almacenOrigen.php"
+        val jsonObjectRequest1 = JsonObjectRequest(
+            Request.Method.GET, url1, null,
+            { response ->
+                // Obtén el array de opciones desde el objeto JSON
+                val jsonArray = response.getJSONArray("Lista")
+                // Convierte el array JSON a una lista mutable
+                val opcionesList = mutableListOf<String>()
+                for (i in 0 until jsonArray.length()) {
+                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                }
+                //Crea un adpatador para el dropdown
+                val adapter = ArrayAdapter(requireContext(), R.layout.list_item, opcionesList)
+                //binding.tvholaMundo?.setText(response.getString("Lista"))
+                DropDownOrigen?.setAdapter(adapter)
+
+                DropDownOrigen?.onItemClickListener =
+                    AdapterView.OnItemClickListener { parent, view, position, id ->
+                        val itemSelected = parent.getItemAtPosition(position)
+                    }
+            }, { error ->
+                //Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+            }
+        )
+        queue1.add(jsonObjectRequest1)
+    }
+
+    private fun ValidacionesIdInsertarDatos() {
+        //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
+        val queue = Volley.newRequestQueue(requireContext())
+        val url = "http://186.64.123.248/Reportes/Transferencias/registro.php"
+        val jsonObjectRequest = object : StringRequest(
+            Request.Method.POST, url,
+            { response ->
+                if (TextNombre?.text.toString().isNotBlank()) {
+                    val id = JSONObject(response).getString("ID_TRANSFERENCIA")
+                    //unico = 1
+                    //no unico = 0
+                   // val unico = JSONObject(response).getString("TRANSFERENCIA_UNICA")
+                   // if (unico == "1") {
+                        //Aqui va el código para validar el almacen
+                        val url1 = "http://186.64.123.248/Reportes/Transferencias/actualizarTransferencia.php" // Reemplaza esto con tu URL de la API
+                        val queue1 = Volley.newRequestQueue(requireContext())
+                        val stringRequest = object : StringRequest(
+                            Request.Method.POST,
+                            url1,
+                            { response ->
+                                if (binding.etNombreTransferencia.text.isNotBlank() && binding.tvListaDesplegableAlmacenDestino.text.toString() != "Eliga una opción" && binding.tvListaDesplegableAlmacenOrigen.text.toString() != "Eliga una opción") {
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        InsertarPreciosYCantidades()
+                                    }, 2500)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        modificarInventario()
+                                    }, 5000)
+                                    binding.tvProductosAnadidos.isVisible = !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
+                                }
+
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Transferencia agregada exitosamente. El id de ingreso es el número $id ",
+                                    Toast.LENGTH_LONG
+                                ).show()
+
+
+                            },
+                            { error ->
+                                Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
+                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                            }
+                        ) {
+                            override fun getParams(): MutableMap<String, String> {
+                                val parametros = HashMap<String, String>()
+                                parametros.put("ID_TRANSFERENCIA", id.toString())
+                                parametros.put("TRANSFERENCIA", TextNombre?.text.toString().uppercase())
+                                parametros.put("FECHA_TRANSFERENCIA", TextFecha?.text.toString().uppercase())
+                                parametros.put("ALMACEN_ORIGEN", DropDownOrigen?.text.toString())
+                                parametros.put("ALMACEN_DESTINO", DropDownDestino?.text.toString())
+                                parametros.put("COMENTARIOS", TextComentarios?.text.toString().uppercase())
+                                /* parametros.put("NUMERO_DE_PRODUCTOS",sharedViewModel.listaDeProductos.size.toString())
+                                for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                                    parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
+                                    parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
+                                }*/
+
+                                return parametros
+                            }
+                        }
+                        queue1.add(stringRequest)
+
+                 /*   } else if (unico == "0") {
+                        //VolleyError("El almacén ya se encuentra en la base de datos")
+                        //queue1.cancelAll(TAG)
+                        //jsonObjectRequest1.cancel()
+                        Toast.makeText(
+                            requireContext(),
+                            "La transferencia ya se encuentra en la base de datos",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }*/
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "El nombre de la transferencia es obligatorio",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+                // TextId?.setText(response.getString("ID_ALMACEN"))
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+            }, { error ->
+                Toast.makeText(
+                    requireContext(),
+                    "Conecte la aplicación al servidor",
+                    Toast.LENGTH_LONG
+                ).show()
+                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("TRANSFERENCIA", TextNombre?.text.toString().uppercase())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
+    }
+
+    private fun InsertarPreciosYCantidades() {
+        //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
+        val queue = Volley.newRequestQueue(requireContext())
+        val url = "http://186.64.123.248/Reportes/Transferencias/registro.php"
+        val jsonObjectRequest = object : StringRequest(
+            Request.Method.POST, url,
+            { response ->
+                if (TextNombre?.text.toString().isNotBlank()) {
+                    val id = JSONObject(response).getString("ID_TRANSFERENCIA")
+                    //unico = 1
+                    //no unico = 0
+                    //Aqui va el código para validar el almacen
+                    val url1 = "http://186.64.123.248/Reportes/Transferencias/insertarProductosTransferenciaTotal.php" // Reemplaza esto con tu URL de la API
+                    val queue1 = Volley.newRequestQueue(requireContext())
+                    val stringRequest = object : StringRequest(
+                        Request.Method.POST,
+                        url1,
+                        { response ->
+                            Toast.makeText(
+                                requireContext(),
+                                "Productos agregados exitosamente",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
+                        { error ->
+                            Toast.makeText(
+                                requireContext(),
+                                "Productos agregados exitosamente",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    ) {
+                        override fun getParams(): MutableMap<String, String> {
+                            val parametros = HashMap<String, String>()
+                            parametros.put("ID_TRANSFERENCIA", id.toString())
+                            parametros.put("NUMERO_DE_PRODUCTOS", sharedViewModel.listaDeProductos.size.toString())
+                            for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                                parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
+                                parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
+                            }
+                            return parametros
+                        }
+                    }
+                    queue1.add(stringRequest)
+
+                }
+
+                // TextId?.setText(response.getString("ID_ALMACEN"))
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+            }, { error ->
+                //Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("TRANSFERENCIA", TextNombre?.text.toString().uppercase())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
+    }
+
+    fun obtenerMiView(): View {
+        return binding.etNombreTransferencia // Tu vista que quieres acceder
+    }
+
+
+    fun modificarInventario() {
+        //Si el inventario es menor que la transferencia que no la haga y si el almacen de destino no existe, que lo cree
+        val url1 = "http://186.64.123.248/Reportes/Transferencias/modificarInventarioCompleta.php" // Reemplaza esto con tu URL de la API
+        val queue1 = Volley.newRequestQueue(requireContext())
+        val stringRequest = object : StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+                Toast.makeText(
+                    requireContext(),
+                    "Inventario modificado exitosamente",
+                    Toast.LENGTH_SHORT
+                ).show()
+                TextNombre?.setText("")
+                TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
+                DropDownOrigen?.setText("Eliga una opción", false)
+                DropDownDestino?.setText("Eliga una opción", false)
+                TextComentarios?.setText("")
+                sharedViewModel.listaDeCantidades.removeAll(sharedViewModel.listaDeCantidades)
+                sharedViewModel.listaDeProductos.removeAll(sharedViewModel.listaDeProductos)
+                sharedViewModel.listaDeProductosAntigua.removeAll(sharedViewModel.listaDeProductosAntigua)
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProducto.requestLayout()
+                binding.tvProductosAnadidos.isVisible = false
+                binding.nsvElegirProducto.isVisible = false
+
+            },
+            { error ->
+                /*  TextNombre?.setText("")
+                          TextFecha?.setText("")
+                          DropDownOrigen?.setText("Eliga una opción",false)
+                          DropDownDestino?.setText("Eliga una opción",false)
+                          TextComentarios?.setText("")
+                          TextCodigoDeBarra?.setText("")*/
+                Toast.makeText(
+                    requireContext(),
+                    "Error $error y ${sharedViewModel.listaDeProductos} y ${sharedViewModel.listaDeCantidades}",
+                    Toast.LENGTH_LONG
+                ).show()
+                Log.i("Sebastian","$error, ${sharedViewModel.listaDeProductos} y ${sharedViewModel.listaDeCantidades}")
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("NUMERO_DE_PRODUCTOS", sharedViewModel.listaDeProductos.size.toString())
+                parametros.put("ALMACEN_ORIGEN", DropDownOrigen?.text.toString())
+                parametros.put("ALMACEN_DESTINO", DropDownDestino?.text.toString())
+                for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                    parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
+                    parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
+                }
+
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
+    }/*,
+            {error ->
+                Toast.makeText(requireContext(),"El inventario del almacén es menor que la transferencia",Toast.LENGTH_SHORT).show()
+            }) {
+            override fun getParams(): MutableMap<String, String> {
+
+                val parametros = HashMap<String, String>()
+                for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                    parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
+                }
+                return parametros
+            }
+        }
+        queue.add(stringRequest1)*/
+
+
+    /* private var segundaVez = false
+    override fun onResume() {
+        super.onResume()
+        if (segundaVez && sharedViewModel.listaDeProductos.isNotEmpty() && sharedViewModel.listaDeCantidades.isNotEmpty()){
+            view?.findViewById<TextView>(R.id.tvProductosAnadidos)?.isVisible = true
+        }
+        segundaVez = true
+
+    }*/
+
+   /* fun preguntarInventario() {
+        val url1 = "http://186.64.123.248/Transferencia/validacionProductos.php"
+        val queue1 = Volley.newRequestQueue(requireContext())
+        val stringRequest = @SuppressLint("ClickableViewAccessibility")
+        object : StringRequest(
+            Request.Method.POST, url1,
+            { response ->
+                val encontrado = JSONObject(response).getString("ENCONTRADO")
+                if(encontrado == "1") {
+                    val queue = Volley.newRequestQueue(requireContext())
+                    val url = "http://186.64.123.248/Transferencia/preguntarInventario.php"
+                    val jsonObjectRequest = @SuppressLint("ClickableViewAccessibility")
+                    object : StringRequest(
+                        Request.Method.POST, url,
+                        { response ->
+                            //  try {
+                            cantidad = JSONObject(response).getString("Cantidad")
+                            val diferencia1 = sharedViewModel.listaDeCantidades.subtract(sharedViewModel.listaDeCantidadesAntigua.toSet()).firstOrNull()
+                            val diferencia2 = sharedViewModel.listaDeCantidadesAntigua.subtract(sharedViewModel.listaDeCantidades.toSet()).firstOrNull()
+                            val diferencia = diferencia1 ?: diferencia2
+                            exceso = sharedViewModel.listaDeCantidades.find{ it.toInt() > cantidad.toInt() }
+                            // for (i in 0..<sharedViewModel.listaDeCantidades.size) {
+                            // if (sharedViewModel.listaDeCantidades[i] != sharedViewModel.listaDeCantidadesAntigua[i]) {
+                            // val cantidadIngresada = sharedViewModel.listaDeCantidades[i].toInt()
+                            //    val indiceCantidad = i
+                            if(diferencia != null) {
+                                if (cantidad.toInt() < diferencia.toInt()) {
+                                    val inflater = requireActivity().layoutInflater
+                                    val layout =
+                                        inflater.inflate(R.layout.toast_custom, null)
+                                    val text =
+                                        layout.findViewById<TextView>(R.id.text_view_toast)
+                                    text.text =
+                                        "La cantidad es mayor que la cantidad en inventario"
+                                    val toast = Toast(requireContext())
+                                    toast.duration = Toast.LENGTH_LONG
+                                    toast.view = layout
+                                    toast.setGravity(Gravity.BOTTOM, 0, 500)
+                                    toast.show()
+                                    Log.i("Sebastian","Diferencia: $diferencia")
+                                    Log.i("Sebastian","Exceso: $exceso")
+                                    Log.i("Sebastian","Cantidad: $cantidad")
+                                    Log.i("Sebastian", "Mensaje 1")
+                                    //else if (exceso != null && (sharedViewModel.listaDeCantidadesAntigua == sharedViewModel.listaDeCantidades)){
+                                }
+                            } else if(exceso != null && (cantidad.toInt() < exceso?.toInt()!!)){
+                                val inflater = requireActivity().layoutInflater
+                                val layout =
+                                    inflater.inflate(R.layout.toast_custom, null)
+                                val text =
+                                    layout.findViewById<TextView>(R.id.text_view_toast)
+                                text.text =
+                                    "La cantidad es mayor que la cantidad en inventario"
+                                val toast = Toast(requireContext())
+                                toast.duration = Toast.LENGTH_SHORT
+                                toast.view = layout
+                                toast.setGravity(Gravity.BOTTOM, 0, 500)
+                                toast.show()
+                                Log.i("Sebastian","Exceso: $exceso")
+                                Log.i("Sebastian", "Mensaje 2")
+                            }
+                            else {
+                                Log.i("Sebastian", "Mensaje 6")
+                                //binding.TransferenciaButtonEnviar.setOnTouchListener { _, motionEvent ->
+                                //  if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                                if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
+                                    ValidacionesIdInsertarDatos()
+                                }else{
+                                    Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
+                                }
+                                //   }
+                                //    return@setOnTouchListener false
+                                //  }
+                            }
+                            Log.i(
+                                "Sebastian",
+                                "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}"
+                            )
+                            Log.i("Sebastian", "Mensaje 3")
+                            /*   } catch (e: Exception) {
+                                   Toast.makeText(
+                                       requireContext(), "La excepcion es $e",
+                                       Toast.LENGTH_LONG
+                                   ).show()
+                                   Log.i("Sebastián", "$e")
+                               }*/
+                        },
+                        { error ->
+                            /*binding.TransferenciaButtonEnviar.setOnTouchListener { _ , motionEvent ->
+                                if(motionEvent.action == MotionEvent.ACTION_DOWN) {
+                                    ValidacionesIdInsertarDatos()
+                                }
+                                return@setOnTouchListener false*/
+                            val responseBody: ByteArray? = error.networkResponse?.data
+                            if(responseBody != null) {
+                                val responseString = String(responseBody)
+                                if (responseString.startsWith("<!DOCTYPE")) {
+
+                                } else {
+                                    val jsonResponse = JSONObject(responseString)
+                                    val cantidad = jsonResponse.getString("Cantidad")
+                                    val exceso =
+                                        sharedViewModel.listaDeCantidades.find { it.toInt() > cantidad.toInt() }
+                                    Log.i("Sebastian", "Exceso: $exceso")
+                                    Log.i("Sebastian", "Cantidad: $cantidad")
+                                    if ((sharedViewModel.listaDeCantidades != sharedViewModel.listaDeCantidadesAntigua) || (exceso?.toInt()!! > cantidad.toInt())) {
+                                        val inflater = requireActivity().layoutInflater
+                                        val layout =
+                                            inflater.inflate(R.layout.toast_custom, null)
+                                        val text =
+                                            layout.findViewById<TextView>(R.id.text_view_toast)
+                                        text.text =
+                                            "La cantidad es mayor que la cantidad en inventario"
+                                        val toast = Toast(requireContext())
+                                        toast.duration = Toast.LENGTH_SHORT
+                                        toast.view = layout
+                                        toast.setGravity(Gravity.BOTTOM, 0, 500)
+                                        toast.show()
+                                    }
+                                }
+                            }
+                            Log.i(
+                                "Sebastian",
+                                "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}"
+                            )
+                            //Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_LONG).show()
+                            // Log.i("Sebastián", "$error")
+                            Log.i("Sebastian", "Mensaje 4")
+                        }) {
+                        // Ejemplo: "ALMACEN_ORIGEN" : BODEGA_SANTIAGO
+                        //          "PRODUCTO"       : TABLETON ( 0 unid. )
+                        override fun getParams(): MutableMap<String, String> {
+                            val parametros = HashMap<String, String>()
+                            parametros.put("ALMACEN_ORIGEN", sharedViewModel.almacen)
+                            for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                                if ((sharedViewModel.listaDeProductos[i].substringBefore('(', sharedViewModel.listaDeProductos[i])
+                                            != sharedViewModel.listaDeProductosAntigua[i].substringBefore('(',
+                                        sharedViewModel.listaDeProductosAntigua[i]
+                                    )) ||
+                                    (sharedViewModel.listaDeCantidades[i] != sharedViewModel.listaDeCantidadesAntigua[i])
+                                ) {
+                                    parametros.put("PRODUCTO", sharedViewModel.listaDeProductos[i])
+                                }
+                                /* else if(sharedViewModel.listaDeCantidades[i] == sharedViewModel.listaDeCantidadesAntigua[i] &&
+                                     (sharedViewModel.listaDeProductos[i].substringBefore('(', sharedViewModel.listaDeProductos[i])
+                                             == sharedViewModel.listaDeProductosAntigua[i].substringBefore('(',
+                                         sharedViewModel.listaDeProductosAntigua[i]
+                                     )) && exceso != null){
+                                     parametros.put("PRODUCTO", sharedViewModel.listaDeProductos[sharedViewModel.listaDeCantidades.indexOf(exceso)])
+                                 }*/
+                                /*  else  {
+                                      binding.TransferenciaButtonEnviar.setOnTouchListener { _ , motionEvent ->
+                                          if(motionEvent.action == MotionEvent.ACTION_DOWN) {
+                                              ValidacionesIdInsertarDatos()
+                                          }
+                                          return@setOnTouchListener false
+                                      }
+                                  }*/
+                            }
+
+                            return parametros
+                        }
+                    }
+                    queue.add(jsonObjectRequest)
+                }else if (encontrado == "0"){
+                    Toast.makeText(requireContext(), "El producto no se encuentra en la base de datos", Toast.LENGTH_LONG).show()
+                    Log.i(
+                        "Sebastian",
+                        "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}"
+                    )
+                    Log.i("Sebas",sharedViewModel.listaDeProductos[0].substringBefore('(', sharedViewModel.listaDeProductos[0]))
+                }
+            }, { error ->
+                Log.i("Sebastian", "Mensaje 5")
+
+                //  binding.TransferenciaButtonEnviar.setOnTouchListener { _ , motionEvent ->
+                //      if(motionEvent.action == MotionEvent.ACTION_DOWN) {
+                if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
+                    ValidacionesIdInsertarDatos()
+                }else{
+                    Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
+                }
+                //       }
+                //       return@setOnTouchListener false
+                //  }
+                // Toast.makeText(requireContext(),"Aquí esta el error de la api validacionProductos",Toast.LENGTH_LONG).show()
+            }) {
+            // Ejemplo: "PRODUCTO" :***AGUA CON GAS**
+            //Los asteriscos son espacios
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                    //Ejemplos:
+                    // Si ALOE de lista productos es distinto a otro elemento de lista productos antigua
+                    // Y 20 si esta en lista cantidad y no en lista cantidad antigua
+                    if ((sharedViewModel.listaDeProductos[i].substringBefore('(', sharedViewModel.listaDeProductos[i]) != sharedViewModel.listaDeProductosAntigua[i].substringBefore('(', sharedViewModel.listaDeProductosAntigua[i]
+                        )) ||
+                        (sharedViewModel.listaDeCantidades[i] != sharedViewModel.listaDeCantidadesAntigua[i])
+                    ) {
+                        parametros.put("PRODUCTO", sharedViewModel.listaDeProductos[i].substringBefore('(', sharedViewModel.listaDeProductos[i]))
+                    }
+                    else if ((sharedViewModel.listaDeProductos[i].substringBefore('(', sharedViewModel.listaDeProductos[i]) != sharedViewModel.listaDeProductosAntigua[i].substringBefore('(', sharedViewModel.listaDeProductosAntigua[i]
+                        )) ||(sharedViewModel.listaDeCantidades[i] == sharedViewModel.listaDeCantidadesAntigua[i])){
+                        parametros.put("PRODUCTO", sharedViewModel.listaDeProductos[i].substringBefore('(', sharedViewModel.listaDeProductos[i]))
+                    }
+                }
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
+    }*/
+    override fun onDestroyView() {
+        super.onDestroyView()
+        adapter.notifyDataSetChanged()
+        binding.rvElegirProducto.requestLayout()
+        _binding = null
+    }
+}

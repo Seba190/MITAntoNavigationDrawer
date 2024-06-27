@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/nav_inicio">
-
     <fragment
         android:id="@+id/nav_inicio"
         android:name="com.seba.mitantonavigationdrawer.ui.inicio.InicioFragment"
@@ -31,6 +30,12 @@
         <action
             android:id="@+id/action_nav_inicio_to_nav_añadir_transferencia"
             app:destination="@id/nav_añadir_transferencia" />
+        <action
+            android:id="@+id/action_nav_inicio_to_nav_transferencias"
+            app:destination="@id/nav_transferencias" />
+        <action
+            android:id="@+id/action_nav_inicio_to_nav_transacciones"
+            app:destination="@id/nav_transacciones" />
     </fragment>
 
     <fragment
@@ -117,6 +122,9 @@
         <action
             android:id="@+id/action_nav_añadir_producto_to_nav_alertas_almacenes"
             app:destination="@id/nav_alertas_almacenes" />
+        <action
+            android:id="@+id/action_nav_añadir_producto_to_nav_camara_actualizada"
+            app:destination="@id/nav_camara_actualizada" />
     </fragment>
     <fragment
         android:id="@+id/nav_barcode_scan_producto"
@@ -366,6 +374,9 @@
         <action
             android:id="@+id/action_nav_editar_producto_to_nav_barcode_scan_editar_producto"
             app:destination="@id/nav_barcode_scan_editar_producto" />
+        <action
+            android:id="@+id/action_nav_editar_producto_to_nav_camara_actualizada"
+            app:destination="@id/nav_camara_actualizada" />
     </fragment>
     <fragment
         android:id="@+id/nav_barcode_scan_editar_producto"
@@ -402,6 +413,57 @@
         <action
             android:id="@+id/action_nav_tipos_de_productos_to_nav_editar_tipos_de_productos"
             app:destination="@id/nav_editar_tipos_de_productos" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_transferencias"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transferencias.TransferenciasFragment"
+        android:label="@string/menu_transferencias"
+        tools:layout="@layout/fragment_transferencias" >
+        <action
+            android:id="@+id/action_nav_transferencias_to_nav_editar_transferencias"
+            app:destination="@id/nav_editar_transferencias">
+            <argument
+                android:name="id"
+                app:argType="string"
+                android:defaultValue="id" />
+        </action>
+        <argument
+            android:name="id"
+            app:argType="string"
+            android:defaultValue="id" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_editar_transferencias"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transferencias.editarTransferencia.EditarTransferenciaFragment"
+        android:label="@string/menu_editar_transferencia"
+        tools:layout="@layout/fragment_editar_transferencia" >
+        <action
+            android:id="@+id/action_nav_editar_transferencias_to_nav_transferencias"
+            app:destination="@id/nav_transferencias" />
+        <action
+            android:id="@+id/action_nav_editar_transferencias_to_nav_barcode_scan_editar_transferencia"
+            app:destination="@id/nav_barcode_scan_editar_transferencia" />
+        <action
+            android:id="@+id/action_nav_editar_transferencias_to_nav_elegir_producto_editar_transferencias"
+            app:destination="@id/nav_elegir_producto_editar_transferencias" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_elegir_producto_editar_transferencias"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transferencias.editarTransferencia.ElegirProductoEditarTransferenciaFragment"
+        android:label="@string/menu_elegir_producto_editar_transferencia"
+        tools:layout="@layout/fragment_elegir_producto_editar_transferencia">
+        <action
+            android:id="@+id/action_nav_elegir_producto_editar_transferencias_to_nav_editar_transferencias"
+            app:destination="@id/nav_editar_transferencias" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_barcode_scan_editar_transferencia"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transferencias.editarTransferencia.BarcodeScanEditarTransferenciaFragment"
+        android:label="@string/menu_barcode_scan_editar_transferencia"
+        tools:layout="@layout/fragment_barcode_scan_editar_transferencia" >
+        <action
+            android:id="@+id/action_nav_barcode_scan_editar_transferencia_to_nav_editar_transferencias"
+            app:destination="@id/nav_editar_transferencias" />
     </fragment>
     <fragment
         android:id="@+id/nav_editar_tipos_de_productos"
@@ -468,6 +530,127 @@
             android:id="@+id/action_nav_cliente_precio_venta_to_nav_añadir_producto"
             app:destination="@id/nav_añadir_producto" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_transacciones"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.TransaccionesFragment"
+        android:label="@string/menu_transacciones"
+        tools:layout="@layout/fragment_transacciones">
+        <action
+            android:id="@+id/action_nav_transacciones_to_nav_editar_sin_factura"
+            app:destination="@id/nav_editar_sin_factura">
+            <argument
+                android:name="id"
+                app:argType="string"
+                android:defaultValue="id" />
+        </action>
+        <action
+            android:id="@+id/action_nav_transacciones_to_nav_editar_factura_entrada"
+            app:destination="@id/nav_editar_factura_entrada">
+            <argument
+                android:name="id"
+                app:argType="string"
+                android:defaultValue="id" />
+        </action>
+        <action
+            android:id="@+id/action_nav_transacciones_to_nav_editar_factura_salida"
+            app:destination="@id/nav_editar_factura_salida">
+            <argument
+                android:name="id"
+                app:argType="string"
+                android:defaultValue="id" />
+        </action>
+        <argument
+            android:name="id"
+            app:argType="string"
+            android:defaultValue="id" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_sin_factura"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.sinFactura.SinFacturaFragment"
+        android:label="@string/menu_sin_factura"
+        tools:layout="@layout/fragment_sin_factura">
+    </fragment>
+    <fragment
+        android:id="@+id/nav_editar_sin_factura"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.sinFactura.editarSinFactura.EditarSinFacturaFragment"
+        android:label="@string/menu_editar_sin_factura"
+        tools:layout="@layout/fragment_editar_sin_factura">
+    </fragment>
+    <fragment
+        android:id="@+id/nav_factura_entrada"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaEntrada.FacturaEntradaFragment"
+        android:label="@string/menu_factura_entrada"
+        tools:layout="@layout/fragment_factura_entrada">
+    </fragment>
+    <fragment
+        android:id="@+id/nav_editar_factura_entrada"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaEntrada.editarFacturaEntrada.EditarFacturaEntradaFragment"
+        android:label="@string/menu_editar_factura_entrada"
+        tools:layout="@layout/fragment_editar_factura_entrada">
+        <action
+            android:id="@+id/action_nav_editar_factura_entrada_to_nav_barcode_scan_factura_entrada"
+            app:destination="@id/nav_barcode_scan_factura_entrada" />
+        <action
+            android:id="@+id/action_nav_editar_factura_entrada_to_nav_elegir_producto_factura_entrada"
+            app:destination="@id/nav_elegir_producto_factura_entrada" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_barcode_scan_factura_entrada"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaEntrada.editarFacturaEntrada.BarcodeScanFacturaEntradaFragment"
+        android:label="@string/menu_barcode_scan_factura_entrada"
+        tools:layout="@layout/fragment_barcode_scan_factura_entrada" >
+    </fragment>
+    <fragment
+        android:id="@+id/nav_elegir_producto_factura_entrada"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaEntrada.editarFacturaEntrada.ElegirProductoFacturaEntradaFragment"
+        android:label="@string/menu_elegir_producto_factura_entrada"
+        tools:layout="@layout/fragment_elegir_producto_factura_entrada">
+        <action
+            android:id="@+id/action_nav_elegir_producto_factura_entrada_to_nav_editar_factura_entrada"
+            app:destination="@id/nav_editar_factura_entrada" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_factura_salida"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaSalida.FacturaSalidaFragment"
+        android:label="@string/menu_factura_salida"
+        tools:layout="@layout/fragment_factura_salida">
+    </fragment>
+    <fragment
+        android:id="@+id/nav_editar_factura_salida"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaSalida.editarFacturaSalida.EditarFacturaSalidaFragment"
+        android:label="@string/menu_editar_factura_salida"
+        tools:layout="@layout/fragment_editar_factura_salida">
+        <action
+            android:id="@+id/action_nav_editar_factura_salida_to_nav_elegir_producto_factura_salida"
+            app:destination="@id/nav_elegir_producto_factura_salida" />
+        <action
+            android:id="@+id/action_nav_editar_factura_salida_to_nav_barcode_scan_factura_salida"
+            app:destination="@id/nav_barcode_scan_factura_salida" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_barcode_scan_factura_salida"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaSalida.editarFacturaSalida.BarcodeScanFacturaSalidaFragment"
+        android:label="@string/menu_barcode_scan_factura_salida"
+        tools:layout="@layout/fragment_barcode_scan_factura_salida">
+        <action
+            android:id="@+id/action_nav_barcode_scan_factura_salida_to_nav_editar_factura_salida"
+            app:destination="@id/nav_editar_factura_salida" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_inventory"
+        android:name="com.seba.mitantonavigationdrawer.ui.inventario.InventarioFragment"
+        android:label="@string/menu_inventario"
+        tools:layout="@layout/fragment_inventario">
+    </fragment>
+    <fragment
+        android:id="@+id/nav_elegir_producto_factura_salida"
+        android:name="com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaSalida.editarFacturaSalida.ElegirProductoFacturaSalidaFragment"
+        android:label="@string/menu_elegir_producto_factura_salida"
+        tools:layout="@layout/fragment_elegir_producto_factura_salida">
+        <action
+            android:id="@+id/action_nav_elegir_producto_factura_salida_to_nav_editar_factura_salida"
+            app:destination="@id/nav_editar_factura_salida" />
+    </fragment>
     <navigation android:id="@+id/navigation"
         app:startDestination="@id/nav_camara">
         <fragment
@@ -480,4 +663,10 @@
                 app:destination="@id/nav_añadir_producto" />
         </fragment>
     </navigation>
+    <fragment
+        android:id="@+id/nav_camara_actualizada"
+        android:name="com.seba.mitantonavigationdrawer.ui.Camara.CamaraActualizadaFragment"
+        android:label="@string/menu_camara"
+        tools:layout="@layout/fragment_camara_actualizada">
+    </fragment>
 </navigation>

@@ -30,7 +30,7 @@ class AnadirTransferenciaAdapter (var listaDeCantidades: MutableList<String>
     }
 
     override fun getItemCount(): Int {
-        return listaDeCantidades.size
+        return listaDeProductos.size
     }
 
     override fun onBindViewHolder(holder: AnadirTransferenciaViewHolder, position: Int) {
@@ -39,12 +39,11 @@ class AnadirTransferenciaAdapter (var listaDeCantidades: MutableList<String>
         holder.bind(itemCantidad,itemProducto,position,onClickDelete)
 
     }
-    fun getDataProductoAtPosition(position: Int): String {
-        return listaDeProductos[position]
-    }
 
-    fun getDataCantidadAtPosition(position: Int): String {
-        return listaDeCantidades[position]
+    fun setData(listaDeCantidadesNueva: MutableList<String>,listaDeProductosNueva: MutableList<String>) {
+        listaDeCantidades.addAll(listaDeCantidadesNueva)
+        listaDeProductos.addAll(listaDeProductosNueva)
+        notifyDataSetChanged()
     }
 
 

@@ -1,10 +1,12 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.editarProducto
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -47,13 +49,20 @@ import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirPro
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.ClientePrecioVentaFragment
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.ProveedorPrecioCompraFragment
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.Redondeado
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.tiposDeProductos.editarTiposDeProductos.EditarCantidadTiposDeProductosFragment
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
+import com.squareup.picasso.Picasso
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
 import kotlin.Exception
+import android.graphics.BitmapShader
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
+import android.graphics.Shader
 
 
 class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),RadioGroup.OnCheckedChangeListener {
@@ -84,6 +93,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
     private var requestCamara: ActivityResultLauncher<String>? = null
     private val sharedViewModel : SharedViewModel by activityViewModels()
     private lateinit var retrofit: Retrofit
+    @SuppressLint("CutPasteId")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -110,6 +120,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
         ButtonSellPrice = binding.buttonSellPrice.findViewById(R.id.buttonSellPrice)
         ButtonProducto = binding.buttonProducto.findViewById(R.id.buttonProducto)
         TablaAlmacenes = binding.tablaAlmacenes.findViewById(R.id.tablaAlmacenes)
+        Imagen = binding.ivImageSelectedProducto.findViewById(R.id.ivImageSelectedProducto)
         TablaAlmacenes?.removeAllViews()
         radio1 = binding.EstadoProductoRadioButton1.findViewById(R.id.EstadoProductoRadioButton1)
         radio2 = binding.EstadoProductoRadioButton2.findViewById(R.id.EstadoProductoRadioButton2)
@@ -135,17 +146,22 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
         ListaDesplegableTipoDeProducto()
 
         ButtonImagenes?.setOnClickListener {
-            findNavController().navigate(R.id.action_nav_editar_producto_to_navigation)
+            findNavController().navigate(R.id.action_nav_editar_producto_to_nav_camara_actualizada)
         }
-        sharedViewModel.selectedImage.observe(viewLifecycleOwner) { imageByteArray ->
-            binding.ivImageSelectedProducto.setImageBitmap(
-                BitmapFactory.decodeByteArray(
-                    imageByteArray,
-                    0,
-                    imageByteArray?.size ?: 0
 
-                )
+        sharedViewModel.selectedImage.observe(viewLifecycleOwner) { imageByteArray ->
+            if (imageByteArray != null && imageByteArray.isNotEmpty()) {
+            val bitmap = BitmapFactory.decodeByteArray(
+                imageByteArray,
+                0,
+                imageByteArray/*?*/.size /*?: 0*/
             )
+            val redondearBitmap = getRoundedCornerBitmap(bitmap, 200f)
+            binding.ivImageSelectedProducto.setImageBitmap(redondearBitmap)
+             }else{
+            //   binding.ivImageSelectedProducto.setImageBitmap(null)
+                binding.ivImageSelectedProducto.setImageResource(R.drawable.android_logo)
+            }
         }
         requestCamara = registerForActivityResult(ActivityResultContracts.RequestPermission(),){
             if(it){
@@ -326,19 +342,27 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
         //  val id2 = this.arguments
         // val id3 = id2?.get(EXTRA_ID)
         //val id4 = almacenesItemResponse.Id
+        val cornerRadius = 150f
         val url1 = "http://186.64.123.248/Reportes/Productos/registroInsertar.php?ID_PRODUCTO=${sharedViewModel.id.last()}"
          val jsonObjectRequest1 = JsonObjectRequest(
             Request.Method.GET, url1, null,
             { response ->
                 tablaInventario()
-                TextNombre?.setText(response.getString("PRODUCTO"))
-                TextPeso?.setText(response.getString("PESO_PRODUCTO"))
-                TextVolumen?.setText(response.getString("VOLUMEN_PRODUCTO"))
-                // TextNombreImagen?.setText(response.getString("TELEFONO_CLIENTE"))
-                TextCodigoDeBarraProducto?.setText(response.getString("CODIGO_BARRA_PRODUCTO"))
-                TextCodigoDeBarraEmbalaje?.setText(response.getString("CODIGO_BARRA_EMBALAJE"))
-                TextUnidadesEmbalaje?.setText(response.getString("UNIDADES_EMBALAJE"))
-                DropwDownTipoDeProducto?.setText(response.getString("TIPO_PRODUCTO"), false)
+                if(TextNombre?.text?.isEmpty() == true && TextPeso?.text?.isEmpty() == true &&
+                    TextVolumen?.text?.isEmpty() == true && TextCodigoDeBarraProducto?.text?.isEmpty() == true &&
+                    TextCodigoDeBarraEmbalaje?.text?.isEmpty() == true && TextUnidadesEmbalaje?.text?.isEmpty() == true) {
+                    val urlImagen = response.getString("URL_PRODUCTO")
+                    val modificarUrl = urlImagen.replace("'", "%27")
+                    TextNombre?.setText(response.getString("PRODUCTO"))
+                    TextPeso?.setText(response.getString("PESO_PRODUCTO"))
+                    TextVolumen?.setText(response.getString("VOLUMEN_PRODUCTO"))
+                    Picasso.get().load(Uri.parse(modificarUrl).toString()).transform(Redondeado(cornerRadius)).into(Imagen)
+                    // TextNombreImagen?.setText(response.getString("TELEFONO_CLIENTE"))
+                    TextCodigoDeBarraProducto?.setText(response.getString("CODIGO_BARRA_PRODUCTO"))
+                    TextCodigoDeBarraEmbalaje?.setText(response.getString("CODIGO_BARRA_EMBALAJE"))
+                    TextUnidadesEmbalaje?.setText(response.getString("UNIDADES_EMBALAJE"))
+                    DropwDownTipoDeProducto?.setText(response.getString("TIPO_PRODUCTO"), false)
+                }
                 TextEstado = response.getString("ESTADO_PRODUCTO").toInt()
                 if (TextEstado == 1) {
                     radio1?.isChecked = true
@@ -885,6 +909,21 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                  // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
     }
 
+    fun getRoundedCornerBitmap(bitmap: Bitmap, radius: Float): Bitmap {
+        val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+
+        val paint = Paint()
+        paint.isAntiAlias = true
+        val shader = BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+        paint.shader = shader
+
+        val rect = RectF(0f, 0f, bitmap.width.toFloat(), bitmap.height.toFloat())
+        canvas.drawRoundRect(rect, radius, radius, paint)
+
+        bitmap.recycle()
+        return output
+    }
     /*private fun ModificarAlertasyAlmacenes(){
         for (i in 0..<sharedViewModel.listaDeAlertas.size) {
             setFragmentResultListener("AlertaAlmacen$i"){key,bundle ->
