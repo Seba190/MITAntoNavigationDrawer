@@ -104,6 +104,8 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         binding.FacturaSalidaButtonEnviar.setOnClickListener {
             if(sharedViewModel.listaDeCantidadesRemover.size > 0 && sharedViewModel.listaDeProductosRemover.size > 0 && sharedViewModel.listaDePreciosRemover.size >0) {
                 ValidacionesIdInsertarDatos()
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProductoRemover.requestLayout()
             }
             else{
                 Toast.makeText(requireContext(),"Debe elegir al menos un producto para remover inventario", Toast.LENGTH_LONG).show()
@@ -128,6 +130,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         binding.bAnadirNuevoProductoRemover.setOnClickListener {
             if(DropDownCliente?.text.toString() != "Eliga una opción" && DropDownAlmacen?.text.toString() != "Eliga una opción"){
                 sharedViewModel.almacenRemover = DropDownAlmacen?.text.toString()
+                sharedViewModel.listaDeAlmacenesRemover.add(DropDownAlmacen?.text.toString())
                 sharedViewModel.clienteRemover = DropDownCliente?.text.toString()
                 binding.nsvElegirProductoRemover.isVisible = true
                 binding.llMontoRemover.isVisible = true
@@ -183,9 +186,10 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
       //  if(sharedViewModel.listaDeProductosRemover.isEmpty() && sharedViewModel.listaDeCantidadesRemover.isEmpty()){
       //      binding.nsvElegirProductoRemover.isVisible = false
       //  }
-        sharedViewModel.opcionesListRemover.add(position,sharedViewModel.listaDeProductosRemover[position])
+       // sharedViewModel.opcionesListRemover.add(position,sharedViewModel.listaDeProductosRemover[position])
         sharedViewModel.listaDeCantidadesRemover.removeAt(position)
         sharedViewModel.listaDeProductosRemover.removeAt(position)
+        sharedViewModel.listaDePreciosRemover.removeAt(position)
         adapter.notifyItemRemoved(position)
         adapter.notifyDataSetChanged()
         Handler(Looper.getMainLooper()).postDelayed({
@@ -204,7 +208,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         val jsonObjectRequest = object: StringRequest(
             Request.Method.POST,url,
             { response ->
-                if(!TextNombre?.text.toString().isBlank()){
+                if(TextNombre?.text.toString().isNotBlank()){
                     val id = JSONObject(response).getString("ID_FACTURA_SALIDA")
                     //unico = 1
                     //no unico = 0
@@ -218,12 +222,12 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                             url1,
                             { response ->
                                 if(binding.etNombreFacturaSalida.text.isNotBlank() && binding.tvListaDesplegableCliente.text.toString() != "Eliga una opción" && binding.tvListaDesplegableAlmacen.text.toString() != "Eliga una opción") {
+                                 //   Handler(Looper.getMainLooper()).postDelayed({
+                                    removerInventario()
+                                 //   }, 2500)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosYCantidades()
-                                    }, 2500)
-                                    Handler(Looper.getMainLooper()).postDelayed({
-                                        removerInventario()
-                                    }, 5000)
+                                    }, 500)
                                     binding.tvProductosAnadidosRemover.isVisible = !(adapter.listaDeCantidadesRemover.size == 0 && adapter.listaDeProductosRemover.size == 0 && adapter.listaDePreciosRemover.size == 0)
                                 }
                                 Toast.makeText(requireContext(), "Factura agregada exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
@@ -303,6 +307,13 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
 
                 DropDownAlmacen?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
+                    sharedViewModel.listaDeProductosRemover.clear()
+                    sharedViewModel.listaDeCantidadesRemover.clear()
+                    sharedViewModel.listaDePreciosRemover.clear()
+                    binding.tvProductosAnadidosRemover.isVisible = sharedViewModel.listaDeProductosRemover.size != 0
+                    binding.llMontoRemover.isVisible = sharedViewModel.listaDeProductosRemover.size != 0
+                    binding.nsvElegirProductoRemover.isVisible = false
+                    binding.rvElegirProductoRemover.requestLayout()
                     val itemSelected = parent.getItemAtPosition(position)
                 }
             }, { error ->
@@ -358,8 +369,8 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                         Request.Method.POST,
                         url1,
                         { response ->
-                            Toast.makeText(requireContext(),"Productos agregados exitosamente", Toast.LENGTH_LONG).show()
-                            /*TextNombre?.setText("")
+                            Toast.makeText(requireContext(),"Productos removidos exitosamente", Toast.LENGTH_LONG).show()
+                            TextNombre?.setText("")
                             TextFecha?.setText("")
                             binding.tvListaDesplegableCliente.setText("Eliga una opción",false)
                             binding.tvListaDesplegableAlmacen.setText("Eliga una opción",false)
@@ -369,7 +380,10 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                             sharedViewModel.listaDePreciosRemover.removeAll(sharedViewModel.listaDePreciosRemover)
                             adapter.notifyDataSetChanged()
                             binding.rvElegirProductoRemover.requestLayout()
-                            binding.tvProductosAnadidosRemover.isVisible = false*/
+                            binding.tvProductosAnadidosRemover.isVisible = false
+                            binding.nsvElegirProductoRemover.isVisible = true
+                            binding.llMontoRemover.isVisible = false
+                            sharedViewModel.opcionesListRemover.clear()
 
                         },
                         { error ->
@@ -425,19 +439,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
             url1,
             { response ->
                 Toast.makeText(requireContext(),"Cantidad de inventario removida  exitosamente", Toast.LENGTH_SHORT).show()
-                TextNombre?.setText("")
-                TextFecha?.setText("")
-                binding.tvListaDesplegableCliente.setText("Eliga una opción",false)
-                binding.tvListaDesplegableAlmacen.setText("Eliga una opción",false)
-                TextComentarios?.setText("")
-                sharedViewModel.listaDeCantidadesRemover.removeAll(sharedViewModel.listaDeCantidadesRemover)
-                sharedViewModel.listaDeProductosRemover.removeAll(sharedViewModel.listaDeProductosRemover)
-                sharedViewModel.listaDePreciosRemover.removeAll(sharedViewModel.listaDePreciosRemover)
-                adapter.notifyDataSetChanged()
-                binding.rvElegirProductoRemover.requestLayout()
-                binding.tvProductosAnadidosRemover.isVisible = false
-                binding.nsvElegirProductoRemover.isVisible = true
-                binding.llMontoRemover.isVisible = false
+
             },
             { error ->
                 /*  TextNombre?.setText("")

@@ -102,6 +102,9 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
         }*/
 
         binding.bAgregarAlmacen.setOnClickListener {
+            adapter.getAllEditTextContents()
+            adapter.getAllTextViewContents()
+            Log.i("Sebastian2", "${sharedViewModel.listaDeAlertasAnadir} , ${sharedViewModel.listaDeBodegasAnadir}")
             if(!sharedViewModel.listaDeAlertasAnadir.all { it.isBlank() }){
             for (i in 0..<sharedViewModel.listaDeAlertasAnadir.size) {
                 if(sharedViewModel.listaDeAlertasAnadir[i] != "" && sharedViewModel.listaDeBodegasAnadir[i] != "") {
@@ -116,7 +119,6 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
                     .replace(R.id.rlAlertasAlmacenes, anadirProductoFragment)
                     .commitNow()
             }
-
 
         return root
     }
@@ -185,7 +187,11 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
         }
     }
 
-   // override fun onEditTextValueChanged(position: Int, value: String, viewHolder: AlertasAlmacenesViewHolder) {
+    override fun afterTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder) {
+
+    }
+
+    // override fun onEditTextValueChanged(position: Int, value: String, viewHolder: AlertasAlmacenesViewHolder) {
        /* while (sharedViewModel.listaDeAlertas.size <= position){
             sharedViewModel.listaDeAlertas.add("")
             sharedViewModel.listaDeBodegas.add("")
@@ -203,7 +209,7 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
      // }
 
    // var codeExecuted = false
-    override fun afterTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder) {
+  /* override fun afterTextChange(text: String, viewHolder: AlertasAlmacenesViewHolder) {
         if (!binding.bAgregarAlmacen.isPressed && text.isNotEmpty()){
             Toast.makeText(requireContext(), "Se he agregado la alerta", Toast.LENGTH_SHORT).show()
             sharedViewModel.listaDeAlertasAnadir[viewHolder.adapterPosition] = text
@@ -216,7 +222,7 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
              Toast.makeText(requireContext(), "Se ha eliminado la alerta", Toast.LENGTH_SHORT).show()
              Log.i("Sebastian", "${sharedViewModel.listaDeBodegasAnadir} y ${sharedViewModel.listaDeAlertasAnadir}")
         }
-    }
+    }*/
     override fun getAllItems(): List<AlertasAlmacenesItemResponse> {
         TODO("Not yet implemented")
     }

@@ -27,16 +27,34 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="85dp"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/tvNombreTransferencia"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:layout_marginVertical="30dp"
+                    android:layout_marginVertical="20dp"
                     android:text="@string/textView_nombre_transferencia"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/ivEliminarTransferencia"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:scaleType="centerCrop"
+                        android:layout_marginStart="35dp"
+                        android:layout_gravity="end|center"
+                        android:src="@drawable/ic_trash"/>
+
+                </LinearLayout>
 
                 <EditText
                     android:id="@+id/etNombreTransferencia"

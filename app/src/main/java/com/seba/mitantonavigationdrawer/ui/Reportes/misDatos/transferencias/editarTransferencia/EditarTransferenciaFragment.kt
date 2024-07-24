@@ -1,6 +1,7 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transferencias.editarTransferencia
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
@@ -14,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -71,6 +73,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
     private lateinit var adapter: AnadirTransferenciaAdapter
     private var cantidad: String = ""
     private var exceso: String? = ""
+    var EliminarTransferencia: ImageView? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -84,6 +87,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
         //Aquí se programa
         TextNombre = binding.etNombreTransferencia.findViewById(R.id.etNombreTransferencia)
         TextFecha = binding.etFechaTransferencia.findViewById(R.id.etFechaTransferencia)
+        EliminarTransferencia = binding.ivEliminarTransferencia.findViewById(R.id.ivEliminarTransferencia)
         TextComentarios =
             binding.etTransferenciaComentarios.findViewById(R.id.etTransferenciaComentarios)
         DropDownOrigen =
@@ -107,10 +111,15 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
         ListaDesplegableOrigen()
         ListaDesplegableDestino()
 
+        EliminarTransferencia?.setOnClickListener {
+            mensajeEliminarTransferencia()
+        }
+
         binding.nsvElegirProducto.isVisible = true
         binding.bAnadirNuevoProducto.setOnClickListener {
             if (DropDownOrigen?.text.toString() != "Eliga una opción" && DropDownDestino?.text.toString() != "Eliga una opción") {
                 sharedViewModel.almacen = DropDownOrigen?.text.toString()
+                sharedViewModel.listaDeAlmacenesEditarTransferencia.add(DropDownOrigen?.text.toString())
                 binding.nsvElegirProducto.isVisible = true
                 //Aquí se obtiene el id de la transferencia actual
                 if (TextNombre?.text.toString().isNotBlank()) {
@@ -180,6 +189,8 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
             }*/
             if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
                 ValidacionesIdInsertarDatos()
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProducto.requestLayout()
                /* Handler(Looper.getMainLooper()).postDelayed({
                     for (i in 0..<sharedViewModel.listaDeCantidades.size) {
                         if(sharedViewModel.listaDeCantidadesAntigua[i] != sharedViewModel.listaDeCantidades[i]){
@@ -290,25 +301,25 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                 TextComentarios?.setText(response.getString("COMENTARIOS"))
 
                 val ListaDeProductos = response.getJSONArray("PRODUCTOS")
-
+                if(sharedViewModel.listaDeProductos.size == 0 && sharedViewModel.listaDeCantidades.size == 0) {
                 val productosList = mutableListOf<String>()
                 for (i in 0 until ListaDeProductos.length()) {
                     productosList.add(ListaDeProductos.getString(i))
                 }
-
-                val jsonArray = JSONArray(ListaDeProductos.toString())
-                // Convierte el array JSON a una lista mutable
-                for (i in 0 until productosList.size) {
-                    val jsonObject: JSONObject = jsonArray.getJSONObject(i)
-                    val producto: String = jsonObject.getString("PRODUCTO")
-                    val cantidad: String = jsonObject.getString("CANTIDAD")
-                    Log.i("Sebastian", "PRODUCTO: $producto")
-                    Log.i("Sebastian", "CANTIDAD: $cantidad")
-                    if(!sharedViewModel.listaDeProductos.contains("$producto ( 0 unid. )")) {
-                        sharedViewModel.listaDeProductos.add("$producto ( 0 unid. )")
-                        sharedViewModel.listaDeCantidades.add(cantidad)
-                    }
-                }
+                   val jsonArray = JSONArray(ListaDeProductos.toString())
+                   // Convierte el array JSON a una lista mutable
+                   for (i in 0 until productosList.size) {
+                       val jsonObject: JSONObject = jsonArray.getJSONObject(i)
+                       val producto: String = jsonObject.getString("PRODUCTO")
+                       val cantidad: String = jsonObject.getString("CANTIDAD")
+                       Log.i("Sebastian", "PRODUCTO: $producto")
+                       Log.i("Sebastian", "CANTIDAD: $cantidad")
+                       if (!sharedViewModel.listaDeProductos.contains("$producto ( 0 unid. )")) {
+                           sharedViewModel.listaDeProductos.add("$producto ( 0 unid. )")
+                           sharedViewModel.listaDeCantidades.add(cantidad)
+                       }
+                   }
+               }
                 /*if(!sharedViewModel.listaDeProductos.contains(response.getString("PRODUCTO").toString()) &&
                     !sharedViewModel.listaDeCantidades.contains(response.getString("CANTIDAD").toString())) {
                     sharedViewModel.listaDeCantidades.add(response.getString("CANTIDAD").toString())
@@ -417,6 +428,11 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
 
                 DropDownOrigen?.onItemClickListener =
                     AdapterView.OnItemClickListener { parent, view, position, id ->
+                        sharedViewModel.listaDeProductos.clear()
+                        sharedViewModel.listaDeCantidades.clear()
+                        binding.tvProductosAnadidos.isVisible = sharedViewModel.listaDeProductos.size != 0
+                        binding.nsvElegirProducto.isVisible = false
+                        binding.rvElegirProducto.requestLayout()
                         val itemSelected = parent.getItemAtPosition(position)
                     }
             }, { error ->
@@ -447,12 +463,13 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                             url1,
                             { response ->
                                 if (binding.etNombreTransferencia.text.isNotBlank() && binding.tvListaDesplegableAlmacenDestino.text.toString() != "Eliga una opción" && binding.tvListaDesplegableAlmacenOrigen.text.toString() != "Eliga una opción") {
+                                //    Handler(Looper.getMainLooper()).postDelayed({
+                                    eliminarProductos()
+                                    modificarInventarioTotal()
+                                //    }, 2500)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosYCantidades()
-                                    }, 2500)
-                                    Handler(Looper.getMainLooper()).postDelayed({
-                                        modificarInventario()
-                                    }, 5000)
+                                    }, 500)
                                     binding.tvProductosAnadidos.isVisible = !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
                                 }
 
@@ -526,6 +543,44 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
         queue.add(jsonObjectRequest)
     }
 
+    private fun eliminarProductos() {
+        val url1 = "http://186.64.123.248/Reportes/Transferencias/eliminarProductosEditarTransferencia.php" // Reemplaza esto con tu URL de la API
+        val queue1 = Volley.newRequestQueue(requireContext())
+        val stringRequest = object : StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+                Toast.makeText(
+                    requireContext(),
+                    "Transferencia e inventario modificados exitosamente",
+                    Toast.LENGTH_SHORT
+                ).show()
+            },
+            { error ->
+                Toast.makeText(
+                    requireContext(),
+                    "$error",
+                    Toast.LENGTH_SHORT
+                ).show()
+                Log.i("Sebastian2", "$error")
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("TRANSFERENCIA",TextNombre?.text.toString())
+                parametros.put("NUMERO_DE_PRODUCTOS", sharedViewModel.listaDeProductos.size.toString())
+                parametros.put("ALMACEN_ORIGEN",DropDownOrigen?.text.toString())
+                parametros.put("ALMACEN_DESTINO",DropDownDestino?.text.toString())
+                for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                    parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
+                }
+
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
+    }
+
     private fun InsertarPreciosYCantidades() {
         //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
         val queue = Volley.newRequestQueue(requireContext())
@@ -546,16 +601,41 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                         { response ->
                             Toast.makeText(
                                 requireContext(),
-                                "Productos agregados exitosamente",
+                                "Productos agregados exitosamente a la transferencia",
                                 Toast.LENGTH_SHORT
                             ).show()
+                            TextNombre?.setText("")
+                            TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
+                            DropDownOrigen?.setText("Eliga una opción", false)
+                            DropDownDestino?.setText("Eliga una opción", false)
+                            TextComentarios?.setText("")
+                            sharedViewModel.listaDeCantidades.removeAll(sharedViewModel.listaDeCantidades)
+                            sharedViewModel.listaDeProductos.removeAll(sharedViewModel.listaDeProductos)
+                            sharedViewModel.listaDeProductosAntigua.removeAll(sharedViewModel.listaDeProductosAntigua)
+                            adapter.notifyDataSetChanged()
+                            binding.rvElegirProducto.requestLayout()
+                            binding.tvProductosAnadidos.isVisible = false
+                            binding.nsvElegirProducto.isVisible = false
+                            sharedViewModel.opcionesListEditarTransferencia.clear()
                         },
                         { error ->
                             Toast.makeText(
                                 requireContext(),
-                                "Productos agregados exitosamente",
+                                "Productos agregados exitosamente a la transferencia",
                                 Toast.LENGTH_LONG
                             ).show()
+                            TextNombre?.setText("")
+                            TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
+                            DropDownOrigen?.setText("Eliga una opción", false)
+                            DropDownDestino?.setText("Eliga una opción", false)
+                            TextComentarios?.setText("")
+                            sharedViewModel.listaDeCantidades.removeAll(sharedViewModel.listaDeCantidades)
+                            sharedViewModel.listaDeProductos.removeAll(sharedViewModel.listaDeProductos)
+                            sharedViewModel.listaDeProductosAntigua.removeAll(sharedViewModel.listaDeProductosAntigua)
+                            adapter.notifyDataSetChanged()
+                            binding.rvElegirProducto.requestLayout()
+                            binding.tvProductosAnadidos.isVisible = false
+                            binding.nsvElegirProducto.isVisible = false
                         }
                     ) {
                         override fun getParams(): MutableMap<String, String> {
@@ -650,20 +730,86 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
             }
         }
         queue1.add(stringRequest)
-    }/*,
-            {error ->
-                Toast.makeText(requireContext(),"El inventario del almacén es menor que la transferencia",Toast.LENGTH_SHORT).show()
-            }) {
-            override fun getParams(): MutableMap<String, String> {
+    }
 
+    fun modificarInventarioTotal() {
+        //Si el inventario es menor que la transferencia que no la haga y si el almacen de destino no existe, que lo cree
+        val url1 = "http://186.64.123.248/Reportes/Transferencias/modificarInventarioEditarTransferencia.php" // Reemplaza esto con tu URL de la API
+        val queue1 = Volley.newRequestQueue(requireContext())
+        val stringRequest = object : StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+                Toast.makeText(
+                    requireContext(),
+                    "Inventario modificado exitosamente",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+
+            },
+            { error ->
+                Toast.makeText(
+                    requireContext(),
+                    "Inventario modificado exitosamente",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
                 val parametros = HashMap<String, String>()
+                parametros.put("TRANSFERENCIA", TextNombre?.text.toString())
+                parametros.put("NUMERO_DE_PRODUCTOS", sharedViewModel.listaDeProductos.size.toString())
+                parametros.put("ALMACEN_ORIGEN", DropDownOrigen?.text.toString())
+                parametros.put("ALMACEN_DESTINO", DropDownDestino?.text.toString())
                 for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                    parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
                     parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
                 }
+
                 return parametros
             }
         }
-        queue.add(stringRequest1)*/
+        queue1.add(stringRequest)
+    }
+
+    private fun mensajeEliminarTransferencia(){
+        AlertDialog.Builder(context).apply {
+            setTitle("¿Quieres eliminar esta transferencia?")
+            setMessage("Esta acción no se puede deshacer.")
+            setPositiveButton("Sí") { dialog, _ ->
+                eliminarTransferencia()
+                findNavController().navigate(R.id.action_nav_editar_transferencias_to_nav_transferencias)
+                dialog.dismiss()
+            }
+            setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+
+    }
+    private fun eliminarTransferencia(){
+        val url = "http://186.64.123.248/Reportes/Transferencias/borrar.php"
+        val queue = Volley.newRequestQueue(requireContext())
+        var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+            { response ->
+                Toast.makeText(requireContext(), "Transferencia eliminada exitosamente", Toast.LENGTH_SHORT).show()
+
+            },{error ->
+                Toast.makeText(requireContext(), "No se pudo eliminar la transferencia", Toast.LENGTH_SHORT).show()
+            })
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_TRANSFERENCIA", sharedViewModel.id.last())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
+    }
 
 
     /* private var segundaVez = false

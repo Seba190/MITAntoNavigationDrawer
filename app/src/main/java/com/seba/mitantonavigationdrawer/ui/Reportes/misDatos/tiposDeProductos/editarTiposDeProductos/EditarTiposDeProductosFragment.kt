@@ -1,5 +1,6 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.tiposDeProductos.editarTiposDeProductos
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
@@ -12,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TableRow
@@ -67,6 +69,7 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
     var radioGroup: RadioGroup? = null
     var radio1: RadioButton? = null
     var radio2: RadioButton? = null
+   // var EliminarTipoDeProducto: ImageView? = null
     //var TextId: EditText? = null
 
     override fun onCreateView(
@@ -82,6 +85,7 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
         //Aquí se programa
         TextNombre = binding.etNombreTipoDeProductoEditar.findViewById(R.id.etNombreTipoDeProductoEditar)
         TextDescripcion = binding.etDescripcionTipoDeProductoEditar.findViewById(R.id.etDescripcionTipoDeProductoEditar)
+      //  EliminarTipoDeProducto = binding.ivEliminarTipoDeProducto.findViewById(R.id.ivEliminarTipoDeProducto)
         radio1 = binding.EstadoRadioButton1.findViewById(R.id.EstadoRadioButton1)
         radio2 = binding.EstadoRadioButton2.findViewById(R.id.EstadoRadioButton2)
         radioGroup = binding.radioGroupEstado.findViewById(R.id.radioGroupEstado)
@@ -91,6 +95,10 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
             PorterDuff.Mode.SRC_ATOP)
         binding.etDescripcionTipoDeProductoEditar.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
+
+        //EliminarTipoDeProducto?.setOnClickListener {
+        //    mensajeEliminarTipoDeProducto()
+       // }
 
         //   Mostrar los usuarios responsables en la lista desplegable
         binding.buttonTipoDeProductoEditar.setOnClickListener {
@@ -201,7 +209,7 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número ${args.id} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Tipo de producto agregado exitosamente. Id número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
 
             },
             { error ->
@@ -378,6 +386,43 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
             }
         )
         queue1.add(jsonObjectRequest1)
+    }
+
+    private fun mensajeEliminarTipoDeProducto(){
+        AlertDialog.Builder(context).apply {
+            setTitle("¿Quieres eliminar este tipo de producto?")
+            setMessage("Esta acción no se puede deshacer.")
+            setPositiveButton("Sí") { dialog, _ ->
+                eliminarTipoDeProducto()
+                findNavController().navigate(R.id.action_nav_editar_tipos_de_productos_to_nav_mis_datos)
+                dialog.dismiss()
+            }
+            setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+
+    }
+    private fun eliminarTipoDeProducto(){
+        val url = "http://186.64.123.248/Reportes/TiposDeProducto/borrar.php"
+        val queue = Volley.newRequestQueue(requireContext())
+        var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+            { response ->
+                Toast.makeText(requireContext(), "Tipo de producto eliminado exitosamente", Toast.LENGTH_SHORT).show()
+
+            },{error ->
+                Toast.makeText(requireContext(), "No se pudo eliminar el tipo de producto", Toast.LENGTH_SHORT).show()
+            })
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_TIPO_PRODUCTO", sharedViewModel.id.last())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
     }
 
     override fun onDestroyView() {

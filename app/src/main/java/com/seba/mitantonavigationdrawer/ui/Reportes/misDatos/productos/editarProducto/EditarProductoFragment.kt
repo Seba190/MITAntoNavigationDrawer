@@ -1,6 +1,7 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.editarProducto
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -63,6 +64,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Shader
+import java.net.MalformedURLException
+import java.net.URL
 
 
 class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),RadioGroup.OnCheckedChangeListener {
@@ -90,6 +93,8 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
     var radioGroup: RadioGroup? = null
     var radio1: RadioButton? = null
     var radio2: RadioButton? = null
+    //var EliminarProducto: ImageView? = null
+
     private var requestCamara: ActivityResultLauncher<String>? = null
     private val sharedViewModel : SharedViewModel by activityViewModels()
     private lateinit var retrofit: Retrofit
@@ -105,6 +110,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
         _binding = FragmentEditarProductoBinding.inflate(inflater, container, false)
         val root: View = binding.root
         TextNombre = binding.etNombreProducto.findViewById(R.id.etNombreProducto)
+       // EliminarProducto = binding.ivEliminarProducto.findViewById(R.id.ivEliminarProducto)
         TextPeso = binding.etPesoProducto.findViewById(R.id.etPesoProducto)
         TextVolumen = binding.etVolumenProducto.findViewById(R.id.etVolumenProducto)
         DropwDownTipoDeProducto = binding.tvAutoCompleteTipoDeProducto.findViewById(R.id.tvAutoCompleteTipoDeProducto)
@@ -145,6 +151,10 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
 
         ListaDesplegableTipoDeProducto()
 
+       // EliminarProducto?.setOnClickListener {
+       //     mensajeEliminarProducto()
+       // }
+
         ButtonImagenes?.setOnClickListener {
             findNavController().navigate(R.id.action_nav_editar_producto_to_nav_camara_actualizada)
         }
@@ -176,6 +186,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
         }
 
         ButtonProducto?.setOnClickListener {
+            actualizarProducto()
           /*  Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
             Handler(Looper.getMainLooper()).postDelayed({
                 Toast.makeText(requireContext(),"${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDeProveedores}",Toast.LENGTH_LONG).show()
@@ -190,99 +201,6 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
             Log.i("Sebastian","${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDeProveedores}")
             Log.i("Sebastian","${sharedViewModel.listaDePreciosVenta} y ${sharedViewModel.listaDeClientes}")
             Log.i("Sebastian", "${sharedViewModel.numeroAlertas} , ${sharedViewModel.numeroPreciosCompra} y ${sharedViewModel.numeroPreciosVenta}")*/
-            actualizarProducto()
-            //Solo 1 se envía:
-            if(sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty() && sharedViewModel.listaDePreciosCompra.isEmpty()){
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarAlertas()
-                }, 4000)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarAlertas()
-                }, 4500)
-            }
-            //Solo 2 se envía:
-            if(sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty()){
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarPreciosCompra()
-                }, 4000)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarPreciosCompra()
-                }, 4500)
-            }
-            //Solo 3 se envía
-            if(sharedViewModel.listaDePreciosVenta.isNotEmpty() &&  sharedViewModel.listaDeAlertas.isEmpty() && sharedViewModel.listaDePreciosCompra.isEmpty()){
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarPreciosVenta()
-                }, 4000)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarPreciosVenta()
-                }, 4500)
-            }
-            //1 y 2 se envían
-            if(sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty()){
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarAlertas()
-                }, 4000)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarAlertas()
-                }, 4500)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarPreciosCompra()
-                }, 8500)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarPreciosCompra()
-                }, 9000)}
-            //1 y 3 s envían
-            if(sharedViewModel.listaDePreciosCompra.isEmpty() &&  sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isNotEmpty()){
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarAlertas()
-                }, 4000)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarAlertas()
-                }, 4500)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarPreciosVenta()
-                }, 8500)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarPreciosVenta()
-                }, 9000)
-            }
-            //2 y 3 se envían
-            if(sharedViewModel.listaDePreciosVenta.isNotEmpty() && sharedViewModel.listaDeAlertas.isEmpty() && sharedViewModel.listaDePreciosCompra.isNotEmpty()){
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarPreciosCompra()
-                }, 4000)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarPreciosCompra()
-                }, 4500)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarPreciosVenta()
-                }, 8500)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarPreciosVenta()
-                }, 9000)}
-            //1, 2 y 3 se envían
-            if(sharedViewModel.listaDePreciosVenta.isNotEmpty() && sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isNotEmpty()){
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarAlertas()
-                }, 4000)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarAlertas()
-                }, 4500)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarPreciosCompra()
-                }, 8500)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarPreciosCompra()
-                }, 9000)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    borrarPreciosVenta()
-                }, 13000)
-                Handler(Looper.getMainLooper()).postDelayed({
-                    actualizarPreciosVenta()
-                }, 13500)
-            }
-
         }
 
         codigoDeBarraProducto()
@@ -353,10 +271,27 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                     TextCodigoDeBarraEmbalaje?.text?.isEmpty() == true && TextUnidadesEmbalaje?.text?.isEmpty() == true) {
                     val urlImagen = response.getString("URL_PRODUCTO")
                     val modificarUrl = urlImagen.replace("'", "%27")
+                    val modificarUrlFinal = modificarUrl.replace(" ", "%20")
+                    if(isValidUrl(modificarUrl)) {
+                        Picasso.get().load(Uri.parse(modificarUrlFinal).toString())
+                            .transform(Redondeado(cornerRadius)).into(Imagen, object: com.squareup.picasso.Callback{
+                                override fun onSuccess() {
+                                    Log.i("Sebastian", "Imagen cargada correctamente desde: $modificarUrlFinal")
+                                }
+
+                                override fun onError(e: java.lang.Exception?) {
+                                    Log.e("Sebastian", "Error al cargar la imagen desde: $modificarUrlFinal", e)
+                                    binding.ivImageSelectedProducto.setImageResource(R.drawable.android_logo)
+                                }
+
+                            })
+                    }else{
+                        Log.e("Sebastian", "URL no válida: $modificarUrlFinal")
+                        binding.ivImageSelectedProducto.setImageResource(R.drawable.android_logo)
+                    }
                     TextNombre?.setText(response.getString("PRODUCTO"))
                     TextPeso?.setText(response.getString("PESO_PRODUCTO"))
                     TextVolumen?.setText(response.getString("VOLUMEN_PRODUCTO"))
-                    Picasso.get().load(Uri.parse(modificarUrl).toString()).transform(Redondeado(cornerRadius)).into(Imagen)
                     // TextNombreImagen?.setText(response.getString("TELEFONO_CLIENTE"))
                     TextCodigoDeBarraProducto?.setText(response.getString("CODIGO_BARRA_PRODUCTO"))
                     TextCodigoDeBarraEmbalaje?.setText(response.getString("CODIGO_BARRA_EMBALAJE"))
@@ -379,197 +314,6 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
        // }
     }
 
-
-
-
-    private fun borrarAlertas(){
-        val url = "http://186.64.123.248/Reportes/Productos/borrarAlertas.php"
-        val queue = Volley.newRequestQueue(requireContext())
-        val jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
-            { response ->
-                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
-
-            },{error ->
-                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
-            })
-        {
-            override fun getParams(): MutableMap<String, String> {
-                val parametros = HashMap<String, String>()
-                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
-                parametros.put("NUMERO_DE_ALERTAS",sharedViewModel.numeroAlertas.size.toString())
-                for(i in 0..<sharedViewModel.numeroAlertas.size){
-                    parametros.put("ALMACEN$i",sharedViewModel.numeroAlertas[i])
-                }
-                return parametros
-            }
-        }
-        queue.add(jsonObjectRequest)
-    }
-
-    private fun actualizarAlertas() {
-        val url1 = "http://186.64.123.248/Reportes/Productos/insertarAlertas.php"
-        val queue1 =Volley.newRequestQueue(requireContext())
-        val stringRequest = object: StringRequest(
-            Request.Method.POST,
-            url1,
-            { response ->
-                Toast.makeText(requireContext(), "Alertas actualizadas exitosamente.", Toast.LENGTH_LONG).show()
-                //   TextNombre?.setText("")
-                //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
-            },
-            { error ->
-                Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
-            }
-        )
-
-        {
-            override fun getParams(): MutableMap<String, String> {
-                val parametros = HashMap<String, String>()
-                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
-                parametros.put("NUMERO_DE_ALERTAS",sharedViewModel.numeroAlertas.size.toString())
-                for(i in 0..<sharedViewModel.listaDeAlertas.size){
-                    if(sharedViewModel.listaDeAlertas[i] != ""){
-                        for(j in 0..<sharedViewModel.numeroAlertas.size) {
-                            parametros.put("ALMACEN$j", sharedViewModel.numeroAlertas[j])
-                            parametros.put("ALERTA$j", sharedViewModel.listaDeAlertas[j])
-                        }
-                    }
-                }
-                return parametros
-            }
-        }
-        queue1.add(stringRequest)
-    }
-
-    private fun borrarPreciosCompra(){
-        val url = "http://186.64.123.248/Reportes/Productos/borrarPreciosCompra.php"
-        val queue = Volley.newRequestQueue(requireContext())
-        val jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
-            { response ->
-                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
-
-            },{error ->
-                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
-            })
-        {
-            override fun getParams(): MutableMap<String, String> {
-                val parametros = HashMap<String, String>()
-                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
-                parametros.put("NUMERO_DE_PRECIOS_COMPRA",sharedViewModel.numeroPreciosCompra.size.toString())
-                for(i in 0..<sharedViewModel.numeroPreciosCompra.size){
-                    parametros.put("PROVEEDOR$i",sharedViewModel.numeroPreciosCompra[i])}
-                return parametros
-            }
-        }
-        queue.add(jsonObjectRequest)
-    }
-
-    private fun actualizarPreciosCompra() {
-        val url1 = "http://186.64.123.248/Reportes/Productos/insertarPreciosCompra.php"
-        val queue1 =Volley.newRequestQueue(requireContext())
-        val stringRequest = object: StringRequest(
-            Request.Method.POST,
-            url1,
-            { response ->
-                Toast.makeText(requireContext(), "Precios de compra actualizados exitosamente.", Toast.LENGTH_LONG).show()
-                //   TextNombre?.setText("")
-                //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
-            },
-            { error ->
-                Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
-            }
-        )
-
-        {
-            override fun getParams(): MutableMap<String, String> {
-                val parametros = HashMap<String, String>()
-                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
-                parametros.put("NUMERO_DE_PRECIOS_COMPRA",sharedViewModel.numeroPreciosCompra.size.toString())
-                for(i in 0..<sharedViewModel.listaDePreciosCompra.size){
-                    if(sharedViewModel.listaDePreciosCompra[i] != ""){
-                        for(j in 0..<sharedViewModel.numeroPreciosCompra.size){
-                            parametros.put("PROVEEDOR$j",sharedViewModel.numeroPreciosCompra[j])
-                            parametros.put("PRECIO_COMPRA$j", sharedViewModel.listaDePreciosCompra[j])
-                        }
-                    }
-                }
-                return parametros
-            }
-        }
-        queue1.add(stringRequest)
-    }
-
-    private fun borrarPreciosVenta(){
-        val url = "http://186.64.123.248/Reportes/Productos/borrarPreciosVenta.php"
-        val queue = Volley.newRequestQueue(requireContext())
-        val jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
-            { response ->
-                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
-
-            },{error ->
-                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
-            })
-        {
-            override fun getParams(): MutableMap<String, String> {
-                val parametros = HashMap<String, String>()
-                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
-                parametros.put("NUMERO_DE_PRECIOS_VENTA",sharedViewModel.numeroPreciosVenta.size.toString())
-                for(i in 0..<sharedViewModel.numeroPreciosVenta.size){
-                    parametros.put("CLIENTE$i",sharedViewModel.numeroPreciosVenta[i])
-                }
-                return parametros
-            }
-        }
-        queue.add(jsonObjectRequest)
-    }
-
-    private fun actualizarPreciosVenta() {
-        val url1 = "http://186.64.123.248/Reportes/Productos/insertarPreciosVenta.php"
-        val queue1 =Volley.newRequestQueue(requireContext())
-        val stringRequest = object: StringRequest(
-            Request.Method.POST,
-            url1,
-            { response ->
-                Toast.makeText(requireContext(), "Precios de venta actualizados exitosamente.", Toast.LENGTH_LONG).show()
-                TextNombre?.setText("")
-                TextPeso?.setText("")
-                TextVolumen?.setText("")
-                TextNombreImagen?.setText("")
-                TextCodigoDeBarraProducto?.setText("")
-                TextCodigoDeBarraEmbalaje?.setText("")
-                TextUnidadesEmbalaje?.setText("")
-                //Imagen?.setImageDrawable(null)
-                ImagenProducto?.setImageResource(R.drawable.android_logo)
-                DropwDownTipoDeProducto?.setText("Eliga una opción",false)
-            },
-            { error ->
-                Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
-            }
-        )
-
-        {
-            override fun getParams(): MutableMap<String, String> {
-                val parametros = HashMap<String, String>()
-                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
-                parametros.put("NUMERO_DE_PRECIOS_VENTA",sharedViewModel.numeroPreciosVenta.size.toString())
-                for(i in 0..<sharedViewModel.listaDePreciosVenta.size){
-                    if(sharedViewModel.listaDePreciosVenta[i] != ""){
-                        for (j in 0..<sharedViewModel.numeroPreciosVenta.size) {
-                            parametros.put("CLIENTE$j", sharedViewModel.numeroPreciosVenta[j])
-                            parametros.put("PRECIO_VENTA$j", sharedViewModel.listaDePreciosVenta[j])
-                        }
-                    }
-                }
-                return parametros
-            }
-        }
-        queue1.add(stringRequest)
-    }
     private fun actualizarRegistros() {
         val url1 = "http://186.64.123.248/Reportes/Productos/actualizarProducto.php"
         val queue1 =Volley.newRequestQueue(requireContext())
@@ -853,7 +597,8 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
 
     private fun actualizarProducto() {
         val drawable = ImagenProducto?.drawable as BitmapDrawable
-        val bitmap = (drawable).bitmap
+        val bitmap = drawable.bitmap
+        //val bitmap = (drawable).bitmap
         val fotoBase64 = convertirBitmapABase64(bitmap)
         //unico = 1
         //no unico = 0
@@ -866,7 +611,141 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Producto actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_SHORT).show()
+                //Solo 1 se envía:
+                if(sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty() && sharedViewModel.listaDePreciosCompra.isEmpty()){
+                  //  Handler(Looper.getMainLooper()).postDelayed({
+                        borrarAlertas()
+                  //  }, 4000)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarAlertas()
+                    }, 100)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        Toast.makeText(requireContext(), "Alertas actualizadas exitosamente.", Toast.LENGTH_SHORT).show()
+                    }, 4000)
+                    Log.i("Sebastian4", "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}")
+                    Log.i("Sebastian4", "${sharedViewModel.numeroAlertas}, ${sharedViewModel.numeroPreciosCompra} y ${sharedViewModel.numeroPreciosVenta}")
+                }
+                //Solo 2 se envía:
+               else if(sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty()){
+                  //  Handler(Looper.getMainLooper()).postDelayed({
+                        borrarPreciosCompra()
+                  //  }, 4000)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarPreciosCompra()
+                    }, 100)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        Toast.makeText(requireContext(), "Precios de compra actualizados exitosamente.", Toast.LENGTH_SHORT).show()
+                    }, 4000)
+                    Log.i("Sebastian4", "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}")
+                    Log.i("Sebastian4", "${sharedViewModel.numeroAlertas}, ${sharedViewModel.numeroPreciosCompra} y ${sharedViewModel.numeroPreciosVenta}")
+                }
+                //Solo 3 se envía
+               else if(sharedViewModel.listaDePreciosVenta.isNotEmpty() &&  sharedViewModel.listaDeAlertas.isEmpty() && sharedViewModel.listaDePreciosCompra.isEmpty()){
+                   // Handler(Looper.getMainLooper()).postDelayed({
+                        borrarPreciosVenta()
+                  //  }, 4000)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarPreciosVenta()
+                    }, 100)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        Toast.makeText(requireContext(), "Precios de venta actualizados exitosamente.", Toast.LENGTH_SHORT).show()
+                    }, 4000)
+                    Log.i("Sebastian4", "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}")
+                    Log.i("Sebastian4", "${sharedViewModel.numeroAlertas}, ${sharedViewModel.numeroPreciosCompra} y ${sharedViewModel.numeroPreciosVenta}")
+                }
+                //1 y 2 se envían
+               else if(sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty()){
+                  //  Handler(Looper.getMainLooper()).postDelayed({
+                        borrarAlertas()
+                 //   }, 4000)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarAlertas()
+                    }, 100)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        borrarPreciosCompra()
+                    }, 150)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarPreciosCompra()
+                    }, 250)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        Toast.makeText(requireContext(), "Alertas y precios de compra actualizados exitosamente.", Toast.LENGTH_SHORT).show()
+                    }, 4000)
+                    Log.i("Sebastian4", "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}")
+                    Log.i("Sebastian4", "${sharedViewModel.numeroAlertas}, ${sharedViewModel.numeroPreciosCompra} y ${sharedViewModel.numeroPreciosVenta}")
+                }
+               // Toast.makeText(requireContext(), "Precios de compra actualizados exitosamente.", Toast.LENGTH_LONG).show()
+                //1 y 3 s envían
+               else if(sharedViewModel.listaDePreciosCompra.isEmpty() &&  sharedViewModel.listaDeAlertas.isNotEmpty() && sharedViewModel.listaDePreciosVenta.isNotEmpty()){
+                   // Handler(Looper.getMainLooper()).postDelayed({
+                        borrarAlertas()
+                  //  }, 4000)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarAlertas()
+                    }, 100)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        borrarPreciosVenta()
+                    }, 150)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarPreciosVenta()
+                    }, 250)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        Toast.makeText(requireContext(), "Alertas y precios de venta actualizados exitosamente.", Toast.LENGTH_SHORT).show()
+                    }, 4000)
+                    Log.i("Sebastian4", "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}")
+                    Log.i("Sebastian4", "${sharedViewModel.numeroAlertas}, ${sharedViewModel.numeroPreciosCompra} y ${sharedViewModel.numeroPreciosVenta}")
+                }
+                //Toast.makeText(requireContext(), "Precios de venta actualizados exitosamente.", Toast.LENGTH_LONG).show()
+                //2 y 3 se envían
+               else if(sharedViewModel.listaDePreciosVenta.isNotEmpty() && sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isEmpty() ){
+                  //  Handler(Looper.getMainLooper()).postDelayed({
+                        borrarPreciosCompra()
+                  //  }, 4000)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarPreciosCompra()
+                    }, 100)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        borrarPreciosVenta()
+                    }, 150)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarPreciosVenta()
+                    }, 250)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        Toast.makeText(requireContext(), "Precios de compra y de venta actualizados exitosamente.", Toast.LENGTH_SHORT).show()
+                    }, 4000)
+                    Log.i("Sebastian4", "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}")
+                    Log.i("Sebastian4", "${sharedViewModel.numeroAlertas}, ${sharedViewModel.numeroPreciosCompra} y ${sharedViewModel.numeroPreciosVenta}")
+                }
+               //Toast.makeText(requireContext(), "Precios de venta actualizados exitosamente.", Toast.LENGTH_LONG).show()
+                //1, 2 y 3 se envían
+               else if(sharedViewModel.listaDePreciosVenta.isNotEmpty() && sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isNotEmpty()){
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        Toast.makeText(requireContext(), "Alertas, precios de compra y de venta actualizados exitosamente.", Toast.LENGTH_SHORT).show()
+                    }, 4000)
+                    Log.i("Sebastian4", "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}")
+                    Log.i("Sebastian4", "${sharedViewModel.numeroAlertas}, ${sharedViewModel.numeroPreciosCompra} y ${sharedViewModel.numeroPreciosVenta}")
+                 //   Handler(Looper.getMainLooper()).postDelayed({
+                        borrarAlertas()
+                //    }, 4000)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarAlertas()
+                    }, 100)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        borrarPreciosCompra()
+                    }, 150)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarPreciosCompra()
+                    }, 250)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        borrarPreciosVenta()
+                    }, 300)
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        actualizarPreciosVenta()
+                    }, 400)
+                }
+
+              //  Toast.makeText(requireContext(), "Precios de compra actualizados exitosamente.", Toast.LENGTH_LONG).show()
+              //  Toast.makeText(requireContext(), "Precios de venta actualizados exitosamente.", Toast.LENGTH_LONG).show()
                 /* TextPeso?.setText("")
                 TextVolumen?.setText("")
                 TextNombreImagen?.setText("")
@@ -907,6 +786,190 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
                  // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+    }
+
+    private fun borrarAlertas(){
+        val url = "http://186.64.123.248/Reportes/Productos/borrarAlertas.php"
+        val queue = Volley.newRequestQueue(requireContext())
+        val jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+            { response ->
+                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
+
+            },{error ->
+                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
+            })
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
+                parametros.put("NUMERO_DE_ALERTAS",sharedViewModel.numeroAlertas.size.toString())
+                for(i in 0..<sharedViewModel.numeroAlertas.size){
+                    parametros.put("ALMACEN$i",sharedViewModel.numeroAlertas[i])
+                }
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
+    }
+
+    private fun actualizarAlertas() {
+        val url1 = "http://186.64.123.248/Reportes/Productos/insertarAlertas.php"
+        val queue1 =Volley.newRequestQueue(requireContext())
+        val stringRequest = object: StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+
+                //   TextNombre?.setText("")
+                //   TextDireccion?.setText("")
+                //   TextDropdown?.setText("Eliga una opción",false)
+            },
+            { error ->
+                Log.i("Sebastian3", "${sharedViewModel.numeroAlertas}, ${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDeBodegas}")
+               // Toast.makeText(requireContext(), "Alertas actualizadas exitosamente.", Toast.LENGTH_LONG).show()
+
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+            }
+        )
+
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
+                parametros.put("NUMERO_DE_ALERTAS",sharedViewModel.numeroAlertas.size.toString())
+                for(i in 0..<sharedViewModel.numeroAlertas.size){
+                    parametros.put("ALMACEN$i", sharedViewModel.numeroAlertas[i])
+                    parametros.put("ALERTA$i", sharedViewModel.listaDeAlertas[i])
+
+                }
+
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
+    }
+
+    private fun borrarPreciosCompra(){
+        val url = "http://186.64.123.248/Reportes/Productos/borrarPreciosCompra.php"
+        val queue = Volley.newRequestQueue(requireContext())
+        val jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+            { response ->
+                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
+
+            },{error ->
+                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
+            })
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
+                parametros.put("NUMERO_DE_PRECIOS_COMPRA",sharedViewModel.numeroPreciosCompra.size.toString())
+                for(i in 0..<sharedViewModel.numeroPreciosCompra.size){
+                    parametros.put("PROVEEDOR$i",sharedViewModel.numeroPreciosCompra[i])}
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
+    }
+
+    private fun actualizarPreciosCompra() {
+        val url1 = "http://186.64.123.248/Reportes/Productos/insertarPreciosCompra.php"
+        val queue1 =Volley.newRequestQueue(requireContext())
+        val stringRequest = object: StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+
+                //   TextNombre?.setText("")
+                //   TextDireccion?.setText("")
+                //   TextDropdown?.setText("Eliga una opción",false)
+            },
+            { error ->
+                Log.i("Sebastian3", "${sharedViewModel.numeroPreciosCompra}, ${sharedViewModel.listaDePreciosCompra}, ${sharedViewModel.listaDeProveedores}")
+               // Toast.makeText(requireContext(), "Precios de compra actualizados exitosamente.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+            }
+        )
+
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
+                parametros.put("NUMERO_DE_PRECIOS_COMPRA",sharedViewModel.numeroPreciosCompra.size.toString())
+                for(i in 0..<sharedViewModel.numeroPreciosCompra.size){
+                    parametros.put("PROVEEDOR$i",sharedViewModel.numeroPreciosCompra[i])
+                    parametros.put("PRECIO_COMPRA$i", sharedViewModel.listaDePreciosCompra[i])
+
+
+                }
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
+    }
+
+    private fun borrarPreciosVenta(){
+        val url = "http://186.64.123.248/Reportes/Productos/borrarPreciosVenta.php"
+        val queue = Volley.newRequestQueue(requireContext())
+        val jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+            { response ->
+                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
+
+            },{error ->
+                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
+            })
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
+                parametros.put("NUMERO_DE_PRECIOS_VENTA",sharedViewModel.numeroPreciosVenta.size.toString())
+                for(i in 0..<sharedViewModel.numeroPreciosVenta.size){
+                    parametros.put("CLIENTE$i",sharedViewModel.numeroPreciosVenta[i])
+                }
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
+    }
+
+    private fun actualizarPreciosVenta() {
+        val url1 = "http://186.64.123.248/Reportes/Productos/insertarPreciosVenta.php"
+        val queue1 =Volley.newRequestQueue(requireContext())
+        val stringRequest = object: StringRequest(
+            Request.Method.POST,
+            url1,
+            { response ->
+                /* TextNombre?.setText("")
+                 TextPeso?.setText("")
+                 TextVolumen?.setText("")
+                 TextNombreImagen?.setText("")
+                 TextCodigoDeBarraProducto?.setText("")
+                 TextCodigoDeBarraEmbalaje?.setText("")
+                 TextUnidadesEmbalaje?.setText("")
+                 //Imagen?.setImageDrawable(null)
+                 ImagenProducto?.setImageResource(R.drawable.android_logo)
+                 DropwDownTipoDeProducto?.setText("Eliga una opción",false)*/
+            },
+            { error ->
+                Log.i("Sebastian3", "${sharedViewModel.numeroPreciosVenta}, ${sharedViewModel.listaDePreciosVenta}, ${sharedViewModel.listaDeClientes}")
+               // Toast.makeText(requireContext(), "Precios de venta actualizados exitosamente.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+            }
+        )
+
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
+                parametros.put("NUMERO_DE_PRECIOS_VENTA",sharedViewModel.numeroPreciosVenta.size.toString())
+                for (i in 0..<sharedViewModel.numeroPreciosVenta.size) {
+                    parametros.put("CLIENTE$i", sharedViewModel.numeroPreciosVenta[i])
+                    parametros.put("PRECIO_VENTA$i", sharedViewModel.listaDePreciosVenta[i])
+                }
+                return parametros
+            }
+        }
+        queue1.add(stringRequest)
     }
 
     fun getRoundedCornerBitmap(bitmap: Bitmap, radius: Float): Bitmap {
@@ -1175,7 +1238,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
 
     fun convertirBitmapABase64(bitmap: Bitmap): String {
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         val byteArray = stream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
@@ -1186,6 +1249,52 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
             radio2?.id -> TextEstado = 0
         }
     }
+    private fun isValidUrl(url: String): Boolean{
+        return try{
+            URL(url)
+            true
+        }catch(e: MalformedURLException){
+            false
+        }
+    }
+
+    private fun mensajeEliminarProducto(){
+        AlertDialog.Builder(context).apply {
+            setTitle("¿Quieres eliminar este producto?")
+            setMessage("Esta acción no se puede deshacer.")
+            setPositiveButton("Sí") { dialog, _ ->
+                eliminarProducto()
+                findNavController().navigate(R.id.action_nav_editar_producto_to_nav_mis_datos)
+                dialog.dismiss()
+            }
+            setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+
+    }
+    private fun eliminarProducto(){
+        val url = "http://186.64.123.248/Reportes/Productos/borrar.php"
+        val queue = Volley.newRequestQueue(requireContext())
+        var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+            { response ->
+                Toast.makeText(requireContext(), "Producto eliminado exitosamente", Toast.LENGTH_SHORT).show()
+
+            },{error ->
+                Toast.makeText(requireContext(), "No se pudo eliminar el producto", Toast.LENGTH_SHORT).show()
+            })
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

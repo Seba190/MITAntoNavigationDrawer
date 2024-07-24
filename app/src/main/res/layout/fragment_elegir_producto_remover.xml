@@ -248,6 +248,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
+                        android:inputType="number"
                         android:hint="Escriba el precio de venta"
                         android:textColorHint="@color/color_list"
                         android:layout_marginTop="5dp"/>

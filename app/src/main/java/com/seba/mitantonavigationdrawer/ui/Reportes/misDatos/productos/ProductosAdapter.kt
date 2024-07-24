@@ -10,6 +10,7 @@ import com.seba.mitantonavigationdrawer.R
 class ProductosAdapter(var productosList: List<ProductosItemResponse> = emptyList(),
                       private val onItemSelected:(String) -> Unit)
     : RecyclerView.Adapter<ProductosViewHolder>() {
+
     fun updateList(productosList: List<ProductosItemResponse>){
         this.productosList = productosList
         notifyDataSetChanged()

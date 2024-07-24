@@ -62,6 +62,7 @@ class AlertasAlmacenesEditarFragment() : Fragment(R.layout.fragment_alertas_alma
         retrofit = getRetrofit()
         gestionarRecyclerView()
 
+
         /* binding.bAlertaAlmacenVolver.setOnClickListener {
                  binding.rlAlertasAlmacenes.isVisible = false
                  val anadirProductoFragment = AnadirProductoFragment()
@@ -82,30 +83,32 @@ class AlertasAlmacenesEditarFragment() : Fragment(R.layout.fragment_alertas_alma
             sharedViewModel.ListasDeAlertas.clear()
             sharedViewModel.ListasDeAlmacenes.clear()
             sharedViewModel.ListasDeProductosAlertas.clear()
+            sharedViewModel.numeroAlertas.clear()
             Toast.makeText(requireContext(), "Se han eliminado las alertas exitosamente", Toast.LENGTH_LONG).show()
         }
 
         binding.bAgregarAlmacenEditar.setOnClickListener {
+            adapter.getAllEditTextContents()
+            adapter.getAllTextViewContents()
             //Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
-            Log.i("Sebastian", "${sharedViewModel.listaDeBodegas} y ${sharedViewModel.listaDeAlertas}")
-            if(!sharedViewModel.listaDeAlertas.all { it.isBlank() }){
-            if (sharedViewModel.listaDeAlertas.size > 0 && sharedViewModel.listaDeBodegas.size >0) {
-                for (i in 0..<sharedViewModel.listaDeAlertas.size) {
-                    if(sharedViewModel.listaDeAlertas[i] != "") {
-                        setFragmentResult("AlertaAlmacen$i", bundleOf("Almacen$i" to sharedViewModel.listaDeBodegas[i], "Alerta$i" to sharedViewModel.listaDeAlertas[i]
-                            )
-                        )
+
+
+            if (sharedViewModel.numeroAlertas.isEmpty()) {
+                for (i in 0..<adapter.alertasAlmacenesList.size) {
+                  //  if(sharedViewModel.listaDeAlertas[i] != "") {
+                      //  setFragmentResult("AlertaAlmacen$i", bundleOf("Almacen$i" to sharedViewModel.listaDeBodegas[i], "Alerta$i" to sharedViewModel.listaDeAlertas[i] ) )
                        sharedViewModel.numeroAlertas.add(adapter.alertasAlmacenesList[i].Nombre)
-                    }
+                   // }
                 }
                 Toast.makeText(requireContext(), "Se han agregado exitosamente las alertas", Toast.LENGTH_LONG).show()
-            }}
+
+            }
                 binding.rlAlertasAlmacenesEditar.isVisible = false
                 val editarProductoFragment = EditarProductoFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlAlertasAlmacenesEditar, editarProductoFragment)
                     .commit()
-
+            Log.i("Sebastian2", "${sharedViewModel.listaDeBodegas} , ${sharedViewModel.listaDeAlertas} , ${sharedViewModel.numeroAlertas} ")
         }
 
         /* binding.bAgregarAlmacen.setOnClickListener {
@@ -211,7 +214,7 @@ class AlertasAlmacenesEditarFragment() : Fragment(R.layout.fragment_alertas_alma
 
     // var codeExecuted = false
     override fun afterTextChange(text: String, viewHolder: AlertasAlmacenesEditarViewHolder) {
-        if (!binding.bAgregarAlmacenEditar.isPressed && text.isNotEmpty()){
+       /* if (!binding.bAgregarAlmacenEditar.isPressed && text.isNotEmpty()){
             Toast.makeText(requireContext(), "Se he agregado la alerta", Toast.LENGTH_SHORT).show()
             sharedViewModel.listaDeAlertas[viewHolder.adapterPosition] = text
             sharedViewModel.listaDeBodegas[viewHolder.adapterPosition] = adapter.alertasAlmacenesList[viewHolder.adapterPosition].Nombre
@@ -225,7 +228,7 @@ class AlertasAlmacenesEditarFragment() : Fragment(R.layout.fragment_alertas_alma
             Log.i("Sebastian", "${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}")
             Toast.makeText(requireContext(), "Se ha eliminado la alerta", Toast.LENGTH_SHORT).show()
 
-           }
+           }*/
 
     }
 

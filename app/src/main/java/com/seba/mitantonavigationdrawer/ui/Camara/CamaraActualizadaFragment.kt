@@ -76,7 +76,9 @@ class CamaraActualizadaFragment : Fragment(R.layout.fragment_camara_actualizada)
         if (result.resultCode == Activity.RESULT_OK) {
            // val imageBitmap = result.data?.extras?.get("data") as Bitmap
             val imageBitmap = BitmapFactory.decodeFile(currentPhotoPath)
-            val imageByteArray: ByteArray = bitmapToByteArray(imageBitmap)
+            val resizedBitmap = resizeBitmap(imageBitmap, 800, 800)
+           // val imageByteArray: ByteArray = bitmapToByteArray(imageBitmap)
+            val imageByteArray: ByteArray = bitmapToByteArray(resizedBitmap)
             sharedViewModel.setImageData(imageByteArray)
             imageView.setImageBitmap(imageBitmap)
             roundImageView(imageBitmap)
@@ -90,7 +92,9 @@ class CamaraActualizadaFragment : Fragment(R.layout.fragment_camara_actualizada)
             val imageUri = result.data?.data
             imageUri?.let {
                 val imageBitmap = getBitmapFromUri(it)
-                val imageByteArray: ByteArray = bitmapToByteArray(imageBitmap)
+                val resizedBitmap = resizeBitmap(imageBitmap, 800 , 800)
+               // val imageByteArray: ByteArray = bitmapToByteArray(imageBitmap)
+                val imageByteArray: ByteArray = bitmapToByteArray(resizedBitmap)
                 sharedViewModel.setImageData(imageByteArray)
                 imageView.setImageBitmap(imageBitmap)
                 roundImageView(imageBitmap)
@@ -209,7 +213,16 @@ class CamaraActualizadaFragment : Fragment(R.layout.fragment_camara_actualizada)
     }
     private fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
         val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
         return byteArrayOutputStream.toByteArray()
+    }
+
+    private fun resizeBitmap(bitmap: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
+        val width = bitmap.width
+        val height = bitmap.height
+        val scaleFactor = Math.min(maxWidth.toFloat() / width, maxHeight.toFloat() / height)
+        val newWidth = (width * scaleFactor).toInt()
+        val newHeight = (height * scaleFactor).toInt()
+        return Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
     }
 }

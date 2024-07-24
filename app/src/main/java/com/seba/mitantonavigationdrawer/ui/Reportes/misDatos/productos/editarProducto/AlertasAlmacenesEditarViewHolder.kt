@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -25,9 +27,11 @@ import kotlin.math.abs
 //Inserte sharedViewModel en AlertasAlmacenesAdapter
 class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextChangeListenerEditar, private val sharedViewModel: SharedViewModel, private val adapter: AlertasAlmacenesEditarAdapter): RecyclerView.ViewHolder(view) {
     private val binding = ItemAlertBinding.bind(view)
+    val editText : EditText = view.findViewById(R.id.etAlert)
+    val textView : TextView = view.findViewById(R.id.tvWarehouse)
     var segundaVez = false
 
-    init {
+    /*init {
         binding.etAlert.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
                 charSequence: CharSequence?,
@@ -68,7 +72,7 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
         })
 
 
-    }
+    }*/
     private var codeExecuted = false
     fun bind(
         alertasAlmacenesItemResponse: AlertasAlmacenesItemResponseEditar,
@@ -79,17 +83,17 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
         binding.cbWarehouse.setOnClickListener {
             binding.etAlert.isEnabled = binding.cbWarehouse.isChecked
         }
-        for (i in 0..listaAdapter.itemCount) {
+
             if (sharedViewModel.listaDeAlertas.isNotEmpty()) {
-                if (sharedViewModel.listaDeAlertas.size > i) {
+                for (i in 0..<sharedViewModel.listaDeAlertas.size) {
                     if (binding.etAlert.text.isBlank() && binding.tvWarehouse.text.toString() == sharedViewModel.listaDeBodegas[i]) {
                         binding.etAlert.setText(sharedViewModel.listaDeAlertas[i])
                     }
-                } else {
-                    break
                 }
             }
-        }
+
+
+
         /*if(!codeExecuted) {
             for (i in 0..listaAdapter.itemCount) {
                 if (sharedViewModel.listaDeBodegas.size > i && sharedViewModel.listaDeAlertas.size > i) {
@@ -103,7 +107,7 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
             }
             codeExecuted = true
         }*/
-        if(!segundaVez) {
+        if(!segundaVez && sharedViewModel.listaDeAlertas.isEmpty()) {
             obtenerAlertas()
             segundaVez = true
         }

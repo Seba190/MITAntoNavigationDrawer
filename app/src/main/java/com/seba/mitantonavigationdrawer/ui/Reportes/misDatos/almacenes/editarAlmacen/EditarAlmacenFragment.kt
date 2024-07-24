@@ -1,5 +1,6 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.editarAlmacen
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TableRow
@@ -24,6 +26,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavArgs
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.android.volley.Request
 import com.android.volley.Response
@@ -57,6 +60,7 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
     var radioGroup: RadioGroup? = null
     var radio1: RadioButton? = null
     var radio2: RadioButton? = null
+   // var EliminarAlmacen: ImageView? = null
     //var TextId: EditText? = null
 
     override fun onCreateView(
@@ -72,6 +76,7 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
         //Aquí se programa
         TextNombre = binding.etNombreAlmacenEditable.findViewById(R.id.etNombreAlmacenEditable)
         TextDireccion = binding.etDireccionAlmacenEditable.findViewById(R.id.etDireccionAlmacenEditable)
+        //EliminarAlmacen = binding.ivEliminarAlmacen.findViewById(R.id.ivEliminarAlmacen)
         TextDropdown = binding.tvAutoCompleteEditable.findViewById(R.id.tvAutoCompleteEditable)
         radio1 = binding.EstadoAlmacenRadioButton1.findViewById(R.id.EstadoAlmacenRadioButton1)
         radio2 = binding.EstadoAlmacenRadioButton2.findViewById(R.id.EstadoAlmacenRadioButton2)
@@ -91,6 +96,11 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
             },500)*/
             actualizarAlmacen()
         }
+
+       // EliminarAlmacen?.setOnClickListener {
+       //     mensajeEliminarAlmacen()
+       // }
+
         try {
             sharedViewModel.id.add(args.id)
         }
@@ -453,6 +463,43 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
             radio1?.id -> TextEstado = 1
             radio2?.id -> TextEstado = 0
         }
+    }
+
+    private fun mensajeEliminarAlmacen(){
+        AlertDialog.Builder(context).apply {
+            setTitle("¿Quieres eliminar este almacén?")
+            setMessage("Esta acción no se puede deshacer.")
+            setPositiveButton("Sí") { dialog, _ ->
+                eliminarProveedor()
+                findNavController().navigate(R.id.action_nav_editar_almacen_to_nav_mis_datos)
+                dialog.dismiss()
+            }
+            setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+
+    }
+    private fun eliminarProveedor(){
+        val url = "http://186.64.123.248/Reportes/Almacenes/borrar.php"
+        val queue = Volley.newRequestQueue(requireContext())
+        var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+            { response ->
+                Toast.makeText(requireContext(), "Almacén eliminado exitosamente", Toast.LENGTH_SHORT).show()
+
+            },{error ->
+                Toast.makeText(requireContext(), "No se pudo eliminar el almacén", Toast.LENGTH_SHORT).show()
+            })
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_ALMACEN", sharedViewModel.id.last())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
     }
 
     override fun onDestroyView() {

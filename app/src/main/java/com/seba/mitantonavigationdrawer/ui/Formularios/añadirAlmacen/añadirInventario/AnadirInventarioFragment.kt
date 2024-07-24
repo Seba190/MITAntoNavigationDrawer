@@ -116,6 +116,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         binding.FacturaEntradaButtonEnviar.setOnClickListener {
             if(sharedViewModel.listaDeCantidadesAnadir.size > 0 && sharedViewModel.listaDeCantidadesAnadir.size>0 && sharedViewModel.listaDePreciosAnadir.size >0) {
                 ValidacionesIdInsertarDatos()
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProductoAnadir.requestLayout()
             }else{
                 Toast.makeText(requireContext(),"Debe elegir al menos un producto para añadir inventario", Toast.LENGTH_LONG).show()
             }
@@ -168,6 +170,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
             if(DropDownProveedor?.text.toString() != "Eliga una opción" && DropDownAlmacen?.text.toString() != "Eliga una opción"){
                 sharedViewModel.proveedorAnadir = DropDownProveedor?.text.toString()
                 sharedViewModel.almacenAnadir = DropDownAlmacen?.text.toString()
+                sharedViewModel.listaDeAlmacenesAnadir.add(DropDownAlmacen?.text.toString())
                 binding.nsvElegirProductoAnadir.isVisible = true
                 binding.llMonto.isVisible = true
             //setFragmentResult("Proveedor", bundleOf("Proveedor" to DropDownProveedor?.text.toString()))
@@ -216,9 +219,10 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
     }
 
     private fun onDeletedItem(position: Int){
-        sharedViewModel.opcionesListAnadir.add(position,sharedViewModel.listaDeProductosAnadir[position])
+       // sharedViewModel.opcionesListAnadir.add(position,sharedViewModel.listaDeProductosAnadir[position])
         sharedViewModel.listaDeCantidadesAnadir.removeAt(position)
         sharedViewModel.listaDeProductosAnadir.removeAt(position)
+        sharedViewModel.listaDePreciosAnadir.removeAt(position)
         adapter.notifyItemRemoved(position)
         adapter.notifyDataSetChanged()
         binding.rvElegirProductoAnadir.requestLayout()
@@ -255,7 +259,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         val jsonObjectRequest = object: StringRequest(
             Request.Method.POST,url,
             { response ->
-                if(!TextNombre?.text.toString().isBlank()){
+                if(TextNombre?.text.toString().isNotBlank()){
                     val id = JSONObject(response).getString("ID_FACTURA_ENTRADA")
                     //unico = 1
                     //no unico = 0
@@ -269,12 +273,12 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                             url1,
                             { response ->
                                 if(binding.etNombreFacturaEntrada.text.isNotBlank() && binding.tvListaDesplegableProveedor.text.toString() != "Eliga una opción" && binding.tvListaDesplegableAlmacen.text.toString() != "Eliga una opción") {
+                               //     Handler(Looper.getMainLooper()).postDelayed({
+                                    anadirInventario()
+                               //     }, 2500)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosYCantidades()
-                                    }, 2500)
-                                    Handler(Looper.getMainLooper()).postDelayed({
-                                        anadirInventario()
-                                    }, 5000)
+                                    }, 500)
                                     binding.tvProductosAnadidosAnadir.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 && adapter.listaDeProductosAnadir.size == 0 && adapter.listaDePreciosAnadir.size == 0)
                                 }
                                 Toast.makeText(requireContext(), "Factura agregada exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
@@ -285,8 +289,9 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                                 TextComentarios?.setText("")*/
                             },
                             { error ->
-                                Toast.makeText(requireContext(),"El proveedor y el almacén son obligatorios", Toast.LENGTH_LONG).show()
-                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                                //Toast.makeText(requireContext(),"El proveedor y el almacén son obligatorios", Toast.LENGTH_LONG).show()
+                                Log.e("Sebastian4","$error")
+                                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
                             }
                         )
 
@@ -353,6 +358,13 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
 
                 DropDownAlmacen?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
+                    sharedViewModel.listaDeProductosAnadir.clear()
+                    sharedViewModel.listaDeCantidadesAnadir.clear()
+                    sharedViewModel.listaDePreciosAnadir.clear()
+                    binding.tvProductosAnadidosAnadir.isVisible = sharedViewModel.listaDeProductosAnadir.size != 0
+                    binding.llMonto.isVisible = sharedViewModel.listaDeProductosAnadir.size != 0
+                    binding.nsvElegirProductoAnadir.isVisible = false
+                    binding.rvElegirProductoAnadir.requestLayout()
                     val itemSelected = parent.getItemAtPosition(position)
                 }
             }, { error ->
@@ -409,17 +421,20 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                         url1,
                         { response ->
                            Toast.makeText(requireContext(),"Productos agregados exitosamente", Toast.LENGTH_LONG).show()
-                            /*TextNombre?.setText("")
+                            TextNombre?.setText("")
                             TextFecha?.setText("")
-                            binding.tvListaDesplegableProveedor.setText("Eliga una opción",false)
-                            binding.tvListaDesplegableAlmacen.setText("Eliga una opción",false)
+                            DropDownProveedor?.setText("Eliga una opción",false)
+                            DropDownAlmacen?.setText("Eliga una opción",false)
                             TextComentarios?.setText("")
                             sharedViewModel.listaDeCantidadesAnadir.removeAll(sharedViewModel.listaDeCantidadesAnadir)
                             sharedViewModel.listaDeProductosAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
                             sharedViewModel.listaDePreciosAnadir.removeAll(sharedViewModel.listaDePreciosAnadir)
                             adapter.notifyDataSetChanged()
                             binding.rvElegirProductoAnadir.requestLayout()
-                            binding.tvProductosAnadidosAnadir.isVisible = false*/
+                            binding.tvProductosAnadidosAnadir.isVisible = false
+                            binding.nsvElegirProductoAnadir.isVisible = false
+                            binding.llMonto.isVisible = false
+                            sharedViewModel.opcionesListAnadir.clear()
 
                         },
                         { error ->
@@ -475,19 +490,6 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
             url1,
             { response ->
                 Toast.makeText(requireContext(),"Cantidad de inventario añadida exitosamente", Toast.LENGTH_SHORT).show()
-                TextNombre?.setText("")
-                TextFecha?.setText("")
-                DropDownProveedor?.setText("Eliga una opción",false)
-                DropDownAlmacen?.setText("Eliga una opción",false)
-                TextComentarios?.setText("")
-                sharedViewModel.listaDeCantidadesAnadir.removeAll(sharedViewModel.listaDeCantidadesAnadir)
-                sharedViewModel.listaDeProductosAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
-                sharedViewModel.listaDePreciosAnadir.removeAll(sharedViewModel.listaDePreciosAnadir)
-                adapter.notifyDataSetChanged()
-                binding.rvElegirProductoAnadir.requestLayout()
-                binding.tvProductosAnadidosAnadir.isVisible = false
-                binding.nsvElegirProductoAnadir.isVisible = false
-                binding.llMonto.isVisible = false
             },
             { error ->
                 /*  TextNombre?.setText("")

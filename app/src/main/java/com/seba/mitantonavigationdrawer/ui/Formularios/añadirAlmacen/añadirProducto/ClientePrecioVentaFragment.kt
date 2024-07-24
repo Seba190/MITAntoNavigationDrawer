@@ -80,6 +80,9 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
         }
 
         binding.bAgregarCliente.setOnClickListener {
+            adapterPrecioVenta.getAllEditTextContents()
+            adapterPrecioVenta.getAllTextViewContents()
+            Log.i("Sebastian2", "${sharedViewModel.listaDePreciosVentaAnadir} , ${sharedViewModel.listaDeClientesAnadir}")
             if(!sharedViewModel.listaDePreciosVentaAnadir.all { it.isBlank() }){
             for (i in 0..<sharedViewModel.listaDePreciosVentaAnadir.size) {
                 if(sharedViewModel.listaDePreciosVentaAnadir[i] != "" && sharedViewModel.listaDeClientesAnadir[i] != "") {
@@ -153,15 +156,15 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
     }
 
     override fun onCheckBoxClick(id: Int, isChecked: Boolean) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onTextChange(text: String, viewHolder: ClientePrecioVentaViewHolder) {
-        TODO("Not yet implemented")
+
     }
 
     override fun afterTextChange(text: String, viewHolder: ClientePrecioVentaViewHolder) {
-        if (!binding.bAgregarCliente.isPressed && text.isNotEmpty()){
+      /*  if (!binding.bAgregarCliente.isPressed && text.isNotEmpty()){
             Toast.makeText(requireContext(), "Se he agregado el precio de venta", Toast.LENGTH_SHORT).show()
             sharedViewModel.listaDePreciosVentaAnadir[viewHolder.adapterPosition] = text
             sharedViewModel.listaDeClientesAnadir[viewHolder.adapterPosition] = adapterPrecioVenta.clientePrecioVentaList[viewHolder.adapterPosition].Nombre
@@ -172,7 +175,7 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
             sharedViewModel.listaDePreciosVentaAnadir[viewHolder.adapterPosition] = ""
             sharedViewModel.listaDeClientesAnadir[viewHolder.adapterPosition] = ""
             Log.i("Sebastian", "${sharedViewModel.listaDePreciosVentaAnadir} y ${sharedViewModel.listaDeClientesAnadir}")
-        }
+        }*/
 
     }
 }

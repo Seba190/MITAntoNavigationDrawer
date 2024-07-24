@@ -26,11 +26,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
-
                 <TextView
                     android:id="@+id/tvCliente"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_nombre_cliente"

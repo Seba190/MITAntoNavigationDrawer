@@ -18,6 +18,7 @@ class AlertasAlmacenesAdapter(var alertasAlmacenesList:
                               : RecyclerView.Adapter<AlertasAlmacenesViewHolder>() {
 
 
+    private val viewHolders = mutableListOf<AlertasAlmacenesViewHolder>()
 
 
     fun updateList(alertasAlmacenesList: List<AlertasAlmacenesItemResponse>){
@@ -47,12 +48,46 @@ class AlertasAlmacenesAdapter(var alertasAlmacenesList:
     override fun onBindViewHolder(viewholder: AlertasAlmacenesViewHolder, position: Int) {
         val item = alertasAlmacenesList[position]
         viewholder.bind(item,this)
+        if(!viewHolders.contains(viewholder)){
+            viewHolders.add(viewholder)
         }
+    }
+
+    override fun onViewRecycled(holder: AlertasAlmacenesViewHolder) {
+        viewHolders.remove(holder)
+        super.onViewRecycled(holder)
+    }
 
     override fun getItemCount() = alertasAlmacenesList.size
+
+    fun getAllEditTextContents() {
+        sharedViewModel.listaDeAlertasAnadir.clear()
+        viewHolders.forEach { holder ->
+            val text = holder.editText.text.toString()
+              if(text.isEmpty()){
+              sharedViewModel.listaDeAlertasAnadir.add("")
+             }else{
+            sharedViewModel.listaDeAlertasAnadir.add(text)
+             }
+        }
+    }
+    fun getAllTextViewContents(){
+        sharedViewModel.listaDeBodegasAnadir.clear()
+        viewHolders.forEach { holder ->
+            val text = holder.textView.text.toString()
+            val edit = holder.editText.text.toString()
+            if(edit.isEmpty()){
+                sharedViewModel.listaDeBodegasAnadir.add("")
+            }else{
+                sharedViewModel.listaDeBodegasAnadir.add(text)
+            }
+        }
+    }
 
     fun getAllItems(): List<AlertasAlmacenesItemResponse> {
         // Devuelve la lista completa de elementos
         return alertasAlmacenesList
     }
+
+
 }

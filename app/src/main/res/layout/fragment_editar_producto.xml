@@ -35,17 +35,16 @@
                 android:longClickable="true"
                 android:orientation="vertical">
 
-
                 <TextView
                     android:id="@+id/tvNombreProducto"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_nombre_producto"
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <EditText
                     android:id="@+id/etNombreProducto"
@@ -86,7 +85,7 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/color_list"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
 
                 <TextView
@@ -244,7 +243,7 @@
                     android:id="@+id/bEscanearCodigoDeBarraProducto"
                     android:layout_width="130dp"
                     android:layout_height="match_parent"
-                    android:layout_marginStart="135dp"
+                    android:layout_gravity="center"
                     android:backgroundTint="@color/light_green"
                     android:text="@string/button_codigo_de_barra" />
 
@@ -253,7 +252,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_marginHorizontal="130dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_codigo_barra_producto"
                     android:textColor="@color/black"
@@ -309,7 +308,7 @@
                     android:id="@+id/tvUnidadesEmbalaje"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:editable="true"
                     android:text="@string/textView_unidades_embalaje"

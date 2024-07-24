@@ -79,6 +79,9 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
         }
 
         binding.bAgregarProveedor.setOnClickListener {
+            adapterPrecioCompra.getAllEditTextContents()
+            adapterPrecioCompra.getAllTextViewContents()
+            Log.i("Sebastian2", "${sharedViewModel.listaDePreciosCompraAnadir} , ${sharedViewModel.listaDeProveedoresAnadir}")
             if(!sharedViewModel.listaDePreciosCompraAnadir.all { it.isBlank() }){
             for (i in 0..<sharedViewModel.listaDePreciosCompraAnadir.size) {
                 if(sharedViewModel.listaDePreciosCompraAnadir[i] != "" && sharedViewModel.listaDeProveedoresAnadir[i] != "") {
@@ -150,7 +153,7 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
     }
 
     override fun afterTextChange(text: String, viewHolder: ProveedorPrecioCompraViewHolder) {
-        if (!binding.bAgregarProveedor.isPressed && text.isNotEmpty()){
+      /*  if (!binding.bAgregarProveedor.isPressed && text.isNotEmpty()){
             Toast.makeText(requireContext(), "Se he agregado el precio de compra", Toast.LENGTH_SHORT).show()
             sharedViewModel.listaDePreciosCompraAnadir[viewHolder.adapterPosition] = text
             sharedViewModel.listaDeProveedoresAnadir[viewHolder.adapterPosition] =adapterPrecioCompra.proveedorPrecioCompraList[viewHolder.adapterPosition].Nombre
@@ -161,7 +164,7 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
             sharedViewModel.listaDePreciosCompraAnadir[viewHolder.adapterPosition] = ""
             sharedViewModel.listaDeProveedoresAnadir[viewHolder.adapterPosition] = ""
             Log.i("Sebastian", "${sharedViewModel.listaDeProveedoresAnadir} y ${sharedViewModel.listaDePreciosCompraAnadir}")
-        }
+        }*/
 
     }
 

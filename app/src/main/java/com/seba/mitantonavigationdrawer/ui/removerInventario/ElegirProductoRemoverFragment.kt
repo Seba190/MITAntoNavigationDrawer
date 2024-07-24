@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import androidx.fragment.app.Fragment
@@ -62,7 +64,6 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
         binding.etCodigoDeBarraRemover.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
 
-        ListaDesplegableElegirProducto()
         // ListaDesplegableElegirProveedor()
 
         binding.llCajasDeProductoElegirProductoRemover.isVisible = false
@@ -117,7 +118,7 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                                         toast.setGravity(Gravity.BOTTOM, 0, 600)
                                         toast.show()
                                     }else {
-                                        sharedViewModel.listaDeProductosRemover.add(binding.tvListaDesplegableElegirProductoRemover.text.toString())
+                                        sharedViewModel.listaDeProductosRemover.add("${binding.tvListaDesplegableElegirProductoRemover.text.toString().substringBefore('(')}( 0 unid. )")
                                         sharedViewModel.listaDeCantidadesRemover.add(binding.etCantidadRemover.text.toString())
                                         sharedViewModel.listaDePreciosRemover.add(binding.etPrecioRemover.text.toString())
                                         //  refreshAdapterAnadirTransferenciaFragment()
@@ -127,7 +128,11 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                                         )
                                         binding.etCantidadRemover.setText("")
                                         binding.etPrecioRemover.setText("")
-                                        sharedViewModel.opcionesListRemover.removeAll(sharedViewModel.listaDeProductosRemover)
+                                        sharedViewModel.opcionesListRemover.removeAll { elemento ->
+                                            val elementoABuscar = "${elemento.substringBefore('(')}( 0 unid. )"
+                                            sharedViewModel.listaDeProductosRemover.contains(elementoABuscar)
+                                        }
+                                       // sharedViewModel.opcionesListRemover.removeAll(sharedViewModel.listaDeProductosRemover)
                                         Toast.makeText(
                                             requireContext(),
                                             "Se ha agregado el producto a la factura",
@@ -156,7 +161,7 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                                                     binding.etArticulosPorCajaRemover.text.toString()
                                                         .toInt()
                                                 )
-                                        sharedViewModel.listaDeProductosRemover.add(binding.tvListaDesplegableElegirProductoRemover.text.toString())
+                                        sharedViewModel.listaDeProductosRemover.add("${binding.tvListaDesplegableElegirProductoRemover.text.toString().substringBefore('(')}( 0 unid. )")
                                         sharedViewModel.listaDeCantidadesRemover.add(cantidad.toString())
                                         sharedViewModel.listaDePreciosRemover.add(binding.etPrecioRemover.text.toString())
                                         // refreshAdapterAnadirTransferenciaFragment()
@@ -167,7 +172,11 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                                         binding.etArticulosPorCajaRemover.setText("")
                                         binding.etNumeroDeCajasRemover.setText("")
                                         binding.etPrecioRemover.setText("")
-                                        sharedViewModel.opcionesListRemover.removeAll(sharedViewModel.listaDeProductosRemover)
+                                        sharedViewModel.opcionesListRemover.removeAll { elemento ->
+                                            val elementoABuscar = "${elemento.substringBefore('(')}( 0 unid. )"
+                                            sharedViewModel.listaDeProductosRemover.contains(elementoABuscar)
+                                        }
+                                        //sharedViewModel.opcionesListRemover.removeAll(sharedViewModel.listaDeProductosRemover)
                                         Toast.makeText(
                                             requireContext(),
                                             "Se ha agregado el producto a la factura",
@@ -228,6 +237,23 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
             }
         }
 
+        if(sharedViewModel.listaDeAlmacenesRemover.size > 1) {
+            for (i in 1..<sharedViewModel.listaDeAlmacenesRemover.size){
+                if(sharedViewModel.listaDeAlmacenesRemover[i]==sharedViewModel.listaDeAlmacenesRemover[i-1]){
+                    ListaDesplegableElegirProducto()
+                }else if(sharedViewModel.listaDeAlmacenesRemover[i]!=sharedViewModel.listaDeAlmacenesRemover[i-1]){
+                    sharedViewModel.opcionesListRemover.clear()
+                    sharedViewModel.listaDeProductosRemover.clear()
+                    sharedViewModel.listaDeCantidadesRemover.clear()
+                    sharedViewModel.listaDePreciosRemover.clear()
+                    sharedViewModel.listaDePreciosDeProductosRemover.clear()
+                    ListaDesplegableElegirProducto()
+                }
+            }
+        }else{
+            ListaDesplegableElegirProducto()
+        }
+
         return root
     }
 
@@ -243,10 +269,14 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                 val jsonArray = JSONObject(response).getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
                 for (i in 0..<jsonArray.length()) {
-                    if (!sharedViewModel.opcionesListRemover.contains(jsonArray.getString(i).replace("'", ""))) {
-                        sharedViewModel.opcionesListRemover.add(jsonArray.getString(i).replace("'", "")
-                        )
+                    if (!sharedViewModel.opcionesListRemover.contains(jsonArray.getString(i).replace("'", "")) &&
+                        !sharedViewModel.listaDeProductosRemover.contains("${jsonArray.getString(i).replace("'", "").substringBefore('(')}( 0 unid. )")) {
+                        sharedViewModel.opcionesListRemover.add(jsonArray.getString(i).replace("'", ""))
                     }
+                }
+                sharedViewModel.opcionesListRemover.removeAll { elemento ->
+                    val elementoABuscar = "${elemento.substringBefore('(')}( 0 unid. )"
+                    sharedViewModel.listaDeProductosRemover.contains(elementoABuscar)
                 }
                 //Crea un adpatador para el dropdown
                 val adapter = ArrayAdapter(requireContext(),R.layout.list_item,sharedViewModel.opcionesListRemover)
@@ -256,14 +286,21 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                         parent, view, position, id ->
                         precioYCantidad(parent.getItemAtPosition(position).toString())
                 }
-                binding.etCodigoDeBarraRemover.setOnClickListener {
-                    codigoDeBarra()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if (DropDownProducto?.text.toString() != "Eliga una opción") {
-                            precioYCantidad(DropDownProducto?.text.toString())
+                binding.etCodigoDeBarraRemover.addTextChangedListener(object: TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                    override fun afterTextChanged(s: Editable?) {
+                        if(s != null && s.length == 13) {
+                            codigoDeBarra()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                if (DropDownProducto?.text.toString() != "Eliga una opción") {
+                                    precioYCantidad(DropDownProducto?.text.toString())
+                                }
+                            }, 300)
                         }
-                    }, 300)
-                }
+                    }
+
+                })
             },
             { error ->
                 Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
@@ -380,7 +417,7 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                         if (codigoBarraEmbalaje == "") {
                             Toast.makeText(
                                 requireContext(),
-                                "EL código de barra pertenece al producto $codigoBarraProducto y ${sharedViewModel.opcionesListRemover.indexOf("$codigoBarraProducto ( 0 unid. )")}",
+                                "EL código de barra pertenece al producto $codigoBarraProducto",
                                 Toast.LENGTH_SHORT
                             ).show()
                             binding.tvListaDesplegableElegirProductoRemover.postDelayed({
@@ -411,7 +448,7 @@ class ElegirProductoRemoverFragment : Fragment(R.layout.fragment_elegir_producto
                 { error ->
                     Toast.makeText(
                         requireContext(),
-                        "No hay producto o embalaje asociado a este código de barra $error",
+                        "No hay producto o embalaje asociado a este código de barra, error: $error",
                         Toast.LENGTH_SHORT
                     ).show()
                 }) {

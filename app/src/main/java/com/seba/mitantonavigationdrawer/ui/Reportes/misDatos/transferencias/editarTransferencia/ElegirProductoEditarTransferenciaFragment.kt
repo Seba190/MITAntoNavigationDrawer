@@ -87,7 +87,20 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
             PorterDuff.Mode.SRC_ATOP)
 
 
-        ListaDesplegableElegirProducto()
+        if(sharedViewModel.listaDeAlmacenesEditarTransferencia.size > 1) {
+            for (i in 1..<sharedViewModel.listaDeAlmacenesEditarTransferencia.size){
+                if(sharedViewModel.listaDeAlmacenesEditarTransferencia[i]==sharedViewModel.listaDeAlmacenesEditarTransferencia[i-1]){
+                    ListaDesplegableElegirProducto()
+                }else if(sharedViewModel.listaDeAlmacenesEditarTransferencia[i]!=sharedViewModel.listaDeAlmacenesEditarTransferencia[i-1]){
+                    sharedViewModel.opcionesListEditarTransferencia.clear()
+                    sharedViewModel.listaDeProductos.clear()
+                    sharedViewModel.listaDeCantidades.clear()
+                    ListaDesplegableElegirProducto()
+                }
+            }
+        }else{
+            ListaDesplegableElegirProducto()
+        }
         // ListaDesplegableElegirProveedor()
 
         binding.llCajasDeProductoElegirProducto.isVisible = false
@@ -333,14 +346,21 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                         precioYCantidad(parent.getItemAtPosition(position).toString())
                     }
                 }
-                binding.etCodigoDeBarra.setOnClickListener {
-                    codigoDeBarra()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if (DropDownProducto?.text.toString() != "Eliga una opción") {
-                            precioYCantidad(DropDownProducto?.text.toString())
+                binding.etCodigoDeBarra.addTextChangedListener(object: TextWatcher{
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                    override fun afterTextChanged(s: Editable?) {
+                        if(s != null && s.length == 13) {
+                            codigoDeBarra()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                if (DropDownProducto?.text.toString() != "Eliga una opción") {
+                                    precioYCantidad(DropDownProducto?.text.toString())
+                                }
+                            }, 300)
                         }
-                    }, 300)
-                }
+                    }
+
+                })
             },
             { error ->
                 Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
@@ -472,7 +492,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                         if (codigoBarraEmbalaje == "") {
                             Toast.makeText(
                                 requireContext(),
-                                "EL código de barra pertenece al producto $codigoBarraProducto y ${sharedViewModel.opcionesListEditarTransferencia.indexOf("$codigoBarraProducto ( 0 unid. )")}",
+                                "EL código de barra pertenece al producto $codigoBarraProducto",
                                 Toast.LENGTH_SHORT
                             ).show()
                             binding.tvListaDesplegableElegirProducto.postDelayed({
@@ -503,7 +523,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                 { error ->
                     Toast.makeText(
                         requireContext(),
-                        "No hay producto o embalaje asociado a este código de barra $error",
+                        "No hay producto o embalaje asociado a este código de barra, error: $error",
                         Toast.LENGTH_SHORT
                     ).show()
                 }) {

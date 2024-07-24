@@ -84,6 +84,7 @@ class BarcodeScanAnadirFragment: Fragment(R.layout.fragment_barcode_scan_anadir)
             }
 
         })
+        var segundaVez = false
         barcodeDetector.setProcessor(object : Detector.Processor<Barcode>{
             override fun release() {
 
@@ -92,30 +93,35 @@ class BarcodeScanAnadirFragment: Fragment(R.layout.fragment_barcode_scan_anadir)
             override fun receiveDetections(detections: Detector.Detections<Barcode>) {
                 val barcodes = detections.detectedItems
                 if(barcodes.size()!=0){
+                    if(!segundaVez){
+                        val mediaPlayer = MediaPlayer.create(context, R.raw.beep_barcode_scan)  // Reemplaza "beep_sound" con el nombre de tu archivo de sonido
+                        mediaPlayer.start()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            mediaPlayer.release()
+                        },500)
+                        segundaVez = true
+                    }
                     binding.bActionAnadir.text = "ENCONTRADO"
                     binding.bActionAnadir.setBackgroundColor(Color.GREEN)
-                    val mediaPlayer = MediaPlayer.create(context, R.raw.beep_barcode_scan)  // Reemplaza "beep_sound" con el nombre de tu archivo de sonido
-                    mediaPlayer.start()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        mediaPlayer.release()
-                    },500)
                     binding.txtBarcodeValueAnadir!!.post{
-                        intentData = barcodes.valueAt(0).displayValue
-                        binding.txtBarcodeValueAnadir.setText(intentData)
-                        //activity?.finish()
-                        codigoDeBarraAnadir= intentData
-                        /*val bundle = Bundle()
-                        bundle.putString(CODIGO_DE_BARRA,codigoDeBarra)
-                        arguments = bundle*/
-                        viewModel.CodigoDeBarraAnadir.value = codigoDeBarraAnadir
+                        for (i in 0 until barcodes.size()) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                intentData = barcodes.valueAt(i).displayValue
+                                binding.txtBarcodeValueAnadir.text = intentData
+                                codigoDeBarraAnadir = intentData
+                                viewModel.CodigoDeBarraAnadir.value = codigoDeBarraAnadir
+                            //activity?.finish()
+                            },600)
+                        }
+
                         setFragmentResult("Codigo de barra transferencia", bundleOf("codigo" to codigoDeBarraAnadir))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
                     codigo?.setText(codigoDeBarraAnadir)
-                    activity?.runOnUiThread {
-                        Toast.makeText(requireContext(),codigoDeBarraAnadir, Toast.LENGTH_LONG).show()
+                   // activity?.runOnUiThread {
+                   //     Toast.makeText(requireContext(),codigoDeBarraAnadir, Toast.LENGTH_LONG).show()
                         //obtenerCodigo(codigoDeBarra!!)
-                    }
+                   // }
 
                     //obtenerCodigo(arguments?.getString(CODIGO_DE_BARRA)!!)
                     // findNavController().navigate(R.id.action_nav_barcode_scan_to_nav_añadir_transferencia)

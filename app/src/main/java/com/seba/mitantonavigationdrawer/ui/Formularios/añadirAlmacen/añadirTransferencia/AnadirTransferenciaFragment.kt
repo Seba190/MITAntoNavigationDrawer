@@ -124,6 +124,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
         binding.bAnadirNuevoProducto.setOnClickListener {
             if (DropDownOrigen?.text.toString() != "Eliga una opción" && DropDownDestino?.text.toString() != "Eliga una opción") {
                 sharedViewModel.almacen = DropDownOrigen?.text.toString()
+                sharedViewModel.listaDeAlmacenesTransferencia.add(DropDownOrigen?.text.toString())
                 binding.nsvElegirProducto.isVisible = true
                 //Aquí se obtiene el id de la transferencia actual
                 if (TextNombre?.text.toString().isNotBlank()) {
@@ -196,7 +197,9 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 segundaVez = true
             }*/
             if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
-              ValidacionesIdInsertarDatos()
+                ValidacionesIdInsertarDatos()
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProducto.requestLayout()
              /* Handler(Looper.getMainLooper()).postDelayed({
                 for (i in 0..<sharedViewModel.listaDeCantidades.size) {
                     if(sharedViewModel.listaDeCantidadesAntigua[i] != sharedViewModel.listaDeCantidades[i]){
@@ -366,6 +369,11 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
 
                 DropDownOrigen?.onItemClickListener =
                     AdapterView.OnItemClickListener { parent, view, position, id ->
+                        sharedViewModel.listaDeProductos.clear()
+                        sharedViewModel.listaDeCantidades.clear()
+                        binding.tvProductosAnadidos.isVisible = sharedViewModel.listaDeProductos.size != 0
+                        binding.nsvElegirProducto.isVisible = false
+                        binding.rvElegirProducto.requestLayout()
                         val itemSelected = parent.getItemAtPosition(position)
                     }
             }, { error ->
@@ -397,11 +405,11 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                             url1,
                             { response ->
                                 if (binding.etNombreTransferencia.text.isNotBlank() && binding.tvListaDesplegableAlmacenDestino.text.toString() != "Eliga una opción" && binding.tvListaDesplegableAlmacenOrigen.text.toString() != "Eliga una opción") {
-                                        Handler(Looper.getMainLooper()).postDelayed({
-                                            InsertarPreciosYCantidades()
-                                        }, 2500)
-                                        Handler(Looper.getMainLooper()).postDelayed({
-                                            modificarInventario()
+                                      //  Handler(Looper.getMainLooper()).postDelayed({
+                                    modificarInventario()
+                                      //  }, 2500)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        InsertarPreciosYCantidades()
                                         }, 5000)
                                         binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
                                     }
@@ -495,6 +503,19 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                         Request.Method.POST,
                         url1,
                         { response ->
+                            TextNombre?.setText("")
+                            TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
+                            DropDownOrigen?.setText("Eliga una opción", false)
+                            DropDownDestino?.setText("Eliga una opción", false)
+                            TextComentarios?.setText("")
+                            sharedViewModel.listaDeCantidades.removeAll(sharedViewModel.listaDeCantidades)
+                            sharedViewModel.listaDeProductos.removeAll(sharedViewModel.listaDeProductos)
+                            sharedViewModel.listaDeProductosAntigua.removeAll(sharedViewModel.listaDeProductosAntigua)
+                            adapter.notifyDataSetChanged()
+                            binding.rvElegirProducto.requestLayout()
+                            binding.tvProductosAnadidos.isVisible = false
+                            binding.nsvElegirProducto.isVisible = false
+                            sharedViewModel.opcionesListTransferencia.clear()
                             Toast.makeText(
                                 requireContext(),
                                 "Productos agregados exitosamente",
@@ -512,10 +533,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                         override fun getParams(): MutableMap<String, String> {
                             val parametros = HashMap<String, String>()
                             parametros.put("ID_TRANSFERENCIA", id.toString())
-                            parametros.put(
-                                "NUMERO_DE_PRODUCTOS",
-                                sharedViewModel.listaDeProductos.size.toString()
-                            )
+                            parametros.put("NUMERO_DE_PRODUCTOS", sharedViewModel.listaDeProductos.size.toString())
                             for (i in 0..<sharedViewModel.listaDeProductos.size) {
                                 parametros["PRODUCTO$i"] =
                                     sharedViewModel.listaDeProductos[i].uppercase()
@@ -563,19 +581,6 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                     "Inventario modificado exitosamente",
                     Toast.LENGTH_SHORT
                 ).show()
-                TextNombre?.setText("")
-                TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
-                DropDownOrigen?.setText("Eliga una opción", false)
-                DropDownDestino?.setText("Eliga una opción", false)
-                TextComentarios?.setText("")
-                sharedViewModel.listaDeCantidades.removeAll(sharedViewModel.listaDeCantidades)
-                sharedViewModel.listaDeProductos.removeAll(sharedViewModel.listaDeProductos)
-                sharedViewModel.listaDeProductosAntigua.removeAll(sharedViewModel.listaDeProductosAntigua)
-                adapter.notifyDataSetChanged()
-                binding.rvElegirProducto.requestLayout()
-                binding.tvProductosAnadidos.isVisible = false
-                binding.nsvElegirProducto.isVisible = false
-
             },
             { error ->
                 /*  TextNombre?.setText("")

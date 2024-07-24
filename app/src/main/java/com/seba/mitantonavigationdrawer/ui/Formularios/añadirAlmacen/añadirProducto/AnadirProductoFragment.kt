@@ -109,8 +109,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         //Aquí se programa
 
         ///////La lista desplegable y la subida de los datos al servidor////////////
-        TvAutoCompleteTipoDeProducto =
-            binding.tvAutoCompleteTipoDeProducto.findViewById(R.id.tvAutoCompleteTipoDeProducto)
+        TvAutoCompleteTipoDeProducto = binding.tvAutoCompleteTipoDeProducto.findViewById(R.id.tvAutoCompleteTipoDeProducto)
         TextNombre = binding.etNombreProducto.findViewById(R.id.etNombreProducto)
         TextPeso = binding.etPesoProducto.findViewById(R.id.etPesoProducto)
         TextVolumen = binding.etVolumenProducto.findViewById(R.id.etVolumenProducto)
@@ -363,64 +362,96 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                                 Toast.makeText(
                                     requireContext(),
                                     "Producto agregado exitosamente. El id de ingreso es el número $id ",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
                                 //Solo 1 se envía:
                                 if (sharedViewModel.ListasDeAlertas.isNotEmpty() && sharedViewModel.ListasDePreciosDeVenta.isEmpty() && sharedViewModel.ListasDePreciosDeCompra.isEmpty()) {
-                                    Handler(Looper.getMainLooper()).postDelayed({
+                                 //   Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarAlertasyAlmacenes()
-                                    }, 4000)
+                                  //  }, 4000)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        Toast.makeText(requireContext(),
+                                            "Alertas ingresadas exitosamente a la base de datos"
+                                            , Toast.LENGTH_SHORT).show()
+                                          }, 4000)
                                 }
                                 //Solo 2 se envía:
                                 if (sharedViewModel.ListasDeAlertas.isEmpty() && sharedViewModel.ListasDePreciosDeVenta.isEmpty() && sharedViewModel.ListasDePreciosDeCompra.isNotEmpty()) {
-                                    Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosCompraYProveedores()
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        Toast.makeText(requireContext(),
+                                            "Precios de compra ingresados exitosamente a la base de datos"
+                                            , Toast.LENGTH_SHORT).show()
                                     }, 4000)
                                 }
                                 //Solo 3 se envía
                                 if (sharedViewModel.ListasDeAlertas.isEmpty() && sharedViewModel.ListasDePreciosDeVenta.isNotEmpty() && sharedViewModel.ListasDePreciosDeCompra.isEmpty()) {
-                                    Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosVentayClientes()
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                        Toast.makeText(requireContext(),
+                                            "Precios de venta ingresados exitosamente a la base de datos"
+                                            , Toast.LENGTH_SHORT).show()
                                     }, 4000)
+
                                 }
                                 //1 y 2 se envían
                                 if (sharedViewModel.ListasDeAlertas.isNotEmpty() && sharedViewModel.ListasDePreciosDeVenta.isEmpty() && sharedViewModel.ListasDePreciosDeCompra.isNotEmpty()) {
-                                    Handler(Looper.getMainLooper()).postDelayed({
+                                   // Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarAlertasyAlmacenes()
-                                    }, 4000)
+                                  //  }, 4000)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosCompraYProveedores()
-                                    }, 8000)
+                                    }, 100)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        Toast.makeText(requireContext(),
+                                            "Alertas y precios de compra ingresados exitosamente a la base de datos"
+                                            , Toast.LENGTH_SHORT).show()
+                                    }, 4000)
                                 }
                                 //1 y 3 s envían
                                 if (sharedViewModel.ListasDeAlertas.isNotEmpty() && sharedViewModel.ListasDePreciosDeVenta.isNotEmpty() && sharedViewModel.ListasDePreciosDeCompra.isEmpty()) {
-                                    Handler(Looper.getMainLooper()).postDelayed({
+                                 //   Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarAlertasyAlmacenes()
-                                    }, 4000)
+                                //    }, 4000)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosVentayClientes()
-                                    }, 8000)
+                                    }, 100)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        Toast.makeText(requireContext(),
+                                            "Alertas y precios de venta ingresados exitosamente a la base de datos"
+                                            , Toast.LENGTH_SHORT).show()
+                                    }, 4000)
                                 }
                                 //2 y 3 se envían
                                 if (sharedViewModel.ListasDeAlertas.isEmpty() && sharedViewModel.ListasDePreciosDeVenta.isNotEmpty() && sharedViewModel.ListasDePreciosDeCompra.isNotEmpty()) {
-                                    Handler(Looper.getMainLooper()).postDelayed({
+                              //      Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosCompraYProveedores()
-                                    }, 4000)
+                              //      }, 4000)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosVentayClientes()
-                                    }, 8000)
+                                    }, 100)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        Toast.makeText(requireContext(),
+                                            "Precios de compra y precios de venta ingresados exitosamente a la base de datos"
+                                            , Toast.LENGTH_SHORT).show()
+                                    }, 4000)
                                 }
                                 //1, 2 y 3 se envían
                                 if (sharedViewModel.ListasDeAlertas.isNotEmpty() && sharedViewModel.ListasDePreciosDeVenta.isNotEmpty() && sharedViewModel.ListasDePreciosDeCompra.isNotEmpty()) {
-                                    Handler(Looper.getMainLooper()).postDelayed({
+                             //       Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarAlertasyAlmacenes()
-                                    }, 4000)
+                             //       }, 4000)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosCompraYProveedores()
-                                    }, 8000)
+                                    }, 100)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosVentayClientes()
-                                    }, 12000)
+                                    }, 200)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        Toast.makeText(requireContext(),
+                                            "Alertas, precios de compra y precios de venta ingresados exitosamente"
+                                            , Toast.LENGTH_SHORT).show()
+                                    }, 4000)
                                 }
                                 TextPeso?.setText("")
                                 TextVolumen?.setText("")
@@ -448,10 +479,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                                 val parametros = HashMap<String, String>()
                                 parametros.put("ID_PRODUCTO", id.toString())
                                 parametros.put("PRODUCTO", TextNombre?.text.toString().uppercase())
-                                parametros.put(
-                                    "TIPO_PRODUCTO",
-                                    TvAutoCompleteTipoDeProducto?.text.toString()
-                                )
+                                parametros.put("TIPO_PRODUCTO", TvAutoCompleteTipoDeProducto?.text.toString())
                                 parametros.put("ESTADO_PRODUCTO", TextEstado.toString())
                                 parametros.put("PESO_PRODUCTO", TextPeso?.text.toString())
                                 parametros.put("VOLUMEN_PRODUCTO", TextVolumen?.text.toString())
@@ -527,18 +555,18 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                 if (sharedViewModel.ListasDeAlertas.isNotEmpty() && sharedViewModel.ListasDePreciosDeVenta.isEmpty() && sharedViewModel.ListasDePreciosDeCompra.isEmpty()) {
                     TextNombre?.setText("")
                 }
-                Toast.makeText(
+               /* Toast.makeText(
                     requireContext(),
-                    "Alertas ingresadas exitosamente a la base de datos",
+                   "Alertas ingresadas exitosamente a la base de datos",
                     Toast.LENGTH_LONG
-                ).show()
+                ).show()*/
             },
             { error ->
-                Toast.makeText(
+              /*  Toast.makeText(
                     requireContext(),
                     " No se ha podido enviar los almacenes y alertas",
                     Toast.LENGTH_LONG
-                ).show()
+                ).show()*/
                 /*  for (i in 0..<sharedViewModel.listaDeAlertas.size) {
                         Log.i("ALMACEN$i",ListaDeAlmacenes[i])
                          Log.i("PRODUCTO$i", ListaDeProductos[i])
@@ -578,18 +606,18 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                 ) {
                     TextNombre?.setText("")
                 }
-                Toast.makeText(
+               /* Toast.makeText(
                     requireContext(),
                     "Precios de compra ingresados exitosamente a la base de datos",
                     Toast.LENGTH_LONG
-                ).show()
+                ).show()*/
             },
             { error ->
-                Toast.makeText(
+               /* Toast.makeText(
                     requireContext(),
                     " No se ha podido enviar los proveedores y precios de compra",
                     Toast.LENGTH_LONG
-                ).show()
+                ).show()*/
                 /*  for (i in 0..<sharedViewModel.listaDeAlertas.size) {
                       Log.i("ALMACEN$i",ListaDeAlmacenes[i])
                        Log.i("PRODUCTO$i", ListaDeProductos[i])
@@ -626,18 +654,18 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                 sharedViewModel.ListasDeClientes.clear()
                 sharedViewModel.ListasDeProductosPrecioVenta.clear()
                 TextNombre?.setText("")
-                Toast.makeText(
+               /* Toast.makeText(
                     requireContext(),
-                    "Precios de venta ingresados exitosamente a la base de datos",
+                   "Precios de venta ingresados exitosamente a la base de datos",
                     Toast.LENGTH_LONG
-                ).show()
+                ).show()*/
             },
             { error ->
-                Toast.makeText(
+               /* Toast.makeText(
                     requireContext(),
                     " No se ha podido enviar los clientes y precios de venta",
                     Toast.LENGTH_LONG
-                ).show()
+                ).show()*/
                 /*  for (i in 0..<sharedViewModel.listaDeAlertas.size) {
                       Log.i("ALMACEN$i",ListaDeAlmacenes[i])
                        Log.i("PRODUCTO$i", ListaDeProductos[i])
@@ -693,7 +721,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
 
     fun convertirBitmapABase64(bitmap: Bitmap): String {
         val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream)
         val byteArray = stream.toByteArray()
         return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }

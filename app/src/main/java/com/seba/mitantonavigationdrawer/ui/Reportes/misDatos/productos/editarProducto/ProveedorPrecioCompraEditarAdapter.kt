@@ -16,6 +16,8 @@ class ProveedorPrecioCompraEditarAdapter(
                                    private val onCheckBoxClickListener: OnCheckBoxClickListenerPrecioCompraEditar)
                               : RecyclerView.Adapter<ProveedorPrecioCompraEditarViewHolder>() {
 
+    private val viewHolders = mutableListOf<ProveedorPrecioCompraEditarViewHolder>()
+
     fun updateList(proveedorPrecioCompraList: List<ProveedorPrecioCompraItemResponseEditar>){
         this.proveedorPrecioCompraList = proveedorPrecioCompraList
         notifyDataSetChanged()
@@ -43,8 +45,40 @@ class ProveedorPrecioCompraEditarAdapter(
     override fun onBindViewHolder(viewholder: ProveedorPrecioCompraEditarViewHolder, position: Int) {
         val item = proveedorPrecioCompraList[position]
         viewholder.bind(item,this)
+        if(!viewHolders.contains(viewholder)){
+            viewHolders.add(viewholder)
+        }
 
     }
 
+    override fun onViewRecycled(holder: ProveedorPrecioCompraEditarViewHolder) {
+        viewHolders.remove(holder)
+        super.onViewRecycled(holder)
+    }
+
     override fun getItemCount() = proveedorPrecioCompraList.size
+
+    fun getAllEditTextContents() {
+        sharedViewModel.listaDePreciosCompra.clear()
+        viewHolders.forEach { holder ->
+            val text = holder.editText.text.toString()
+            if(text.isEmpty()){
+                sharedViewModel.listaDePreciosCompra.add("")
+            }else{
+                sharedViewModel.listaDePreciosCompra.add(text)
+            }
+        }
+    }
+    fun getAllTextViewContents(){
+        sharedViewModel.listaDeProveedores.clear()
+        viewHolders.forEach { holder ->
+            val text = holder.textView.text.toString()
+            val edit = holder.editText.text.toString()
+            if(edit.isEmpty()){
+                sharedViewModel.listaDeProveedores.add("")
+            }else{
+                sharedViewModel.listaDeProveedores.add(text)
+            }
+        }
+    }
 }

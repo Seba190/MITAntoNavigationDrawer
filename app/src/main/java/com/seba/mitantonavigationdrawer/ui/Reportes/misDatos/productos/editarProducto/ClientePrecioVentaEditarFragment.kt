@@ -67,6 +67,7 @@ class ClientePrecioVentaEditarFragment : Fragment(R.layout.fragment_cliente_prec
         retrofit = getRetrofit()
         gestionarRecyclerView()
 
+
         /* binding.bPrecioVentaClientesVolver.setOnClickListener {
              binding.rlPrecioVentaClientes.isVisible = false
              val anadirProductoFragment = AnadirProductoFragment()
@@ -87,20 +88,24 @@ class ClientePrecioVentaEditarFragment : Fragment(R.layout.fragment_cliente_prec
             sharedViewModel.ListasDeClientes.clear()
             sharedViewModel.ListasDePreciosDeVenta.clear()
             sharedViewModel.ListasDeProductosPrecioVenta.clear()
+            sharedViewModel.numeroPreciosVenta.clear()
             Toast.makeText(requireContext(), "Se han eliminado los precios exitosamente", Toast.LENGTH_LONG).show()
         }
 
         binding.bAgregarClienteEditar.setOnClickListener {
-            if(!sharedViewModel.listaDePreciosVenta.all { it.isBlank() }){
-            if (sharedViewModel.listaDePreciosVenta.size > 0) {
-                for (i in 0..<sharedViewModel.listaDePreciosVenta.size) {
-                    if(sharedViewModel.listaDePreciosVenta[i] != "") {
-                    setFragmentResult("PreciosVentaClientes$i", bundleOf("Clientes$i" to sharedViewModel.listaDeClientes[i], "PreciosDeVenta$i" to sharedViewModel.listaDePreciosVenta[i]))
+            adapterPrecioVenta.getAllEditTextContents()
+            adapterPrecioVenta.getAllTextViewContents()
+            //Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
+            Log.i("Sebastian2", "${sharedViewModel.listaDeClientes} y ${sharedViewModel.listaDePreciosVenta}")
+
+            if (sharedViewModel.numeroPreciosVenta.isEmpty()) {
+                for (i in 0..<adapterPrecioVenta.clientePrecioVentaList.size) {
+                   // setFragmentResult("PreciosVentaClientes$i", bundleOf("Clientes$i" to sharedViewModel.listaDeClientes[i], "PreciosDeVenta$i" to sharedViewModel.listaDePreciosVenta[i]))
                         sharedViewModel.numeroPreciosVenta.add(adapterPrecioVenta.clientePrecioVentaList[i].Nombre)
-                        }
+
                 }
                 Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de venta", Toast.LENGTH_LONG).show()
-            }}
+            }
                 binding.rlPrecioVentaClientesEditar.isVisible = false
                 val editarProductoFragment = EditarProductoFragment()
                 parentFragmentManager.beginTransaction()
@@ -174,7 +179,7 @@ class ClientePrecioVentaEditarFragment : Fragment(R.layout.fragment_cliente_prec
     }
 
     override fun afterTextChange(text: String, viewHolder: ClientePrecioVentaEditarViewHolder) {
-        if (!binding.bAgregarClienteEditar.isPressed && text.isNotEmpty()){
+        /*if (!binding.bAgregarClienteEditar.isPressed && text.isNotEmpty()){
             Toast.makeText(requireContext(), "Se he agregado el precio de venta", Toast.LENGTH_SHORT).show()
             sharedViewModel.listaDePreciosVenta[viewHolder.adapterPosition] = text
             sharedViewModel.listaDeClientes[viewHolder.adapterPosition] = adapterPrecioVenta.clientePrecioVentaList[viewHolder.adapterPosition].Nombre
@@ -187,6 +192,6 @@ class ClientePrecioVentaEditarFragment : Fragment(R.layout.fragment_cliente_prec
             Log.i("Sebastian", "${sharedViewModel.listaDePreciosVenta} y ${sharedViewModel.listaDeClientes}")
             //sharedViewModel.listaDePreciosVenta.removeAt(position)
             //sharedViewModel.listaDeClientes.removeAt(position)
-        }
+        }*/
     }
 }

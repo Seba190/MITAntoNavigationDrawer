@@ -104,6 +104,7 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
             }
 
         })
+        var segundaVez = false
         barcodeDetector.setProcessor(object : Detector.Processor<Barcode>{
             override fun release() {
 
@@ -112,30 +113,37 @@ class BarcodeScanFragment : Fragment(R.layout.fragment_barcode_scan) {
             override fun receiveDetections(detections: Detector.Detections<Barcode>) {
                 val barcodes = detections.detectedItems
                 if(barcodes.size()!=0){
+                    if(!segundaVez){
+                        val mediaPlayer = MediaPlayer.create(context, R.raw.beep_barcode_scan)  // Reemplaza "beep_sound" con el nombre de tu archivo de sonido
+                        mediaPlayer.start()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            mediaPlayer.release()
+                        },500)
+                        segundaVez = true
+                    }
                     binding.bAction.text = "ENCONTRADO"
                     binding.bAction.setBackgroundColor(Color.GREEN)
-                    val mediaPlayer = MediaPlayer.create(context, R.raw.beep_barcode_scan)  // Reemplaza "beep_sound" con el nombre de tu archivo de sonido
-                    mediaPlayer.start()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        mediaPlayer.release()
-                    },500)
+
                     binding.txtBarcodeValue!!.post{
-                        intentData = barcodes.valueAt(0).displayValue
-                        binding.txtBarcodeValue.setText(intentData)
+                        for (i in 0 until barcodes.size()) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                intentData = barcodes.valueAt(i).displayValue
+                                binding.txtBarcodeValue.text = intentData
+                                codigoDeBarraTransferencia = intentData
+                                viewModel.CodigoDeBarraTransferencia.value = codigoDeBarraTransferencia
+                            },600)
+                            //activity?.finish()
+                        }
                         //activity?.finish()
-                        codigoDeBarraTransferencia = intentData
-                        /*val bundle = Bundle()
-                        bundle.putString(CODIGO_DE_BARRA,codigoDeBarra)
-                        arguments = bundle*/
-                        viewModel.CodigoDeBarraTransferencia.value = codigoDeBarraTransferencia
+
                         setFragmentResult("Codigo de barra transferencia", bundleOf("codigo" to codigoDeBarraTransferencia))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
                     codigo?.setText(codigoDeBarraTransferencia)
-                    activity?.runOnUiThread {
-                        Toast.makeText(requireContext(),codigoDeBarraTransferencia,Toast.LENGTH_LONG).show()
+                  //  activity?.runOnUiThread {
+                   //     Toast.makeText(requireContext(),codigoDeBarraTransferencia,Toast.LENGTH_LONG).show()
                         //obtenerCodigo(codigoDeBarra!!)
-                    }
+                   // }
 
                     //obtenerCodigo(arguments?.getString(CODIGO_DE_BARRA)!!)
                    // findNavController().navigate(R.id.action_nav_barcode_scan_to_nav_añadir_transferencia)

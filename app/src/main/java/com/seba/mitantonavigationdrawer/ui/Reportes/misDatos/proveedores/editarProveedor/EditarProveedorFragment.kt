@@ -1,5 +1,6 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.proveedores.editarProveedor
 
+import android.app.AlertDialog
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
@@ -9,12 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
@@ -48,6 +51,8 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
     var radioGroup: RadioGroup? = null
     var radio1: RadioButton? = null
     var radio2: RadioButton? = null
+   // var EliminarProveedor: ImageView? = null
+    var Id: String? = null
     //var TextId: EditText? = null
 
     override fun onCreateView(
@@ -63,6 +68,7 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
         //Aquí se programa
         TextNombre = binding.etNombreProveedor.findViewById(R.id.etNombreProveedor)
         TextDireccion = binding.etDireccionProveedor.findViewById(R.id.etDireccionProveedor)
+       // EliminarProveedor = binding.ivEliminarProveedor.findViewById(R.id.ivEliminarProveedor)
         TextRut = binding.etRutProveedor.findViewById(R.id.etRutProveedor)
         TextCorreo = binding.etCorreoProveedor.findViewById(R.id.etCorreoProveedor)
         TextTelefono = binding.etTelefonoProveedor.findViewById(R.id.etTelefonoProveedor)
@@ -82,6 +88,10 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
         binding.etTelefonoProveedor.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
 
+       // EliminarProveedor?.setOnClickListener {
+      //      mensajeEliminarProveedor()
+      //  }
+
         //   Mostrar los usuarios responsables en la lista desplegable
         binding.buttonProveedor.setOnClickListener {
           /*  borrarRegistros()
@@ -92,6 +102,7 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
         }
         try {
             sharedViewModel.id.add(args.id)
+            Id = args.id
         }
         catch(e:Exception){
         }
@@ -310,6 +321,42 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
             radio1?.id -> TextEstado = 1
             radio2?.id -> TextEstado = 0
         }
+    }
+    private fun mensajeEliminarProveedor(){
+        AlertDialog.Builder(context).apply {
+            setTitle("¿Quieres eliminar este proveedor?")
+            setMessage("Esta acción no se puede deshacer.")
+            setPositiveButton("Sí") { dialog, _ ->
+                eliminarProveedor()
+                    findNavController().navigate(R.id.action_nav_editar_proveedor_to_nav_mis_datos)
+                dialog.dismiss()
+            }
+            setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+
+    }
+    private fun eliminarProveedor(){
+        val url = "http://186.64.123.248/Reportes/Proveedores/eliminarProveedor.php"
+        val queue = Volley.newRequestQueue(requireContext())
+        var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+            { response ->
+                  Toast.makeText(requireContext(), "Proveedor eliminado exitosamente", Toast.LENGTH_SHORT).show()
+
+            },{error ->
+                Toast.makeText(requireContext(), "No se pudo eliminar el proveedor", Toast.LENGTH_SHORT).show()
+            })
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_PROVEEDOR", sharedViewModel.id.last())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
     }
 
 }

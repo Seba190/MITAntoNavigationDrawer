@@ -15,6 +15,9 @@ class ClientePrecioVentaEditarAdapter(var clientePrecioVentaList:
                                       private val onCheckBoxClickListener: OnCheckBoxClickListenerPrecioVentaEditar,
                                       private val listener: OnTextChangeListenerPrecioVentaEditar)
                               : RecyclerView.Adapter<ClientePrecioVentaEditarViewHolder>() {
+
+    private val viewHolders = mutableListOf<ClientePrecioVentaEditarViewHolder>()
+
     fun updateList(clientePrecioVentaList: List<ClientePrecioVentaItemResponseEditar>) {
         this.clientePrecioVentaList = clientePrecioVentaList
         notifyDataSetChanged()
@@ -46,6 +49,38 @@ class ClientePrecioVentaEditarAdapter(var clientePrecioVentaList:
     override fun onBindViewHolder(viewholder: ClientePrecioVentaEditarViewHolder, position: Int) {
         val item = clientePrecioVentaList[position]
         viewholder.bind(item,this)
+        if(!viewHolders.contains(viewholder)){
+            viewHolders.add(viewholder)
+        }
+    }
+
+    override fun onViewRecycled(holder: ClientePrecioVentaEditarViewHolder) {
+        viewHolders.remove(holder)
+        super.onViewRecycled(holder)
+    }
+
+    fun getAllEditTextContents() {
+        sharedViewModel.listaDePreciosVenta.clear()
+        viewHolders.forEach { holder ->
+            val text = holder.editText.text.toString()
+            if(text.isEmpty()){
+                sharedViewModel.listaDePreciosVenta.add("")
+            }else{
+                sharedViewModel.listaDePreciosVenta.add(text)
+            }
+        }
+    }
+    fun getAllTextViewContents(){
+        sharedViewModel.listaDeClientes.clear()
+        viewHolders.forEach { holder ->
+            val text = holder.textView.text.toString()
+            val edit = holder.editText.text.toString()
+            if(edit.isEmpty()){
+                sharedViewModel.listaDeClientes.add("")
+            }else{
+                sharedViewModel.listaDeClientes.add(text)
+            }
+        }
     }
 
 }

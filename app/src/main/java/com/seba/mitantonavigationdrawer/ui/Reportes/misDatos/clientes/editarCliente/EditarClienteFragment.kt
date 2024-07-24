@@ -1,5 +1,6 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.editarCliente
 
+import android.app.AlertDialog
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
@@ -9,12 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
@@ -48,6 +51,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
     var radioGroup: RadioGroup? = null
     var radio1: RadioButton? = null
     var radio2: RadioButton? = null
+    //var EliminarCliente: ImageView? = null
     //var TextId: EditText? = null
 
     override fun onCreateView(
@@ -66,6 +70,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
         TextRut = binding.etRutCliente.findViewById(R.id.etRutCliente)
         TextCorreo = binding.etCorreoCliente.findViewById(R.id.etCorreoCliente)
         TextTelefono = binding.etTelefonoCliente.findViewById(R.id.etTelefonoCliente)
+       // EliminarCliente = binding.ivEliminarCliente.findViewById(R.id.ivEliminarCliente)
         radio1 = binding.EstadoClienteRadioButton1.findViewById(R.id.EstadoClienteRadioButton1)
         radio2 = binding.EstadoClienteRadioButton2.findViewById(R.id.EstadoClienteRadioButton2)
         radioGroup = binding.radioGroupEstadoCliente.findViewById(R.id.radioGroupEstadoCliente)
@@ -82,6 +87,10 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
         binding.etTelefonoCliente.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
         //   Mostrar los usuarios responsables en la lista desplegable
+
+      //  EliminarCliente?.setOnClickListener {
+      //      mensajeEliminarCliente()
+      //  }
 
         binding.buttonCliente.setOnClickListener {
           /*  borrarRegistros()
@@ -301,6 +310,44 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
             radio1?.id -> TextEstado = 1
             radio2?.id -> TextEstado = 0
         }
+    }
+
+    private fun mensajeEliminarCliente(){
+        AlertDialog.Builder(context).apply {
+            setTitle("¿Quieres eliminar este cliente?")
+            setMessage("Esta acción no se puede deshacer.")
+            setPositiveButton("Sí") { dialog, _ ->
+                eliminarCliente()
+                findNavController().navigate(R.id.action_nav_editar_cliente_to_nav_mis_datos)
+                dialog.dismiss()
+            }
+            setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+
+    }
+
+    private fun eliminarCliente(){
+        val url = "http://186.64.123.248/Reportes/Clientes/borrar.php"
+        val queue = Volley.newRequestQueue(requireContext())
+        var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+            { response ->
+                Toast.makeText(requireContext(), "Cliente eliminado exitosamente", Toast.LENGTH_SHORT).show()
+
+            },{error ->
+                Toast.makeText(requireContext(), "No se pudo eliminar el cliente", Toast.LENGTH_SHORT).show()
+            })
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_CLIENTE", sharedViewModel.id.last())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
     }
 
     override fun onDestroyView() {

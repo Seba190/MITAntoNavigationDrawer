@@ -16,7 +16,7 @@
         android:layout_gravity="center|start"
         android:scaleType="centerInside"
         android:layout_marginStart="30dp"
-        android:src="@drawable/android_logo"
+        tools:src="@drawable/android_logo"
         android:layout_marginEnd="220dp"/>
 
     <TextView

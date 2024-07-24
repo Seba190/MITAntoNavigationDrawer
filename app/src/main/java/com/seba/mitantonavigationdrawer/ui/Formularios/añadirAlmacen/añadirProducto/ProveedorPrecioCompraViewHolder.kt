@@ -4,17 +4,22 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.EditText
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.ItemPrecioCompraBinding
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
 
 class ProveedorPrecioCompraViewHolder(view: View, private val listener: OnTextChangeListenerPrecioCompra,private val sharedViewModel: SharedViewModel): RecyclerView.ViewHolder(view) {
     private val binding = ItemPrecioCompraBinding.bind(view)
+    val editText : EditText = view.findViewById(R.id.etPrecioCompra)
+    val textView : TextView = view.findViewById(R.id.tvSuppliers)
     val listaDePreciosCompra: MutableList<String> = mutableListOf()
 
-    init {
+  /*  init {
         binding.etPrecioCompra.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
 
@@ -37,24 +42,21 @@ class ProveedorPrecioCompraViewHolder(view: View, private val listener: OnTextCh
                 }
             }
         })
-    }
+    }*/
     private var codeExecuted = false
     fun bind(proveedorPrecioCompraItemResponse: ProveedorPrecioCompraItemResponse,listaAdapter:RecyclerView.Adapter<*>) {
         binding.tvSuppliers.text = proveedorPrecioCompraItemResponse.Nombre
         binding.cbSuppliers.setOnClickListener {
             binding.etPrecioCompra.isEnabled = binding.cbSuppliers.isChecked
         }
-        for (i in 0..listaAdapter.itemCount) {
-            if (sharedViewModel.listaDeProveedoresAnadir.size > i) {
-                if (sharedViewModel.listaDeProveedoresAnadir.isNotEmpty()) {
-                    if (binding.etPrecioCompra.text.isBlank() && binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedoresAnadir[i]) {
-                        binding.etPrecioCompra.setText(sharedViewModel.listaDePreciosCompraAnadir[i])
+        if (sharedViewModel.listaDePreciosCompraAnadir.isNotEmpty()) {
+            for (i in 0..<sharedViewModel.listaDePreciosCompraAnadir.size) {
+                if (binding.etPrecioCompra.text.isBlank() && binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedoresAnadir[i]) {
+                     binding.etPrecioCompra.setText(sharedViewModel.listaDePreciosCompraAnadir[i])
                     }
                 }
-            } else {
-                break
             }
-        }
+
         /*if(!codeExecuted) {
             for (i in 0..listaAdapter.itemCount) {
                 if (sharedViewModel.listaDeProveedores.size > i && sharedViewModel.listaDePreciosCompra.size > i) {

@@ -29,6 +29,7 @@ class ProductosFragment : Fragment(R.layout.fragment_productos) {
     private var _binding: FragmentProductosBinding? = null
     private lateinit var retrofit: Retrofit
     private lateinit var adapter: ProductosAdapter
+    private lateinit var  productosViewModel: ProductosViewModel
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -39,9 +40,7 @@ class ProductosFragment : Fragment(R.layout.fragment_productos) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val productosViewModel =
-            ViewModelProvider(this).get(ProductosViewModel::class.java)
-
+        productosViewModel = ViewModelProvider(this).get(ProductosViewModel::class.java)
         _binding = FragmentProductosBinding.inflate(inflater, container, false)
         val root: View = binding.root
         //Aquí se programa
@@ -54,18 +53,20 @@ class ProductosFragment : Fragment(R.layout.fragment_productos) {
     private fun initUI() {
         //  binding.rvAlmacenes.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
         //    override fun onQueryTextSubmit(query: String?): Boolean {
-        searchByName()
         //      return false
         // }
 
         //override fun onQueryTextChange(newText: String?): Boolean { return false }
         // })
         adapter = ProductosAdapter{navigateToEditarCliente(it)}
-        // adapter2 = CaracteristicasAdapter()
         binding.rvProductos.setHasFixedSize(true)
         binding.rvProductos.layoutManager = LinearLayoutManager(requireContext())
         binding.rvProductos.adapter = adapter
-        // binding.rvAlmacenes.adapter = adapter2
+
+        productosViewModel.productos.observe(viewLifecycleOwner) { productos ->
+            adapter.updateList(productos)
+        }
+        searchByName()
     }
 
     private fun searchByName() {
@@ -76,17 +77,22 @@ class ProductosFragment : Fragment(R.layout.fragment_productos) {
                 Log.i("Sebastian", "Funciona!!")
                 val response: ProductosDataResponse? = myResponse.body()
                 // val response2: AlmacenesItemResponse? = myResponse2.body()
-                if(response != null){
-                    Log.i("Sebastian", response.toString())
-                    //Log.i("Sebastian", response2.toString())
+               // if(response != null){
+                response?.let {
                     activity?.runOnUiThread {
-                        adapter.updateList(response.Productos)
+                        productosViewModel.updateProductos(it.Productos)
+                       // adapter.updateList(response.Productos)
                         binding.progressBarProductos.isVisible = false
+                        Log.i("Sebastian", response.toString())
                     }
                 }
-
-            }else{
+            //Log.i("Sebastian", response2.toString())
+            }
+            else{
                 Log.i("Sebastian", "No funciona.")
+                activity?.runOnUiThread {
+                    binding.progressBarProductos.isVisible = false
+                }
             }
         }
     }

@@ -31,6 +31,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import com.seba.mitantonavigationdrawer.MainActivity
+import com.seba.mitantonavigationdrawer.databinding.FragmentBarcodeScanFacturaSalidaBinding
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AlertasAlmacenesFragment
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaFragment.Companion.CODIGO_DE_BARRA
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.BarcodeScanViewModel
@@ -43,7 +44,7 @@ class BarcodeScanFacturaSalidaFragment : Fragment(R.layout.fragment_barcode_scan
     private val viewModel by activityViewModels<SharedViewModel>()
 
     // private val args: AnadirTransferenciaFragmentArgs by navArgs()
-    private var _binding: FragmentBarcodeScanBinding? = null
+    private var _binding: FragmentBarcodeScanFacturaSalidaBinding? = null
 
     // private var codigoDeBarra: String? = null
 
@@ -61,7 +62,7 @@ class BarcodeScanFacturaSalidaFragment : Fragment(R.layout.fragment_barcode_scan
         val barcodeScanViewModel =
             ViewModelProvider(this).get(BarcodeScanViewModel::class.java)
 
-        _binding = FragmentBarcodeScanBinding.inflate(inflater, container, false)
+        _binding = FragmentBarcodeScanFacturaSalidaBinding.inflate(inflater, container, false)
         val root: View = binding.root
         //Aquí se programa
         // binding.bAction.setBackgroundColor(resources.getColor(R.color.red))
@@ -106,6 +107,7 @@ class BarcodeScanFacturaSalidaFragment : Fragment(R.layout.fragment_barcode_scan
             }
 
         })
+        var segundaVez = false
         barcodeDetector.setProcessor(object : Detector.Processor<Barcode> {
             override fun release() {
 
@@ -116,38 +118,38 @@ class BarcodeScanFacturaSalidaFragment : Fragment(R.layout.fragment_barcode_scan
                 if (barcodes.size() != 0) {
                     binding.bAction.text = "ENCONTRADO"
                     binding.bAction.setBackgroundColor(Color.GREEN)
-                    val mediaPlayer = MediaPlayer.create(
-                        context,
-                        R.raw.beep_barcode_scan
-                    )  // Reemplaza "beep_sound" con el nombre de tu archivo de sonido
-                    mediaPlayer.start()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        mediaPlayer.release()
-                    }, 500)
-                    binding.txtBarcodeValue!!.post {
-                        intentData = barcodes.valueAt(0).displayValue
-                        binding.txtBarcodeValue.setText(intentData)
+                    if(!segundaVez){
+                        val mediaPlayer = MediaPlayer.create(context, R.raw.beep_barcode_scan)  // Reemplaza "beep_sound" con el nombre de tu archivo de sonido
+                        mediaPlayer.start()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            mediaPlayer.release()
+                        },500)
+                        segundaVez = true
+                    }
+                    binding.txtBarcodeValueFacturaSalida!!.post {
+                        for (i in 0 until barcodes.size()) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                intentData = barcodes.valueAt(i).displayValue
+                                binding.txtBarcodeValueFacturaSalida.text = intentData
+                                codigoDeBarraFacturaSalida = intentData
+                                viewModel.CodigoDeBarraRemover.value = codigoDeBarraFacturaSalida
+                            },600)
+
+                            //activity?.finish()
+                        }
                         //activity?.finish()
-                        codigoDeBarraFacturaSalida = intentData
-                        /*val bundle = Bundle()
-                        bundle.putString(CODIGO_DE_BARRA,codigoDeBarra)
-                        arguments = bundle*/
-                        viewModel.CodigoDeBarraRemover.value = codigoDeBarraFacturaSalida
-                        setFragmentResult(
-                            "Codigo de barra transferencia",
-                            bundleOf("codigo" to codigoDeBarraFacturaSalida)
-                        )
+                        setFragmentResult("Codigo de barra transferencia",
+                            bundleOf("codigo" to codigoDeBarraFacturaSalida))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
                     codigo?.setText(codigoDeBarraFacturaSalida)
-                    activity?.runOnUiThread {
+                  /*  activity?.runOnUiThread {
                         Toast.makeText(
                             requireContext(),
                             codigoDeBarraFacturaSalida,
                             Toast.LENGTH_LONG
                         ).show()
-
-                    }
+                    }*/
                 }
 
             }

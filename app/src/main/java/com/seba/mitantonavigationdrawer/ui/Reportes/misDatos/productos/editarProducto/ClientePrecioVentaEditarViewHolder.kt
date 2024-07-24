@@ -6,6 +6,8 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -23,10 +25,12 @@ import org.json.JSONObject
 
 class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: OnTextChangeListenerPrecioVentaEditar, private val sharedViewModel: SharedViewModel): RecyclerView.ViewHolder(itemView) {
     private val binding = ItemPrecioVentaBinding.bind(itemView)
+    val editText : EditText = itemView.findViewById(R.id.etPrecioVenta)
+    val textView : TextView = itemView.findViewById(R.id.tvCustomers)
    // var buttonAgregar : Button? = null
 
 
-    init {
+   /* init {
         binding.etPrecioVenta.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
           //  }
@@ -46,27 +50,27 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
             }
         })
 
-    }
+    }*/
     var segundaVez = false
     private var codeExecuted = false
     fun bind(clientePrecioVentaItemResponse: ClientePrecioVentaItemResponseEditar,
              listaAdapter: RecyclerView.Adapter<*>) {
-       // buttonAgregar = itemView.findViewById(R.id.bAgregarCliente)
+        // buttonAgregar = itemView.findViewById(R.id.bAgregarCliente)
         binding.tvCustomers.text = clientePrecioVentaItemResponse.Nombre
         binding.cbCustomers.setOnClickListener {
             binding.etPrecioVenta.isEnabled = binding.cbCustomers.isChecked
         }
-        for (i in 0..listaAdapter.itemCount) {
-            if (sharedViewModel.listaDeClientes.isNotEmpty()) {
-                if (sharedViewModel.listaDeClientes.size > i) {
-                    if (binding.etPrecioVenta.text.isBlank() && binding.tvCustomers.text.toString() == sharedViewModel.listaDeClientes[i]) {
-                        binding.etPrecioVenta.setText(sharedViewModel.listaDePreciosVenta[i])
-                    }
-                }else {
-                    break
+
+        if (sharedViewModel.listaDePreciosVenta.isNotEmpty()) {
+            for (i in 0..<sharedViewModel.listaDePreciosVenta.size) {
+                if (binding.etPrecioVenta.text.isBlank() && binding.tvCustomers.text.toString() == sharedViewModel.listaDeClientes[i]) {
+                    binding.etPrecioVenta.setText(sharedViewModel.listaDePreciosVenta[i])
                 }
             }
         }
+
+
+
        /* if(!codeExecuted) {
             for (i in 0..listaAdapter.itemCount) {
                 if (sharedViewModel.listaDeClientes.size > i && sharedViewModel.listaDePreciosVenta.size > i) {
@@ -80,7 +84,7 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
             }
             codeExecuted = true
         }*/
-        if(!segundaVez) {
+        if(!segundaVez && sharedViewModel.listaDePreciosVenta.isEmpty()) {
             obtenerClientes()
             segundaVez = true
         }

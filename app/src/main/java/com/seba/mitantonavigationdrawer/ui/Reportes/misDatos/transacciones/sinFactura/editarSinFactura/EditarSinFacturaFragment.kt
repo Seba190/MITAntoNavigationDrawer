@@ -1,5 +1,6 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.sinFactura.editarSinFactura
 
+import android.app.AlertDialog
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
@@ -12,6 +13,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
@@ -19,6 +21,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
@@ -48,6 +51,7 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
     var TextFecha: EditText? = null
     var DropDownAlmacen: AutoCompleteTextView? = null
     var DropDownProducto: AutoCompleteTextView? = null
+    var EliminarSinFactura: ImageView? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,6 +66,7 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
        // TextNombre = binding.etNombreSinFactura.findViewById(R.id.etNombreSinFactura)
         DropDownAlmacen = binding.tvListaDesplegableAlmacen.findViewById(R.id.tvListaDesplegableAlmacen)
         DropDownProducto = binding.tvListaDesplegableProducto.findViewById(R.id.tvListaDesplegableProducto)
+        EliminarSinFactura = binding.ivEliminarSinFactura.findViewById(R.id.ivEliminarSinFactura)
         TextCantidad  =  binding.etCantidadSinFactura.findViewById(R.id.etCantidadSinFactura)
         TextFecha  =  binding.etFechaSinFactura.findViewById(R.id.etFechaSinFactura)
         radio1 = binding.SinFacturaRadioButton1.findViewById(R.id.SinFacturaRadioButton1)
@@ -78,6 +83,10 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
 
         ListaDesplegableAlmacen()
         ListaDesplegableProducto()
+
+        EliminarSinFactura?.setOnClickListener {
+            mensajeEliminarSinFactura()
+        }
 
         binding.buttonEditarSinFactura.setOnClickListener {
             actualizarRegistros()
@@ -250,6 +259,43 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
             radio1?.id -> TextEstado = "FACTURA_ENTRADA"
             radio2?.id -> TextEstado = "FACTURA_SALIDA"
         }
+    }
+
+    private fun mensajeEliminarSinFactura(){
+        AlertDialog.Builder(context).apply {
+            setTitle("¿Quieres eliminar esta factura?")
+            setMessage("Esta acción no se puede deshacer.")
+            setPositiveButton("Sí") { dialog, _ ->
+                eliminarSinFactura()
+                findNavController().navigate(R.id.action_nav_editar_sin_factura_to_nav_transacciones)
+                dialog.dismiss()
+            }
+            setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            create()
+            show()
+        }
+
+    }
+    private fun eliminarSinFactura(){
+        val url = "http://186.64.123.248/Reportes/Transacciones/SinFactura/Borrar.php"
+        val queue = Volley.newRequestQueue(requireContext())
+        var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
+            { response ->
+                Toast.makeText(requireContext(), "Factura eliminada exitosamente", Toast.LENGTH_SHORT).show()
+
+            },{error ->
+                Toast.makeText(requireContext(), "No se pudo eliminar la factura", Toast.LENGTH_SHORT).show()
+            })
+        {
+            override fun getParams(): MutableMap<String, String> {
+                val parametros = HashMap<String, String>()
+                parametros.put("ID_FACTURA", sharedViewModel.id.last())
+                return parametros
+            }
+        }
+        queue.add(jsonObjectRequest)
     }
 
     override fun onDestroyView() {

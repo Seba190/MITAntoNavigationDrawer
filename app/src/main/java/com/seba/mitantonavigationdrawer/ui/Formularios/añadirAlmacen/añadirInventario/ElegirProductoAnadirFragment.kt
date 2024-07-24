@@ -4,6 +4,8 @@ import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -62,7 +64,24 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
         binding.etCodigoDeBarraAnadir.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
 
-        ListaDesplegableElegirProducto()
+        if(sharedViewModel.listaDeAlmacenesAnadir.size > 1) {
+            for (i in 1..<sharedViewModel.listaDeAlmacenesAnadir.size){
+                if(sharedViewModel.listaDeAlmacenesAnadir[i]==sharedViewModel.listaDeAlmacenesAnadir[i-1]){
+                    ListaDesplegableElegirProducto()
+                }else if(sharedViewModel.listaDeAlmacenesAnadir[i]!=sharedViewModel.listaDeAlmacenesAnadir[i-1]){
+                    sharedViewModel.opcionesListAnadir.clear()
+                    sharedViewModel.listaDeProductosAnadir.clear()
+                    sharedViewModel.listaDeCantidadesAnadir.clear()
+                    sharedViewModel.listaDePreciosAnadir.clear()
+                    ListaDesplegableElegirProducto()
+                }
+            }
+        }else{
+            ListaDesplegableElegirProducto()
+        }
+
+
+
         // ListaDesplegableElegirProveedor()
 
         binding.llCajasDeProductoElegirProductoAnadir.isVisible = false
@@ -99,15 +118,19 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
             if(binding.tvListaDesplegableElegirProductoAnadir.text.toString() != "Eliga una opción") {
                 if (binding.llUnidadesElegirProductoAnadir.isVisible) {
                     if(binding.etCantidadAnadir.text.isNotBlank()){
-                        sharedViewModel.listaDeProductosAnadir.add(binding.tvListaDesplegableElegirProductoAnadir.text.toString())
+                        sharedViewModel.listaDeProductosAnadir.add("${binding.tvListaDesplegableElegirProductoAnadir.text.toString().substringBefore('(')}( 0 unid. )")
                         sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadAnadir.text.toString())
                         sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
                         //  refreshAdapterAnadirTransferenciaFragment()
                         binding.tvListaDesplegableElegirProductoAnadir.setText("Eliga una opción",false)
-                        binding.etCantidadAnadir.setText("")
-                        binding.etPrecioAnadir.setText("")
-                        sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
-                        Toast.makeText(
+                                binding.etCantidadAnadir.setText("")
+                                binding.etPrecioAnadir.setText("")
+                                sharedViewModel.opcionesListAnadir.removeAll { elemento ->
+                            val elementoABuscar = "${elemento.substringBefore('(')}( 0 unid. )"
+                            sharedViewModel.listaDeProductosAnadir.contains(elementoABuscar)
+                        }
+                                // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
+                                Toast.makeText(
                             requireContext(),
                             "Se ha agregado el producto a la factura",
                             Toast.LENGTH_LONG
@@ -120,7 +143,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                     if (binding.etNumeroDeCajasAnadir.text.isNotBlank() && binding.etArticulosPorCajaAnadir.text.isNotBlank()) {
                         val cantidad = binding.etNumeroDeCajasAnadir.text.toString().toInt()
                             .times(binding.etArticulosPorCajaAnadir.text.toString().toInt())
-                        sharedViewModel.listaDeProductosAnadir.add(binding.tvListaDesplegableElegirProductoAnadir.text.toString())
+                        sharedViewModel.listaDeProductosAnadir.add("${binding.tvListaDesplegableElegirProductoAnadir.text.toString().substringBefore('(')}( 0 unid. )")
                         sharedViewModel.listaDeCantidadesAnadir.add(cantidad.toString())
                         sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
                         // refreshAdapterAnadirTransferenciaFragment()
@@ -128,7 +151,11 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                         binding.etArticulosPorCajaAnadir.setText("")
                         binding.etNumeroDeCajasAnadir.setText("")
                         binding.etPrecioAnadir.setText("")
-                        sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
+                        sharedViewModel.opcionesListAnadir.removeAll { elemento ->
+                            val elementoABuscar = "${elemento.substringBefore('(')}( 0 unid. )"
+                            sharedViewModel.listaDeProductosAnadir.contains(elementoABuscar)
+                        }
+                       // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
                         Toast.makeText(
                             requireContext(), "Se ha agregado el producto a la factura",
                             Toast.LENGTH_LONG).show()
@@ -165,10 +192,16 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = JSONObject(response).getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+
                 for (i in 0..<jsonArray.length()) {
-                    if (!sharedViewModel.opcionesListAnadir.contains(jsonArray.getString(i).replace("'", ""))) {
+                    if (!sharedViewModel.opcionesListAnadir.contains(jsonArray.getString(i).replace("'", ""))&&
+                        !sharedViewModel.listaDeProductosAnadir.contains("${jsonArray.getString(i).replace("'", "").substringBefore('(')}( 0 unid. )")) {
                         sharedViewModel.opcionesListAnadir.add(jsonArray.getString(i).replace("'", ""))
                     }
+                }
+                sharedViewModel.opcionesListAnadir.removeAll { elemento ->
+                    val elementoABuscar = "${elemento.substringBefore('(')}( 0 unid. )"
+                    sharedViewModel.listaDeProductosAnadir.contains(elementoABuscar)
                 }
 
                 //Crea un adpatador para el dropdown
@@ -180,14 +213,22 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                         precioYCantidad(parent.getItemAtPosition(position).toString())
 
                 }
-                binding.etCodigoDeBarraAnadir.setOnClickListener {
-                    codigoDeBarra()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if (DropDownProducto?.text.toString() != "Eliga una opción") {
-                            precioYCantidad(DropDownProducto?.text.toString())
+                binding.etCodigoDeBarraAnadir.addTextChangedListener(object: TextWatcher{
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                    override fun afterTextChanged(s: Editable?) {
+                        if(s != null && s.length == 13) {
+                            codigoDeBarra()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                if (DropDownProducto?.text.toString() != "Eliga una opción") {
+                                    precioYCantidad(DropDownProducto?.text.toString())
+                                }
+                            }, 300)
                         }
-                    }, 300)
-                }
+                    }
+
+                })
+
             },
             { error ->
                 Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
@@ -303,7 +344,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                         if (codigoBarraEmbalaje == "") {
                             Toast.makeText(
                                 requireContext(),
-                                "EL código de barra pertenece al producto $codigoBarraProducto y ${sharedViewModel.opcionesListAnadir.indexOf("$codigoBarraProducto ( 0 unid. )")}",
+                                "EL código de barra pertenece al producto $codigoBarraProducto",
                                 Toast.LENGTH_SHORT
                             ).show()
                             binding.tvListaDesplegableElegirProductoAnadir.postDelayed({
@@ -334,7 +375,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                 { error ->
                     Toast.makeText(
                         requireContext(),
-                        "No hay producto o embalaje asociado a este código de barra $error",
+                        "No hay producto o embalaje asociado a este código de barra, error: $error",
                         Toast.LENGTH_SHORT
                     ).show()
                 }) {

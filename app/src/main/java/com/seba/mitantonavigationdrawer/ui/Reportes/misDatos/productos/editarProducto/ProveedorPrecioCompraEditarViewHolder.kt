@@ -4,6 +4,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +13,7 @@ import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.ItemPrecioCompraBinding
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONObject
@@ -18,9 +21,10 @@ import org.json.JSONObject
 
 class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: OnTextChangeListenerPrecioCompraEditar, private val sharedViewModel: SharedViewModel): RecyclerView.ViewHolder(view) {
     private val binding = ItemPrecioCompraBinding.bind(view)
-    val listaDePreciosCompra: MutableList<String> = mutableListOf()
+    val editText : EditText = view.findViewById(R.id.etPrecioCompra)
+    val textView : TextView = view.findViewById(R.id.tvSuppliers)
 
-    init {
+   /* init {
         binding.etPrecioCompra.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
 
@@ -43,7 +47,7 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
                 }
             }
         })
-    }
+    }*/
     private var codeExecuted = false
     var segundaVez = false
     fun bind(proveedorPrecioCompraItemResponse: ProveedorPrecioCompraItemResponseEditar,listaAdapter:RecyclerView.Adapter<*>) {
@@ -51,10 +55,10 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
         binding.cbSuppliers.setOnClickListener {
             binding.etPrecioCompra.isEnabled = binding.cbSuppliers.isChecked
         }
-            if (sharedViewModel.listaDeProveedores.isNotEmpty()) {
+            if (sharedViewModel.listaDePreciosCompra.isNotEmpty()) {
                 for (i in 0..<sharedViewModel.listaDePreciosCompra.size) {
-                if (binding.etPrecioCompra.text.isBlank() && binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedores[i]) {
-                    binding.etPrecioCompra.setText(sharedViewModel.listaDePreciosCompra[i])
+                    if (binding.etPrecioCompra.text.isBlank() && binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedores[i]) {
+                        binding.etPrecioCompra.setText(sharedViewModel.listaDePreciosCompra[i])
                     }
                 }
             }
@@ -72,7 +76,7 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
             }
             codeExecuted = true
         }*/
-        if(!segundaVez) {
+        if(!segundaVez && sharedViewModel.listaDePreciosCompra.isEmpty()) {
             obtenerPreciosCompra()
             segundaVez = true
         }

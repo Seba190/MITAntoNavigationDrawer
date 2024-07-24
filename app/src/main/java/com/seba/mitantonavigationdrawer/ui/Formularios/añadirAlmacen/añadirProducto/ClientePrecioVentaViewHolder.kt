@@ -6,6 +6,8 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -18,10 +20,13 @@ import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
 class ClientePrecioVentaViewHolder(itemView: View, private val listener: OnTextChangeListenerPrecioVenta,private val sharedViewModel: SharedViewModel): RecyclerView.ViewHolder(itemView) {
     private val binding = ItemPrecioVentaBinding.bind(itemView)
+    val editText : EditText = itemView.findViewById(R.id.etPrecioVenta)
+    val textView : TextView = itemView.findViewById(R.id.tvCustomers)
    // var buttonAgregar : Button? = null
 
 
-    init {
+   /* init {
+
         binding.etPrecioVenta.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
           //  }
@@ -41,7 +46,7 @@ class ClientePrecioVentaViewHolder(itemView: View, private val listener: OnTextC
                 }
         })
 
-    }
+    }*/
     private var codeExecuted = false
     fun bind(clientePrecioVentaItemResponse: ClientePrecioVentaItemResponse,
              listaAdapter: RecyclerView.Adapter<*>) {
@@ -50,17 +55,14 @@ class ClientePrecioVentaViewHolder(itemView: View, private val listener: OnTextC
         binding.cbCustomers.setOnClickListener {
             binding.etPrecioVenta.isEnabled = binding.cbCustomers.isChecked
         }
-        for (i in 0..listaAdapter.itemCount) {
-            if (sharedViewModel.listaDeClientesAnadir.size > i) {
-                if (sharedViewModel.listaDeClientesAnadir.isNotEmpty()) {
-                    if (binding.etPrecioVenta.text.isBlank() && binding.tvCustomers.text.toString() == sharedViewModel.listaDeClientesAnadir[i]) {
-                        binding.etPrecioVenta.setText(sharedViewModel.listaDePreciosVentaAnadir[i])
+        if (sharedViewModel.listaDePreciosVentaAnadir.isNotEmpty()) {
+            for (i in 0..<sharedViewModel.listaDePreciosVentaAnadir.size) {
+                if (binding.etPrecioVenta.text.isBlank() && binding.tvCustomers.text.toString() == sharedViewModel.listaDeClientesAnadir[i]) {
+                    binding.etPrecioVenta.setText(sharedViewModel.listaDePreciosVentaAnadir[i])
                     }
                 }
-            } else {
-                break
             }
-        }
+
        /* if(!codeExecuted) {
             for (i in 0..listaAdapter.itemCount) {
                 if (sharedViewModel.listaDeClientes.size > i && sharedViewModel.listaDePreciosVenta.size > i) {

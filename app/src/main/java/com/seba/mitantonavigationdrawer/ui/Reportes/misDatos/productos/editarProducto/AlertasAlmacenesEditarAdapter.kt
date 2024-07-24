@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.seba.mitantonavigationdrawer.R
+import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirProducto.AlertasAlmacenesViewHolder
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
 //Puse sharedViewModel aquí y al lado del listener
@@ -18,7 +19,7 @@ class AlertasAlmacenesEditarAdapter(
     private val listener: OnTextChangeListenerEditar)
                               : RecyclerView.Adapter<AlertasAlmacenesEditarViewHolder>() {
 
-
+   private val viewHolders = mutableListOf<AlertasAlmacenesEditarViewHolder>()
 
 
     fun updateList(alertasAlmacenesList: List<AlertasAlmacenesItemResponseEditar>){
@@ -48,12 +49,44 @@ class AlertasAlmacenesEditarAdapter(
     override fun onBindViewHolder(viewholder: AlertasAlmacenesEditarViewHolder, position: Int) {
         val item = alertasAlmacenesList[position]
         viewholder.bind(item,this)
+        if(!viewHolders.contains(viewholder)){
+            viewHolders.add(viewholder)
         }
+    }
+
+    override fun onViewRecycled(holder: AlertasAlmacenesEditarViewHolder) {
+        viewHolders.remove(holder)
+        super.onViewRecycled(holder)
+    }
 
     override fun getItemCount() = alertasAlmacenesList.size
 
     fun getAllItems(): List<AlertasAlmacenesItemResponseEditar> {
         // Devuelve la lista completa de elementos
         return alertasAlmacenesList
+    }
+
+    fun getAllEditTextContents() {
+        sharedViewModel.listaDeAlertas.clear()
+        viewHolders.forEach { holder ->
+            val text = holder.editText.text.toString()
+            if(text.isEmpty()){
+                sharedViewModel.listaDeAlertas.add("")
+            }else{
+                sharedViewModel.listaDeAlertas.add(text)
+            }
+        }
+    }
+    fun getAllTextViewContents(){
+        sharedViewModel.listaDeBodegas.clear()
+        viewHolders.forEach { holder ->
+            val text = holder.textView.text.toString()
+            val edit = holder.editText.text.toString()
+            if(edit.isEmpty()){
+                sharedViewModel.listaDeBodegas.add("")
+            }else{
+                sharedViewModel.listaDeBodegas.add(text)
+            }
+        }
     }
 }

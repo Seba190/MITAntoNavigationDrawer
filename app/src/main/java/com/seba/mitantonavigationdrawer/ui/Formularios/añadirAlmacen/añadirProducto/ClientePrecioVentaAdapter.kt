@@ -15,6 +15,9 @@ class ClientePrecioVentaAdapter(var clientePrecioVentaList:
                                 private val onCheckBoxClickListener: OnCheckBoxClickListenerPrecioVenta,
                                 private val listener: OnTextChangeListenerPrecioVenta)
                               : RecyclerView.Adapter<ClientePrecioVentaViewHolder>() {
+
+    private val viewHolders = mutableListOf<ClientePrecioVentaViewHolder>()
+
     fun updateList(clientePrecioVentaList: List<ClientePrecioVentaItemResponse>) {
         this.clientePrecioVentaList = clientePrecioVentaList
         notifyDataSetChanged()
@@ -46,6 +49,38 @@ class ClientePrecioVentaAdapter(var clientePrecioVentaList:
     override fun onBindViewHolder(viewholder: ClientePrecioVentaViewHolder, position: Int) {
         val item = clientePrecioVentaList[position]
         viewholder.bind(item,this)
+        if(!viewHolders.contains(viewholder)){
+            viewHolders.add(viewholder)
+        }
+    }
+
+    override fun onViewRecycled(holder: ClientePrecioVentaViewHolder) {
+        viewHolders.remove(holder)
+        super.onViewRecycled(holder)
+    }
+
+    fun getAllEditTextContents() {
+        sharedViewModel.listaDePreciosVentaAnadir.clear()
+        viewHolders.forEach { holder ->
+            val text = holder.editText.text.toString()
+            if(text.isEmpty()){
+                sharedViewModel.listaDePreciosVentaAnadir.add("")
+            }else{
+                sharedViewModel.listaDePreciosVentaAnadir.add(text)
+            }
+        }
+    }
+    fun getAllTextViewContents(){
+        sharedViewModel.listaDeClientesAnadir.clear()
+        viewHolders.forEach { holder ->
+            val text = holder.textView.text.toString()
+            val edit = holder.editText.text.toString()
+            if(edit.isEmpty()){
+                sharedViewModel.listaDeClientesAnadir.add("")
+            }else{
+                sharedViewModel.listaDeClientesAnadir.add(text)
+            }
+        }
     }
 
 }

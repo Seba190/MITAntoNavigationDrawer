@@ -107,6 +107,7 @@ class BarcodeScanEditarProductoFragment : Fragment() {
             }
 
         })
+        var segundaVez = false
         barcodeDetector.setProcessor(object : Detector.Processor<Barcode>{
             override fun release() {
                 // Toast.makeText(requireContext()," El scanner del código de barra ha sido detenido",
@@ -118,30 +119,35 @@ class BarcodeScanEditarProductoFragment : Fragment() {
             override fun receiveDetections(detections: Detector.Detections<Barcode>) {
                 val barcodes = detections.detectedItems
                 if(barcodes.size()!=0){
+                    if(!segundaVez){
+                        val mediaPlayer = MediaPlayer.create(context, R.raw.beep_barcode_scan)  // Reemplaza "beep_sound" con el nombre de tu archivo de sonido
+                        mediaPlayer.start()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            mediaPlayer.release()
+                        },500)
+                        segundaVez = true
+                    }
                     binding.bActionProducto.text = "ENCONTRADO"
                     binding.bActionProducto.setBackgroundColor(Color.GREEN)
-                    val mediaPlayer = MediaPlayer.create(context, R.raw.beep_barcode_scan)  // Reemplaza "beep_sound" con el nombre de tu archivo de sonido
-                    mediaPlayer.start()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        mediaPlayer.release()
-                    },500)
                     binding.txtBarcodeValueProducto!!.post{
-                        intentData = barcodes.valueAt(0).displayValue
-                        binding.txtBarcodeValueProducto.setText(intentData)
+                        for (i in 0 until barcodes.size()) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                intentData = barcodes.valueAt(i).displayValue
+                                binding.txtBarcodeValueProducto.text = intentData
+                                codigoDeBarraProducto = intentData
+                                viewModel.CodigoDeBarra.value = codigoDeBarraProducto
+                            }, 600)
+                            //activity?.finish()
+                        }
                         //activity?.finish()
-                        codigoDeBarraProducto = intentData
-                        /*val bundle = Bundle()
-                        bundle.putString(AnadirTransferenciaFragment.CODIGO_DE_BARRA,codigoDeBarra)
-                        arguments = bundle*/
-                        viewModel.CodigoDeBarra.value = codigoDeBarraProducto
                         //setFragmentResult("Codigo de barra producto", bundleOf("codigo" to codigoDeBarra))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.tvCodigoBarraProducto)
                     codigo?.setText(codigoDeBarraProducto)
-                    activity?.runOnUiThread {
-                        Toast.makeText(requireContext(),codigoDeBarraProducto, Toast.LENGTH_LONG).show()
+                  //  activity?.runOnUiThread {
+                  //      Toast.makeText(requireContext(),codigoDeBarraProducto, Toast.LENGTH_LONG).show()
                         //obtenerCodigo(codigoDeBarra!!)
-                    }
+                  //  }
 
 
 

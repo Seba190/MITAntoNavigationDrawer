@@ -3,6 +3,7 @@ package com.seba.mitantonavigationdrawer
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
@@ -72,6 +73,7 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
 
         NavigationUI.setupWithNavController(navView, navController)
         drawerLayout = findViewById(R.id.drawer_layout)
+        setupDrawerListener()
         // val drawerLayout: DrawerLayout = binding.drawerLayout
         //  val navView: NavigationView = binding.navView
         // val navController = findNavController(R.id.navHostFragment)
@@ -143,7 +145,7 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
             true
 
         }
-        setupDrawerListener()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -166,18 +168,67 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
     private fun setupDrawerListener(){
         drawerLayout.addDrawerListener(object :DrawerLayout.DrawerListener{
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
-
+                Log.i("Drawer", "Drawer sliding: $slideOffset")
+                sharedViewModel.listaDeProductos.clear()
+                sharedViewModel.listaDeCantidades.clear()
+                sharedViewModel.listaDeProductosAnadir.clear()
+                sharedViewModel.listaDeCantidadesAnadir.clear()
+                sharedViewModel.listaDePreciosAnadir.clear()
+                sharedViewModel.listaDePreciosDeProductos.clear()
+                sharedViewModel.listaDeProductosRemover.clear()
+                sharedViewModel.listaDeCantidadesRemover.clear()
+                sharedViewModel.listaDePreciosRemover.clear()
+                sharedViewModel.listaDePreciosDeProductosRemover.clear()
+                sharedViewModel.listaDeBodegasAnadir.clear()
+                sharedViewModel.listaDeAlertasAnadir.clear()
+                sharedViewModel.ListasDeAlertas.clear()
+                sharedViewModel.ListasDeAlmacenes.clear()
+                sharedViewModel.ListasDeProductosAlertas.clear()
+                sharedViewModel.listaDeClientesAnadir.clear()
+                sharedViewModel.listaDePreciosVentaAnadir.clear()
+                sharedViewModel.ListasDeClientes.clear()
+                sharedViewModel.ListasDePreciosDeVenta.clear()
+                sharedViewModel.ListasDeProductosPrecioVenta.clear()
+                sharedViewModel.listaDePreciosCompraAnadir.clear()
+                sharedViewModel.listaDeProveedoresAnadir.clear()
+                sharedViewModel.ListasDeProveedores.clear()
+                sharedViewModel.ListasDePreciosDeCompra.clear()
+                sharedViewModel.ListasDeProductosPrecioCompra.clear()
+                sharedViewModel.opcionesListSalida.clear()
+                sharedViewModel.opcionesListEntrada.clear()
+                sharedViewModel.opcionesListRemover.clear()
+                sharedViewModel.opcionesListAnadir.clear()
+                sharedViewModel.opcionesListTransferencia.clear()
+                sharedViewModel.opcionesListEditarTransferencia.clear()
+                sharedViewModel.id.clear()
+                sharedViewModel.listaDeAlertas.clear()
+                sharedViewModel.listaDePreciosVenta.clear()
+                sharedViewModel.listaDePreciosCompra.clear()
+                sharedViewModel.listaDeBodegas.clear()
+                sharedViewModel.listaDeClientes.clear()
+                sharedViewModel.listaDeProveedores.clear()
+                sharedViewModel.numeroAlertas.clear()
+                sharedViewModel.numeroPreciosCompra.clear()
+                sharedViewModel.numeroPreciosVenta.clear()
+                sharedViewModel.listaDeAlmacenesAnadir.clear()
+                sharedViewModel.listaDeAlmacenesRemover.clear()
+                sharedViewModel.listaDeAlmacenesEntrada.clear()
+                sharedViewModel.listaDeAlmacenesSalida.clear()
+                sharedViewModel.listaDeAlmacenesTransferencia.clear()
+                sharedViewModel.listaDeAlmacenesEditarTransferencia.clear()
             }
 
             override fun onDrawerOpened(drawerView: View) {
-
+                Log.i("Drawer", "Drawer opened")
             }
 
             override fun onDrawerClosed(drawerView: View) {
+                Log.i("Drawer", "Drawer closed")
 
             }
 
             override fun onDrawerStateChanged(newState: Int) {
+                Log.i("Drawer", "Drawer state changed: $newState")
                 when (newState) {
                     DrawerLayout.STATE_IDLE -> {
                         // El drawer está en reposo
@@ -190,31 +241,8 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
                     DrawerLayout.STATE_SETTLING -> {
                         // El drawer está asentándose a una posición final
                         // Puedes realizar acciones cuando el drawer está en el proceso de abrirse o cerrarse completamente
-                        sharedViewModel.listaDeProductos.clear()
-                        sharedViewModel.listaDeCantidades.clear()
-                        sharedViewModel.listaDeProductosAnadir.clear()
-                        sharedViewModel.listaDeCantidadesAnadir.clear()
-                        sharedViewModel.listaDePreciosAnadir.clear()
-                        sharedViewModel.listaDePreciosDeProductos.clear()
-                        sharedViewModel.listaDeProductosRemover.clear()
-                        sharedViewModel.listaDeCantidadesRemover.clear()
-                        sharedViewModel.listaDePreciosRemover.clear()
-                        sharedViewModel.listaDePreciosDeProductosRemover.clear()
-                        sharedViewModel.listaDeBodegasAnadir.clear()
-                        sharedViewModel.listaDeAlertasAnadir.clear()
-                        sharedViewModel.ListasDeAlertas.clear()
-                        sharedViewModel.ListasDeAlmacenes.clear()
-                        sharedViewModel.ListasDeProductosAlertas.clear()
-                        sharedViewModel.listaDeClientesAnadir.clear()
-                        sharedViewModel.listaDePreciosVentaAnadir.clear()
-                        sharedViewModel.ListasDeClientes.clear()
-                        sharedViewModel.ListasDePreciosDeVenta.clear()
-                        sharedViewModel.ListasDeProductosPrecioVenta.clear()
-                        sharedViewModel.listaDePreciosCompraAnadir.clear()
-                        sharedViewModel.listaDeProveedoresAnadir.clear()
-                        sharedViewModel.ListasDeProveedores.clear()
-                        sharedViewModel.ListasDePreciosDeCompra.clear()
-                        sharedViewModel.ListasDeProductosPrecioCompra.clear()
+
+
 
                     }
                 }

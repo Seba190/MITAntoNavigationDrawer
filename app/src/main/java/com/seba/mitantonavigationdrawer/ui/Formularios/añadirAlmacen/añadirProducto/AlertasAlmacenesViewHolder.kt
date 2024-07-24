@@ -4,16 +4,23 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
+import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.ItemAlertBinding
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 
 //Inserte sharedViewModel en AlertasAlmacenesAdapter
 class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeListener, private val sharedViewModel: SharedViewModel): RecyclerView.ViewHolder(view) {
     private val binding = ItemAlertBinding.bind(view)
+    val editText : EditText = view.findViewById(R.id.etAlert)
+    val textView : TextView = view.findViewById(R.id.tvWarehouse)
     val listaDeAlertas: MutableList<String> = mutableListOf()
-    init {
+  /*  init {
+
         binding.etAlert.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(
                 charSequence: CharSequence?,
@@ -49,26 +56,19 @@ class AlertasAlmacenesViewHolder(view: View, private val listener: OnTextChangeL
             }
         })
 
-    }
+    }*/
      private var codeExecuted = false
-    fun bind(
-        alertasAlmacenesItemResponse: AlertasAlmacenesItemResponse,
-        listaAdapter: RecyclerView.Adapter<*>
-    ) {
+    fun bind(alertasAlmacenesItemResponse: AlertasAlmacenesItemResponse, listaAdapter: RecyclerView.Adapter<*>) {
         binding.tvWarehouse.text = alertasAlmacenesItemResponse.Nombre
         // Verificar si el CheckBox está marcado o no
         binding.cbWarehouse.setOnClickListener {
             binding.etAlert.isEnabled = binding.cbWarehouse.isChecked
         }
-        for (i in 0..listaAdapter.itemCount) {
-            if (sharedViewModel.listaDeAlertasAnadir.isNotEmpty()) {
-                if (sharedViewModel.listaDeAlertasAnadir.size > i) {
-                    if (binding.etAlert.text.isBlank() && binding.tvWarehouse.text.toString() == sharedViewModel.listaDeBodegasAnadir[i]) {
-                        binding.etAlert.setText(sharedViewModel.listaDeAlertasAnadir[i])
-                    }
-                }else {
-                    break
-              }
+        if (sharedViewModel.listaDeAlertasAnadir.isNotEmpty()) {
+            for (i in 0..<sharedViewModel.listaDeAlertasAnadir.size) {
+                if (binding.etAlert.text.isBlank() && binding.tvWarehouse.text.toString() == sharedViewModel.listaDeBodegasAnadir[i]) {
+                    binding.etAlert.setText(sharedViewModel.listaDeAlertasAnadir[i])
+                }
             }
         }
         /*if(!codeExecuted) {

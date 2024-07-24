@@ -83,7 +83,22 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
            PorterDuff.Mode.SRC_ATOP)
 
        adapter = AnadirTransferenciaAdapter(sharedViewModel.listaDeCantidades, sharedViewModel.listaDeProductos,sharedViewModel) { position -> onDeletedItem(position)}
-        ListaDesplegableElegirProducto()
+
+       if(sharedViewModel.listaDeAlmacenesTransferencia.size > 1) {
+           for (i in 1..<sharedViewModel.listaDeAlmacenesTransferencia.size){
+               if(sharedViewModel.listaDeAlmacenesTransferencia[i]==sharedViewModel.listaDeAlmacenesTransferencia[i-1]){
+                   ListaDesplegableElegirProducto()
+               }else if(sharedViewModel.listaDeAlmacenesTransferencia[i]!=sharedViewModel.listaDeAlmacenesTransferencia[i-1]){
+                   sharedViewModel.opcionesListTransferencia.clear()
+                   sharedViewModel.listaDeProductos.clear()
+                   sharedViewModel.listaDeCantidades.clear()
+                   ListaDesplegableElegirProducto()
+               }
+           }
+       }else{
+           ListaDesplegableElegirProducto()
+       }
+
        // ListaDesplegableElegirProveedor()
 
         binding.llCajasDeProductoElegirProducto.isVisible = false
@@ -329,14 +344,21 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                         precioYCantidad(parent.getItemAtPosition(position).toString())
                     }
                 }
-                binding.etCodigoDeBarra.setOnClickListener {
-                    codigoDeBarra()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if (DropDownProducto?.text.toString() != "Eliga una opción") {
-                            precioYCantidad(DropDownProducto?.text.toString())
+                binding.etCodigoDeBarra.addTextChangedListener(object: TextWatcher{
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                    override fun afterTextChanged(s: Editable?) {
+                        if(s != null && s.length == 13) {
+                            codigoDeBarra()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                if (DropDownProducto?.text.toString() != "Eliga una opción") {
+                                    precioYCantidad(DropDownProducto?.text.toString())
+                                }
+                            }, 300)
                         }
-                    }, 300)
-                }
+                    }
+
+                })
             },
             { error ->
                 Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
@@ -468,7 +490,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                             if (codigoBarraEmbalaje == "") {
                                 Toast.makeText(
                                     requireContext(),
-                                    "EL código de barra pertenece al producto $codigoBarraProducto y ${sharedViewModel.opcionesListTransferencia.indexOf("$codigoBarraProducto ( 0 unid. )")}",
+                                    "EL código de barra pertenece al producto $codigoBarraProducto",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 binding.tvListaDesplegableElegirProducto.postDelayed({
@@ -499,7 +521,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                     { error ->
                         Toast.makeText(
                             requireContext(),
-                            "No hay producto o embalaje asociado a este código de barra $error",
+                            "No hay producto o embalaje asociado a este código de barra, error: $error",
                             Toast.LENGTH_SHORT
                         ).show()
                     }) {

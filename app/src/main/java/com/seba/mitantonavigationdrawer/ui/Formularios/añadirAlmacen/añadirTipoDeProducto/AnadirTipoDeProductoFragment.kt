@@ -74,7 +74,7 @@ class AnadirTipoDeProductoFragment : Fragment(R.layout.fragment_anadir_tipo_de_p
                             { response ->
                                 Toast.makeText(
                                     requireContext(),
-                                    "Tipo de producto agregado exitosamente. El id de ingreso es el número $id ",
+                                    "Tipo de producto agregado exitosamente. Id número $id ",
                                     Toast.LENGTH_LONG
                                 ).show()
                                 TextNombre?.setText("")

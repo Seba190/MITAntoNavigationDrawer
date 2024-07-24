@@ -83,6 +83,7 @@ class BarcodeScanRemoverFragment : Fragment(R.layout.fragment_barcode_scan_remov
             }
 
         })
+        var segundaVez = false
         barcodeDetector.setProcessor(object : Detector.Processor<Barcode>{
             override fun release() {
 
@@ -99,22 +100,24 @@ class BarcodeScanRemoverFragment : Fragment(R.layout.fragment_barcode_scan_remov
                         mediaPlayer.release()
                     },500)
                     binding.txtBarcodeValueRemover!!.post{
-                        intentData = barcodes.valueAt(0).displayValue
-                        binding.txtBarcodeValueRemover.setText(intentData)
+                        for (i in 0 until barcodes.size()) {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                intentData = barcodes.valueAt(i).displayValue
+                                binding.txtBarcodeValueRemover.text = intentData
+                                codigoDeBarraRemover= intentData
+                                viewModel.CodigoDeBarraRemover.value = codigoDeBarraRemover
+                            //activity?.finish()
+                            },600)
+                        }
                         //activity?.finish()
-                        codigoDeBarraRemover= intentData
-                        /*val bundle = Bundle()
-                        bundle.putString(CODIGO_DE_BARRA,codigoDeBarra)
-                        arguments = bundle*/
-                        viewModel.CodigoDeBarraRemover.value = codigoDeBarraRemover
                         setFragmentResult("Codigo de barra transferencia", bundleOf("codigo" to codigoDeBarraRemover))
                     }
                     val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
                     codigo?.setText(codigoDeBarraRemover)
-                    activity?.runOnUiThread {
-                        Toast.makeText(requireContext(),codigoDeBarraRemover, Toast.LENGTH_LONG).show()
+                  //  activity?.runOnUiThread {
+                   //     Toast.makeText(requireContext(),codigoDeBarraRemover, Toast.LENGTH_LONG).show()
                         //obtenerCodigo(codigoDeBarra!!)
-                    }
+                   // }
 
                     //obtenerCodigo(arguments?.getString(CODIGO_DE_BARRA)!!)
                     // findNavController().navigate(R.id.action_nav_barcode_scan_to_nav_añadir_transferencia)
