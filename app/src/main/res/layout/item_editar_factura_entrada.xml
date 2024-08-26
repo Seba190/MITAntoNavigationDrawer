@@ -43,7 +43,7 @@
         tools:text ="Nombre Factura"
         android:layout_marginStart="110dp"
         android:layout_marginTop="15dp"
-        android:textSize="22sp"/>
+        android:textSize="20sp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -51,8 +51,8 @@
         android:textColor="@color/black"
         android:text ="Almacén: "
         android:layout_marginStart="110dp"
-        android:layout_marginTop="50dp"
-        android:textSize="18sp"/>
+        android:layout_marginTop="55dp"
+        android:textSize="15sp"/>
 
     <TextView
         android:id="@+id/tvNombreAlmacen"
@@ -61,8 +61,8 @@
         android:textColor="@color/black"
         tools:text ="Nombre Almacén"
         android:layout_marginStart="190dp"
-        android:layout_marginTop="50dp"
-        android:textSize="18sp"/>
+        android:layout_marginTop="55dp"
+        android:textSize="15sp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,8 +70,8 @@
         android:textColor="@color/black"
         android:text ="Proveedor: "
         android:layout_marginStart="110dp"
-        android:layout_marginTop="80dp"
-        android:textSize="18sp"/>
+        android:layout_marginTop="85dp"
+        android:textSize="15sp"/>
 
     <TextView
         android:id="@+id/tvNombreProveedor"
@@ -80,8 +80,8 @@
         android:textColor="@color/black"
         tools:text ="Nombre Proveedor"
         android:layout_marginStart="200dp"
-        android:layout_marginTop="80dp"
-        android:textSize="18sp"/>
+        android:layout_marginTop="85dp"
+        android:textSize="15sp"/>
 
 
 </androidx.cardview.widget.CardView>

@@ -42,6 +42,7 @@ class ClientesFragment : Fragment(R.layout.fragment_clientes) {
 
         _binding = FragmentClientesBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        binding.tvTextoNoClientes.isVisible = false
         //Aquí se programa
         retrofit = getRetrofit()
         initUI()
@@ -78,6 +79,7 @@ class ClientesFragment : Fragment(R.layout.fragment_clientes) {
                     activity?.runOnUiThread {
                         adapter.updateList(response.Clientes)
                         binding.progressBar.isVisible = false
+                        binding.tvTextoNoClientes.isVisible = response.Clientes.isEmpty()
                     }
                 }
 

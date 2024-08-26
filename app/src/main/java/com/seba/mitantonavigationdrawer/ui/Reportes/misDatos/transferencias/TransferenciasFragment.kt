@@ -46,6 +46,7 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
 
         _binding = FragmentTransferenciasBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        binding.tvTextoNoTransferencias.isVisible = false
         //Aquí se programa
         retrofit = getRetrofit()
         initUI()
@@ -77,6 +78,7 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
                     activity?.runOnUiThread {
                         adapter.updateList(response.Transferencias)
                         binding.progressBarTransferencias.isVisible = false
+                        binding.tvTextoNoTransferencias.isVisible = response.Transferencias.isEmpty()
                     }
                 }
 

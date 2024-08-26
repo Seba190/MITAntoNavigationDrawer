@@ -144,13 +144,13 @@ class BarcodeScanFacturaEntradaFragment : Fragment(R.layout.fragment_barcode_sca
                             bundleOf("codigo" to codigoDeBarraFacturaEntrada)
                         )
                     }
-                    val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
-                    codigo?.setText(codigoDeBarraFacturaEntrada)
+                   // val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
+                   // codigo?.setText(codigoDeBarraFacturaEntrada)
                   /*  activity?.runOnUiThread {
                         Toast.makeText(
                             requireContext(),
                             codigoDeBarraFacturaEntrada,
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
 
                     }*/

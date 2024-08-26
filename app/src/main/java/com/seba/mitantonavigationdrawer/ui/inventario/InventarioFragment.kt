@@ -99,7 +99,7 @@ class InventarioFragment: Fragment(R.layout.fragment_inventario) {
                     val itemSelected = parent.getItemAtPosition(position)
                 }
             }, { error ->
-                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)

@@ -143,13 +143,13 @@ class BarcodeScanEditarTransferenciaFragment : Fragment(R.layout.fragment_barcod
                             bundleOf("codigo" to codigoDeBarraTransferencia)
                         )
                     }
-                    val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
-                    codigo?.setText(codigoDeBarraTransferencia)
+                   // val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
+                   // codigo?.setText(codigoDeBarraTransferencia)
                   /*  activity?.runOnUiThread {
                         Toast.makeText(
                             requireContext(),
                             codigoDeBarraTransferencia,
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
                         //obtenerCodigo(codigoDeBarra!!)
                     }*/
@@ -172,7 +172,7 @@ class BarcodeScanEditarTransferenciaFragment : Fragment(R.layout.fragment_barcod
          super.onViewCreated(view, savedInstanceState)
         /* requireActivity().onBackPressedDispatcher
              .addCallback(viewLifecycleOwner) {
-                 activity?.runOnUiThread {Toast.makeText(requireContext(),codigoDeBarraTransferencia,Toast.LENGTH_LONG).show()}
+                 activity?.runOnUiThread {Toast.makeText(requireContext(),codigoDeBarraTransferencia,Toast.LENGTH_SHORT).show()}
              }*/
          (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
      }*/

@@ -51,6 +51,7 @@ class AlmacenesFragment : Fragment(R.layout.fragment_almacenes) {
 
         _binding = FragmentAlmacenesBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        binding.tvTextoNoAlmacenes.isVisible = false
         //Aquí se programa
         retrofit = getRetrofit()
         initUI()
@@ -90,6 +91,7 @@ class AlmacenesFragment : Fragment(R.layout.fragment_almacenes) {
                   activity?.runOnUiThread {
                       adapter.updateList(response.Almacenes)
                       binding.progressBar.isVisible = false
+                      binding.tvTextoNoAlmacenes.isVisible = response.Almacenes.isEmpty()
                   }
               }
 

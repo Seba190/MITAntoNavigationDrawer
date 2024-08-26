@@ -112,7 +112,7 @@
                         android:textColor="@color/black"
                         android:hint="Opciones"
                         android:text="@string/item_label"
-                        android:inputType="none"/>
+                        android:inputType="text"/>
 
 
                 </com.google.android.material.textfield.TextInputLayout>

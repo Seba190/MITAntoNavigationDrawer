@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
@@ -19,13 +20,14 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirAlmacenBinding
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONObject
 
 
 class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
 
     private var _binding: FragmentAnadirAlmacenBinding? = null
-
+    private val sharedViewModel by activityViewModels<SharedViewModel>()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -73,7 +75,18 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
 
         //Botón enviar datos
         binding.button.setOnClickListener {
-            ValidacionesIdInsertarDatos()
+            if(sharedViewModel.opcionesListAlmacenUsuario.contains(TvHolaMundo?.text.toString()) &&
+                TvHolaMundo?.text.toString() != "Eliga una opción"){
+                    ValidacionesIdInsertarDatos()
+                }
+            else if(!sharedViewModel.opcionesListAlmacenUsuario.contains(TvHolaMundo?.text.toString()) &&
+                TvHolaMundo?.text.toString() == "Eliga una opción"){
+                Toast.makeText(requireContext(),"Debe elegir nombre de usuario", Toast.LENGTH_SHORT).show()
+            }
+            else if(!sharedViewModel.opcionesListAlmacenUsuario.contains(TvHolaMundo?.text.toString()) &&
+                TvHolaMundo?.text.toString() != "Eliga una opción"){
+                Toast.makeText(requireContext(),"El usuario no es válido", Toast.LENGTH_SHORT).show()
+            }
         }
 
 
@@ -123,15 +136,15 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                                 VolleyError("El almacen ya se encuentra en la base de datos")
                                 queue1.cancelAll(TAG)
                                 jsonObjectRequest1.cancel()
-                                Toast.makeText(requireContext(), "El almacen ya se encuentra en la base de datos", Toast.LENGTH_LONG).show()
+                                Toast.makeText(requireContext(), "El almacen ya se encuentra en la base de datos", Toast.LENGTH_SHORT).show()
                             }
                            else if (unico == "1") {
-                                Toast.makeText(requireContext(), "Almacen agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
+                                Toast.makeText(requireContext(), "Almacen agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
                               }
                         },
                         { error ->
-                           // Toast.makeText(requireContext(),"No se ha introducido el almacen a la base de datos", Toast.LENGTH_LONG).show()
-                            Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                           // Toast.makeText(requireContext(),"No se ha introducido el almacen a la base de datos", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                         }
                     ){
                         override fun getParams(): MutableMap<String, String> {
@@ -148,10 +161,10 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
 
 
                // TextId?.setText(response.getString("ID_ALMACEN"))
-               // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+               // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
-               // Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+               // Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         )
         queue.add(jsonObjectRequest)
@@ -183,9 +196,9 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                 Request.Method.GET,url, null,
                 { response ->
                     TextId?.setText(response.getString("ID_ALMACEN"))
-                    Toast.makeText(requireContext(),"Id actualizado correctamente", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(),"Id actualizado correctamente", Toast.LENGTH_SHORT).show()
                 }, { error ->
-                    Toast.makeText(requireContext(),"Conecte la aplicación al servidor para actualizar id", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(),"Conecte la aplicación al servidor para actualizar id", Toast.LENGTH_SHORT).show()
                 }
             )
             queue.add(jsonObjectRequest)
@@ -198,10 +211,10 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
             val queue =Volley.newRequestQueue(requireContext())
             var resultadoPost =object : StringRequest(Request.Method.POST,url,
                 Response.Listener<String> { response ->
-                    Toast.makeText(requireContext(),"Almacen insertado exitosamente", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(),"Almacen insertado exitosamente", Toast.LENGTH_SHORT).show()
                 }, Response.ErrorListener { error ->
-                    Toast.makeText(requireContext(),"No se ha introducido el almacen a la base de datos porque no hay conexión a ella", Toast.LENGTH_LONG).show()
-                   // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(),"No se ha introducido el almacen a la base de datos porque no hay conexión a ella", Toast.LENGTH_SHORT).show()
+                   // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                 }
             ) {
                 override fun getParams(): MutableMap<String, String> {
@@ -232,21 +245,38 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'","'"))
+                if(sharedViewModel.opcionesListAlmacenUsuario.isEmpty()) {
+                    for (i in 0 until jsonArray.length()) {
+                        sharedViewModel.opcionesListAlmacenUsuario.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                    }
                 }
+                sharedViewModel.opcionesListAlmacenUsuario.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
+                val adapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,sharedViewModel.opcionesListAlmacenUsuario)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 TvHolaMundo?.setAdapter(adapter)
-
+                TvHolaMundo?.threshold = 1
                 TvHolaMundo?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
                     val itemSelected = parent.getItemAtPosition(position)
                 }
+                TvHolaMundo?.setOnClickListener {
+                    if(TvHolaMundo?.text.toString() == "Eliga una opción"){
+                        binding.tvholaMundo.setText("",false)
+                        TvHolaMundo?.showDropDown()
+                    }
+                }
+                TvHolaMundo?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && TvHolaMundo?.text.toString() == "Eliga una opción"){
+                        binding.tvholaMundo.setText("",false)
+                        TvHolaMundo?.showDropDown()
+                    }
+                    else if (!hasFocus && !sharedViewModel.opcionesListAlmacenUsuario.contains(TvHolaMundo?.text.toString())){
+                        Toast.makeText(requireContext(),"El nombre del usuario no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }, { error ->
-                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -259,7 +289,7 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
         val jsonObjectRequest = object: StringRequest(
             Request.Method.POST,url,
             { response ->
-                if(!TextNombre?.text.toString().isBlank()){
+                if(TextNombre?.text.toString().isNotBlank()){
                     val id = JSONObject(response).getString("ID_ALMACEN")
                     //unico = 1
                     //no unico = 0
@@ -272,14 +302,14 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                             Request.Method.POST,
                             url1,
                             { response ->
-                                Toast.makeText(requireContext(), "Almacén agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
+                                Toast.makeText(requireContext(), "Almacén agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
                                 TextNombre?.setText("")
                                 TextDireccion?.setText("")
                                 TvHolaMundo?.setText("Eliga una opción",false)
                             },
                             { error ->
-                                Toast.makeText(requireContext(),"El usuario responsable del almacén es obligatorio", Toast.LENGTH_LONG).show()
-                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                                Toast.makeText(requireContext(),"El usuario responsable del almacén es obligatorio", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                             }
                         )
 
@@ -301,18 +331,18 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                         //VolleyError("El almacén ya se encuentra en la base de datos")
                         //queue1.cancelAll(TAG)
                         //jsonObjectRequest1.cancel()
-                        Toast.makeText(requireContext(), "El almacén ya se encuentra en la base de datos", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "El almacén ya se encuentra en la base de datos", Toast.LENGTH_SHORT).show()
                     }
                 }
                 else{
-                    Toast.makeText(requireContext(), "El nombre del almacén es obligatorio", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "El nombre del almacén es obligatorio", Toast.LENGTH_SHORT).show()
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
-                Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-               // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ){
             override fun getParams(): MutableMap<String, String> {

@@ -48,6 +48,7 @@ class FacturaSalidaFragment : Fragment(R.layout.fragment_factura_salida) {
 
         _binding = FragmentFacturaSalidaBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        binding.tvTextoNoFacturasDeSalida.isVisible = false
         //Aquí se programa
         retrofit = getRetrofit()
         initUI()
@@ -84,6 +85,7 @@ class FacturaSalidaFragment : Fragment(R.layout.fragment_factura_salida) {
                     activity?.runOnUiThread {
                         adapter.updateList(response.FacturaSalida)
                         binding.progressBarFacturaSalida.isVisible = false
+                        binding.tvTextoNoFacturasDeSalida.isVisible = response.FacturaSalida.isEmpty()
                     }
                 }
 

@@ -116,10 +116,10 @@ class BarcodeScanAnadirFragment: Fragment(R.layout.fragment_barcode_scan_anadir)
 
                         setFragmentResult("Codigo de barra transferencia", bundleOf("codigo" to codigoDeBarraAnadir))
                     }
-                    val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
-                    codigo?.setText(codigoDeBarraAnadir)
+                   // val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
+                   // codigo?.setText(codigoDeBarraAnadir)
                    // activity?.runOnUiThread {
-                   //     Toast.makeText(requireContext(),codigoDeBarraAnadir, Toast.LENGTH_LONG).show()
+                   //     Toast.makeText(requireContext(),codigoDeBarraAnadir, Toast.LENGTH_SHORT).show()
                         //obtenerCodigo(codigoDeBarra!!)
                    // }
 

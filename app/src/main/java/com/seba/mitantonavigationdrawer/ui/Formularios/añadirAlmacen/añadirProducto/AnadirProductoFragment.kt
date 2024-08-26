@@ -154,21 +154,18 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
         //}
 
         binding.buttonProducto.setOnClickListener {
-            ValidacionesIdInsertarDatos()
-            Log.i(
-                "Sebastian",
-                "${sharedViewModel.ListasDeAlertas} , ${sharedViewModel.ListasDePreciosDeCompra} , ${sharedViewModel.ListasDePreciosDeVenta}"
-            )
-            Log.i(
-                "Sebastian",
-                "${sharedViewModel.ListasDeAlmacenes} , ${sharedViewModel.ListasDeProveedores} , ${sharedViewModel.ListasDeClientes}"
-            )
-            Log.i(
-                "Sebastian",
-                "${sharedViewModel.ListasDeProductosAlertas} , ${sharedViewModel.ListasDeProductosPrecioCompra} , ${sharedViewModel.ListasDeProductosPrecioVenta}"
-            )
+            if(sharedViewModel.opcionesListProductoTipoDeProducto.contains(TvAutoCompleteTipoDeProducto?.text.toString()) &&
+                TvAutoCompleteTipoDeProducto?.text.toString() != "Eliga una opción") {
+                ValidacionesIdInsertarDatos()
+            }else if (!sharedViewModel.opcionesListProductoTipoDeProducto.contains(TvAutoCompleteTipoDeProducto?.text.toString()) &&
+                TvAutoCompleteTipoDeProducto?.text.toString() == "Eliga una opción"){
+                Toast.makeText(requireContext(),"Debe elegir el tipo de producto", Toast.LENGTH_SHORT).show()
 
-
+            }else if (!sharedViewModel.opcionesListProductoTipoDeProducto.contains(TvAutoCompleteTipoDeProducto?.text.toString()) &&
+                TvAutoCompleteTipoDeProducto?.text.toString() != "Eliga una opción") {
+                Toast.makeText(requireContext(), "El tipo de producto no es válido", Toast.LENGTH_SHORT
+                ).show()
+            }
         }
         ///////El dialogo con alertas por almacen////////////
 
@@ -243,7 +240,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                     .commitNow()*/
                 findNavController().navigate(R.id.action_nav_añadir_producto_to_nav_barcode_scan_producto)
             } else {
-                Toast.makeText(requireContext(), "Permiso denegado", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Permiso denegado", Toast.LENGTH_SHORT).show()
             }
         }
         binding.bEscanearCodigoDeBarraProducto.setOnClickListener {
@@ -464,13 +461,13 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                                 TvAutoCompleteTipoDeProducto?.setText("Eliga una opción", false)
                             },
                             { error ->
-                                //Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
+                                //Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
                                 Toast.makeText(
                                     requireContext(),
                                     "El tipo de producto es obligatorio.",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
-                                //Toast.makeText(requireContext(),"Error $fotoBase64", Toast.LENGTH_LONG).show()
+                                //Toast.makeText(requireContext(),"Error $fotoBase64", Toast.LENGTH_SHORT).show()
 
 
                             }
@@ -509,26 +506,26 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                         Toast.makeText(
                             requireContext(),
                             "El producto ya se encuentra en la base de datos",
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else if (TextNombre?.text.toString().isBlank() && drawable is BitmapDrawable) {
                     Toast.makeText(
                         requireContext(),
                         "El nombre del producto es obligatorio",
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                 Toast.makeText(
                     requireContext(),
                     "Conecte la aplicación al servidor",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -558,14 +555,14 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                /* Toast.makeText(
                     requireContext(),
                    "Alertas ingresadas exitosamente a la base de datos",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()*/
             },
             { error ->
               /*  Toast.makeText(
                     requireContext(),
                     " No se ha podido enviar los almacenes y alertas",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()*/
                 /*  for (i in 0..<sharedViewModel.listaDeAlertas.size) {
                         Log.i("ALMACEN$i",ListaDeAlmacenes[i])
@@ -609,14 +606,14 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                /* Toast.makeText(
                     requireContext(),
                     "Precios de compra ingresados exitosamente a la base de datos",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()*/
             },
             { error ->
                /* Toast.makeText(
                     requireContext(),
                     " No se ha podido enviar los proveedores y precios de compra",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()*/
                 /*  for (i in 0..<sharedViewModel.listaDeAlertas.size) {
                       Log.i("ALMACEN$i",ListaDeAlmacenes[i])
@@ -657,14 +654,14 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                /* Toast.makeText(
                     requireContext(),
                    "Precios de venta ingresados exitosamente a la base de datos",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()*/
             },
             { error ->
                /* Toast.makeText(
                     requireContext(),
                     " No se ha podido enviar los clientes y precios de venta",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()*/
                 /*  for (i in 0..<sharedViewModel.listaDeAlertas.size) {
                       Log.i("ALMACEN$i",ListaDeAlmacenes[i])
@@ -698,22 +695,38 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista2")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                if(sharedViewModel.opcionesListProductoTipoDeProducto.isEmpty()) {
+                    for (i in 0 until jsonArray.length()) {
+                        sharedViewModel.opcionesListProductoTipoDeProducto.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                    }
                 }
+                sharedViewModel.opcionesListProductoTipoDeProducto.sort()
                 //Crea un adpatador para el dropdown
-                val adapter =
-                    ArrayAdapter(requireContext(), R.layout.list_item_producto, opcionesList)
-                //binding.tvholaMundo?.setText(response.getString("Lista"))
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, sharedViewModel.opcionesListProductoTipoDeProducto)
+                //binding.TvAutoCompleteTipoDeProducto?.setText(response.getString("Lista"))
                 TvAutoCompleteTipoDeProducto?.setAdapter(adapter)
-
+                TvAutoCompleteTipoDeProducto?.threshold = 1
                 TvAutoCompleteTipoDeProducto?.onItemClickListener =
                     AdapterView.OnItemClickListener { parent, view, position, id ->
                         val itemSelected = parent.getItemAtPosition(position)
                     }
+                TvAutoCompleteTipoDeProducto?.setOnClickListener {
+                    if(TvAutoCompleteTipoDeProducto?.text.toString() == "Eliga una opción"){
+                        binding.tvAutoCompleteTipoDeProducto.setText("",false)
+                        TvAutoCompleteTipoDeProducto?.showDropDown()
+                    }
+                }
+                TvAutoCompleteTipoDeProducto?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && TvAutoCompleteTipoDeProducto?.text.toString() == "Eliga una opción"){
+                        binding.tvAutoCompleteTipoDeProducto.setText("",false)
+                        TvAutoCompleteTipoDeProducto?.showDropDown()
+                    }
+                    else if (!hasFocus && !sharedViewModel.opcionesListProductoTipoDeProducto.contains(TvAutoCompleteTipoDeProducto?.text.toString())){
+                        Toast.makeText(requireContext(),"El tipo de producto no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }, { error ->
-                // Toast.makeText(requireContext(), " Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(), " Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -908,7 +921,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                         }
                         catch(e: Exception){
                             Toast.makeText(requireContext(), "No hay producto o embalaje asociado a este producto",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_SHORT
                             ).show()
                         }
                     },
@@ -960,7 +973,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                         }
                         catch(e: Exception){
                             Toast.makeText(requireContext(), "No hay producto o embalaje asociado a este producto",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_SHORT
                             ).show()
                         }
                     },

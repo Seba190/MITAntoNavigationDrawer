@@ -90,11 +90,17 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
         //   Mostrar los usuarios responsables en la lista desplegable
          ListaDesplegable()
         binding.buttonEditable.setOnClickListener {
-         /*   borrarRegistros()
-            Handler(Looper.getMainLooper()).postDelayed({
-                actualizarRegistros()
-            },500)*/
-            actualizarAlmacen()
+            if(sharedViewModel.opcionesListEditarAlmacenUsuario.contains(TextDropdown?.text.toString()) &&
+                TextDropdown?.text.toString() != "Eliga una opción"){
+                actualizarAlmacen()
+            }else if(!sharedViewModel.opcionesListEditarAlmacenUsuario.contains(TextDropdown?.text.toString()) &&
+                TextDropdown?.text.toString() == "Eliga una opción"){
+                Toast.makeText(requireContext(),"Debe elegir nombre de usuario", Toast.LENGTH_SHORT).show()
+            }
+            else if(!sharedViewModel.opcionesListEditarAlmacenUsuario.contains(TextDropdown?.text.toString()) &&
+                TextDropdown?.text.toString() != "Eliga una opción"){
+                Toast.makeText(requireContext(),"El usuario no es válido", Toast.LENGTH_SHORT).show()
+            }
         }
 
        // EliminarAlmacen?.setOnClickListener {
@@ -118,21 +124,40 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
+                if(sharedViewModel.opcionesListEditarAlmacenUsuario.isEmpty()){
                 for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'","'"))
+                    sharedViewModel.opcionesListEditarAlmacenUsuario.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                  }
                 }
+                sharedViewModel.opcionesListEditarAlmacenUsuario.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
-                //binding.tvholaMundo?.setText(response.getString("Lista"))
+                val adapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,sharedViewModel.opcionesListEditarAlmacenUsuario)
+                //binding.TextDropdown?.setText(response.getString("Lista"))
                 binding.tvAutoCompleteEditable.setAdapter(adapter)
-
+                binding.tvAutoCompleteEditable.threshold = 1
                 binding.tvAutoCompleteEditable.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
                     val itemSelected = parent.getItemAtPosition(position)
                 }
+
+                TextDropdown?.setOnClickListener {
+                    if(TextDropdown?.text.toString() == "Eliga una opción"){
+                        binding.tvAutoCompleteEditable.setText("",false)
+                        TextDropdown?.showDropDown()
+                    }
+                }
+                TextDropdown?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && TextDropdown?.text.toString() == "Eliga una opción"){
+                        binding.tvAutoCompleteEditable.setText("",false)
+                        TextDropdown?.showDropDown()
+                    }
+                    else if (!hasFocus && !sharedViewModel.opcionesListEditarAlmacenUsuario.contains(TextDropdown?.text.toString())){
+                        Toast.makeText(requireContext(),"El nombre del usuario no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
             }, { error ->
-                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -162,43 +187,54 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                 }
 
             }, { error ->
-                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
     }
 
     private fun actualizarAlmacen() {
-        val url1 = "http://186.64.123.248/Reportes/Almacenes/actualizarAlmacen.php" // Reemplaza esto con tu URL de la API
-        val queue1 =Volley.newRequestQueue(requireContext())
-        val stringRequest = object: StringRequest(
-            Request.Method.POST,
-            url1,
-            { response ->
-                Toast.makeText(requireContext(), "Almacén actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
-                //   TextNombre?.setText("")
-                //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
-            },
-            { error ->
-                Log.i("Sebastian","Error: $error")
-                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+        if (TextNombre?.text.toString().isNotBlank()) {
+            val url1 =
+                "http://186.64.123.248/Reportes/Almacenes/actualizarAlmacen.php" // Reemplaza esto con tu URL de la API
+            val queue1 = Volley.newRequestQueue(requireContext())
+            val stringRequest = object : StringRequest(
+                Request.Method.POST,
+                url1,
+                { response ->
+                    Toast.makeText(
+                        requireContext(),
+                        "Almacén actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    //   TextNombre?.setText("")
+                    //   TextDireccion?.setText("")
+                    //   TextDropdown?.setText("Eliga una opción",false)
+                },
+                { error ->
+                    Log.i("Sebastian", "Error: $error")
+                    Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_SHORT).show()
+                    // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
+                }
+            ) {
+                override fun getParams(): MutableMap<String, String> {
+                    val parametros = HashMap<String, String>()
+                    parametros.put("ID_ALMACEN", sharedViewModel.id.last())
+                    parametros.put("ALMACEN", TextNombre?.text.toString().uppercase())
+                    parametros.put("DIRECCION_ALMACEN", TextDireccion?.text.toString().uppercase())
+                    parametros.put("ESTADO_ALMACEN", TextEstado.toString())
+                    parametros.put("USUARIO", TextDropdown?.text.toString())
+                    return parametros
+                }
             }
-        )
-
-        {
-            override fun getParams(): MutableMap<String, String> {
-                val parametros = HashMap<String, String>()
-                parametros.put("ID_ALMACEN", sharedViewModel.id.last())
-                parametros.put("ALMACEN", TextNombre?.text.toString().uppercase())
-                parametros.put("DIRECCION_ALMACEN", TextDireccion?.text.toString().uppercase())
-                parametros.put("ESTADO_ALMACEN", TextEstado.toString())
-                parametros.put("USUARIO", TextDropdown?.text.toString())
-                return parametros
-            }
+            queue1.add(stringRequest)
+        }else {
+            Toast.makeText(
+                requireContext(),
+                "El nombre del almacén es obligatorio",
+                Toast.LENGTH_SHORT
+            ).show()
         }
-        queue1.add(stringRequest)
     }
 
     private fun borrarRegistros(){
@@ -206,10 +242,10 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
         val queue = Volley.newRequestQueue(requireContext())
         var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
             { response ->
-              //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
+              //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_SHORT).show()
 
             },{error ->
-                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
             })
         {
             override fun getParams(): MutableMap<String, String> {
@@ -227,14 +263,14 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Almacén actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Almacén actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_SHORT).show()
              //   TextNombre?.setText("")
              //   TextDireccion?.setText("")
              //   TextDropdown?.setText("Eliga una opción",false)
             },
             { error ->
-                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_LONG).show()
-               // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
 
@@ -333,7 +369,7 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                    queue3.add(jsonObjectRequest3)
                }
 
-                //Toast.makeText(requireContext(),"${listaAlmacenes[0][0]} y $listaAlmacenes",Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"${listaAlmacenes[0][0]} y $listaAlmacenes",Toast.LENGTH_SHORT).show()
 
             }, { error ->
                 val queue2 = Volley.newRequestQueue(requireContext())
@@ -395,10 +431,10 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                         val queue = Volley.newRequestQueue(requireContext())
                         var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
                             { response ->
-                                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
+                                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_SHORT).show()
 
                             },{error ->
-                                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
+                                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
                             })
                         {
                             override fun getParams(): MutableMap<String, String> {
@@ -417,10 +453,10 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                         val queue = Volley.newRequestQueue(requireContext())
                         var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
                             { response ->
-                                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
+                                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_SHORT).show()
 
                             },{error ->
-                                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
+                                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
                             })
                         {
                             override fun getParams(): MutableMap<String, String> {
@@ -435,18 +471,18 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                         //VolleyError("El almacén ya se encuentra en la base de datos")
                         //queue1.cancelAll(TAG)
                         //jsonObjectRequest1.cancel()
-                        Toast.makeText(requireContext(), "El almacén ya se encuentra en la base de datos", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "El almacén ya se encuentra en la base de datos", Toast.LENGTH_SHORT).show()
                     }
                 }
                 else{
-                    Toast.makeText(requireContext(), "El nombre del almacén es obligatorio", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "El nombre del almacén es obligatorio", Toast.LENGTH_SHORT).show()
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
-                Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ){
             override fun getParams(): MutableMap<String, String> {

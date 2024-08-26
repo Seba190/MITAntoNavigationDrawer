@@ -63,6 +63,8 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
     var TextCodigoDeBarra: EditText? = null
     var Transferencia: String? = null
     private val sharedViewModel by activityViewModels<SharedViewModel>()
+    private var adapter : ArrayAdapter<String>? = null
+    private var encontrarProducto: Boolean = false
     // var DropDownProveedor: AutoCompleteTextView? = null
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -136,29 +138,40 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
         }
 
         binding.bAnadirFactura.setOnClickListener {
-            val queue = Volley.newRequestQueue(requireContext())
-            val url = "http://186.64.123.248/Transferencia/preguntarInventario.php"
-            val jsonObjectRequest = object : StringRequest(
-                Request.Method.POST, url,
-                { response ->
-                    try {
-                        if (binding.tvListaDesplegableElegirProducto.text.toString() != "Eliga una opción") {
+            encontrarProducto = sharedViewModel.opcionesListEditarTransferencia.any { item ->
+                val trimmedItem = item.substringBefore(" (")
+                Log.i("Sebastian2", "${sharedViewModel.opcionesListEditarTransferencia}, $trimmedItem, ${DropDownProducto?.text.toString().substringBefore(" (").uppercase()}")
+                trimmedItem == DropDownProducto?.text.toString().substringBefore(" (").uppercase()
+            }
+            if(encontrarProducto && DropDownProducto?.text.toString().contains("(") &&
+                DropDownProducto?.text.toString().contains(")")) {
+                val queue = Volley.newRequestQueue(requireContext())
+                val url = "http://186.64.123.248/Transferencia/preguntarInventario.php"
+                val jsonObjectRequest = object : StringRequest(
+                    Request.Method.POST, url,
+                    { response ->
+                        try {
                             val cantidadUnidades = JSONObject(response).getString("Cantidad")
                             if (binding.llUnidadesElegirProducto.isVisible) {
                                 if (binding.etCantidad.text.isNotBlank()) {
-                                    if (cantidadUnidades.toInt() < binding.etCantidad.text.toString().toInt()) {
+                                    if (cantidadUnidades.toInt() < binding.etCantidad.text.toString()
+                                            .toInt()
+                                    ) {
                                         val inflater = requireActivity().layoutInflater
                                         val layout = inflater.inflate(R.layout.toast_custom, null)
-                                        val text = layout.findViewById<TextView>(R.id.text_view_toast)
-                                        text.text = "La cantidad es mayor que la cantidad en inventario"
+                                        val text =
+                                            layout.findViewById<TextView>(R.id.text_view_toast)
+                                        text.text =
+                                            "La cantidad es mayor que la cantidad en inventario"
                                         val toast = Toast(requireContext())
-                                        toast.duration = Toast.LENGTH_LONG
+                                        toast.duration = Toast.LENGTH_SHORT
                                         toast.view = layout
                                         toast.setGravity(Gravity.BOTTOM, 0, 600)
                                         toast.show()
                                     } else {
                                         sharedViewModel.listaDeProductos.add(binding.tvListaDesplegableElegirProducto.text.toString())
                                         sharedViewModel.listaDeCantidades.add(binding.etCantidad.text.toString())
+                                        eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
                                         someFunctionToUpdateAnadirTransferenciaFragment()
                                         sendDataToAnadirTransferenciaFragment(
                                             sharedViewModel.listaDeCantidades,
@@ -171,7 +184,11 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                                         )
                                         binding.etCodigoDeBarra.setText("")
                                         binding.etCantidad.setText("")
-                                        Toast.makeText(requireContext(), "Se ha agregado el producto a la transferencia", Toast.LENGTH_LONG).show()
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Se ha agregado el producto a la transferencia",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 } else {
                                     Toast.makeText(
@@ -180,16 +197,20 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
-                            }
-                            else if (binding.llCajasDeProductoElegirProducto.isVisible) {
+                            } else if (binding.llCajasDeProductoElegirProducto.isVisible) {
                                 if (binding.etNumeroDeCajas.text.isNotBlank() && binding.etArticulosPorCaja.text.isNotBlank()) {
-                                    if (cantidadUnidades.toInt() < binding.etNumeroDeCajas.text.toString().toInt()*binding.etArticulosPorCaja.text.toString().toInt()) {
+                                    if (cantidadUnidades.toInt() < binding.etNumeroDeCajas.text.toString()
+                                            .toInt() * binding.etArticulosPorCaja.text.toString()
+                                            .toInt()
+                                    ) {
                                         val inflater = requireActivity().layoutInflater
                                         val layout = inflater.inflate(R.layout.toast_custom, null)
-                                        val text = layout.findViewById<TextView>(R.id.text_view_toast)
-                                        text.text = "La cantidad es mayor que la cantidad en inventario"
+                                        val text =
+                                            layout.findViewById<TextView>(R.id.text_view_toast)
+                                        text.text =
+                                            "La cantidad es mayor que la cantidad en inventario"
                                         val toast = Toast(requireContext())
-                                        toast.duration = Toast.LENGTH_LONG
+                                        toast.duration = Toast.LENGTH_SHORT
                                         toast.view = layout
                                         toast.setGravity(Gravity.BOTTOM, 0, 600)
                                         toast.show()
@@ -202,18 +223,22 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                                                 )
                                         sharedViewModel.listaDeProductos.add(binding.tvListaDesplegableElegirProducto.text.toString())
                                         sharedViewModel.listaDeCantidades.add(cantidad.toString())
+                                        eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
                                         someFunctionToUpdateAnadirTransferenciaFragment()
-                                        sendDataToAnadirTransferenciaFragment(
-                                            sharedViewModel.listaDeCantidades,
-                                            sharedViewModel.listaDeProductos
-                                        )
+                                        sendDataToAnadirTransferenciaFragment(sharedViewModel.listaDeCantidades, sharedViewModel.listaDeProductos)
                                         // refreshAdapterAnadirTransferenciaFragment()
-                                        binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
+                                        binding.tvListaDesplegableElegirProducto.setText(
+                                            "Eliga una opción",
+                                            false
+                                        )
                                         binding.etArticulosPorCaja.setText("")
                                         binding.etNumeroDeCajas.setText("")
                                         binding.etCodigoDeBarra.setText("")
                                         Toast.makeText(
-                                            requireContext(), "Se ha agregado el producto a la transferencia", Toast.LENGTH_LONG).show()
+                                            requireContext(),
+                                            "Se ha agregado el producto a la transferencia",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 } else {
                                     Toast.makeText(
@@ -223,35 +248,195 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                                     ).show()
                                 }
                             } else {
-                                Toast.makeText(requireContext(), "No se ha podido ingresar la factura", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "No se ha podido ingresar la factura",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-                        } else {
-                            Toast.makeText(requireContext(), "No olvide elegir el producto", Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                requireContext(),
+                                "La excepcion es $e",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                            Log.i("Sebastián", "$e")
                         }
-                    } catch (e: Exception) {
-                        Toast.makeText(requireContext(), "La excepcion es $e", Toast.LENGTH_LONG)
-                            .show()
-                        Log.i("Sebastián", "$e")
-                    }
-                },
-                { error ->
-                    Toast.makeText(requireContext(), "No hay producto para transferir en el almacén de origen", Toast.LENGTH_LONG).show()
-                    binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
-                    binding.etArticulosPorCaja.setText("")
-                    binding.etNumeroDeCajas.setText("")
-                    binding.etCodigoDeBarra.setText("")
-                    binding.etCantidad.setText("")
+                    },
+                    { error ->
+                        Toast.makeText(
+                            requireContext(),
+                            "No hay producto para transferir en el almacén de origen",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
+                        binding.etArticulosPorCaja.setText("")
+                        binding.etNumeroDeCajas.setText("")
+                        binding.etCodigoDeBarra.setText("")
+                        binding.etCantidad.setText("")
 
-                    Log.i("Sebastián", "$error")
-                }) {
-                override fun getParams(): MutableMap<String, String> {
-                    val parametros = HashMap<String, String>()
-                    parametros.put("ALMACEN_ORIGEN", sharedViewModel.almacen)
-                    parametros.put("PRODUCTO", DropDownProducto?.text.toString())
-                    return parametros
+                        Log.i("Sebastián", "$error")
+                    }) {
+                    override fun getParams(): MutableMap<String, String> {
+                        val parametros = HashMap<String, String>()
+                        parametros.put("ALMACEN_ORIGEN", sharedViewModel.almacen)
+                        parametros.put("PRODUCTO", "${DropDownProducto?.text.toString().substringBefore('(').uppercase()}( 0 unid. )")
+                        return parametros
+                    }
                 }
+                queue.add(jsonObjectRequest)
+            }else if(!encontrarProducto && DropDownProducto?.text.toString() != "Eliga una opción") {
+                Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
+            } else if(DropDownProducto?.text.toString() == "Eliga una opción"){
+                Toast.makeText(requireContext(), "Debe elegir producto", Toast.LENGTH_SHORT).show()
+            }else if(encontrarProducto && !DropDownProducto?.text.toString().contains("(") &&
+                !DropDownProducto?.text.toString().contains(")")){
+                val queue = Volley.newRequestQueue(requireContext())
+                val url = "http://186.64.123.248/Transferencia/preguntarInventario.php"
+                val jsonObjectRequest = object : StringRequest(
+                    Request.Method.POST, url,
+                    { response ->
+                        try {
+                            val cantidadUnidades = JSONObject(response).getString("Cantidad")
+                            if (binding.llUnidadesElegirProducto.isVisible) {
+                                if (binding.etCantidad.text.isNotBlank()) {
+                                    if (cantidadUnidades.toInt() < binding.etCantidad.text.toString()
+                                            .toInt()
+                                    ) {
+                                        val inflater = requireActivity().layoutInflater
+                                        val layout = inflater.inflate(R.layout.toast_custom, null)
+                                        val text =
+                                            layout.findViewById<TextView>(R.id.text_view_toast)
+                                        text.text =
+                                            "La cantidad es mayor que la cantidad en inventario"
+                                        val toast = Toast(requireContext())
+                                        toast.duration = Toast.LENGTH_SHORT
+                                        toast.view = layout
+                                        toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                        toast.show()
+                                    } else {
+                                        sharedViewModel.listaDeProductos.add(binding.tvListaDesplegableElegirProducto.text.toString())
+                                        sharedViewModel.listaDeCantidades.add(binding.etCantidad.text.toString())
+                                        eliminarElementoDeListaDesplegableSinParentesis(DropDownProducto?.text.toString().uppercase())
+                                        someFunctionToUpdateAnadirTransferenciaFragment()
+                                        sendDataToAnadirTransferenciaFragment(
+                                            sharedViewModel.listaDeCantidades,
+                                            sharedViewModel.listaDeProductos
+                                        )
+                                        //  refreshAdapterAnadirTransferenciaFragment()
+                                        binding.tvListaDesplegableElegirProducto.setText(
+                                            "Eliga una opción",
+                                            false
+                                        )
+                                        binding.etCodigoDeBarra.setText("")
+                                        binding.etCantidad.setText("")
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Se ha agregado el producto a la transferencia",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                } else {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Falta ingresar la cantidad",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else if (binding.llCajasDeProductoElegirProducto.isVisible) {
+                                if (binding.etNumeroDeCajas.text.isNotBlank() && binding.etArticulosPorCaja.text.isNotBlank()) {
+                                    if (cantidadUnidades.toInt() < binding.etNumeroDeCajas.text.toString()
+                                            .toInt() * binding.etArticulosPorCaja.text.toString()
+                                            .toInt()
+                                    ) {
+                                        val inflater = requireActivity().layoutInflater
+                                        val layout = inflater.inflate(R.layout.toast_custom, null)
+                                        val text =
+                                            layout.findViewById<TextView>(R.id.text_view_toast)
+                                        text.text =
+                                            "La cantidad es mayor que la cantidad en inventario"
+                                        val toast = Toast(requireContext())
+                                        toast.duration = Toast.LENGTH_SHORT
+                                        toast.view = layout
+                                        toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                        toast.show()
+                                    } else {
+                                        val cantidad =
+                                            binding.etNumeroDeCajas.text.toString().toInt()
+                                                .times(
+                                                    binding.etArticulosPorCaja.text.toString()
+                                                        .toInt()
+                                                )
+                                        sharedViewModel.listaDeProductos.add(binding.tvListaDesplegableElegirProducto.text.toString())
+                                        sharedViewModel.listaDeCantidades.add(cantidad.toString())
+                                        eliminarElementoDeListaDesplegableSinParentesis(DropDownProducto?.text.toString().uppercase())
+                                        someFunctionToUpdateAnadirTransferenciaFragment()
+                                        sendDataToAnadirTransferenciaFragment(
+                                            sharedViewModel.listaDeCantidades,
+                                            sharedViewModel.listaDeProductos
+                                        )
+                                        // refreshAdapterAnadirTransferenciaFragment()
+                                        binding.tvListaDesplegableElegirProducto.setText(
+                                            "Eliga una opción",
+                                            false
+                                        )
+                                        binding.etArticulosPorCaja.setText("")
+                                        binding.etNumeroDeCajas.setText("")
+                                        binding.etCodigoDeBarra.setText("")
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Se ha agregado el producto a la transferencia",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                } else {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Falta ingresar al menos los articulos por caja o el número de cajas",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "No se ha podido ingresar la factura",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                requireContext(),
+                                "La excepcion es $e",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                            Log.i("Sebastián", "$e")
+                        }
+                    },
+                    { error ->
+                        Toast.makeText(
+                            requireContext(),
+                            "No hay producto para transferir en el almacén de origen",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
+                        binding.etArticulosPorCaja.setText("")
+                        binding.etNumeroDeCajas.setText("")
+                        binding.etCodigoDeBarra.setText("")
+                        binding.etCantidad.setText("")
+
+                        Log.i("Sebastián", "$error")
+                    }) {
+                    override fun getParams(): MutableMap<String, String> {
+                        val parametros = HashMap<String, String>()
+                        parametros.put("ALMACEN_ORIGEN", sharedViewModel.almacen)
+                        parametros.put("PRODUCTO", "${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                        return parametros
+                    }
+                }
+                queue.add(jsonObjectRequest)
             }
-            queue.add(jsonObjectRequest)
         }
 
         binding.bVolver.setOnClickListener {
@@ -265,7 +450,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
              if(it){
                  findNavController().navigate(R.id.action_nav_añadir_transferencia_to_nav_barcode_scan)
              }else{
-                 Toast.makeText(requireContext(),"Permiso denegado",Toast.LENGTH_LONG).show()
+                 Toast.makeText(requireContext(),"Permiso denegado",Toast.LENGTH_SHORT).show()
              }
          }
          binding.bEscanearCodigoDeBarra.setOnClickListener {
@@ -332,14 +517,21 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                         sharedViewModel.opcionesListEditarTransferencia.add(jsonArray.getString(i).replace("'", ""))
                     }
                 }
+
+                sharedViewModel.opcionesListEditarTransferencia.removeAll { elemento ->
+                    Log.i("ListaRemoverInventario5", "${sharedViewModel.opcionesListEditarTransferencia}, $elemento, ${sharedViewModel.listaDeProductos}")
+                    sharedViewModel.listaDeProductos.any{it == elemento}
+                }
                /* sharedViewModel.opcionesListEditarTransferencia.removeAll { elemento ->
                     val elementoABuscar = "${elemento.substringBefore('(')}( 0 unid. )"
                     sharedViewModel.listaDeProductos.contains(elementoABuscar)
                 }*/
+                sharedViewModel.opcionesListEditarTransferencia.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,sharedViewModel.opcionesListEditarTransferencia)
+                 adapter = ArrayAdapter(requireContext(),R.layout.list_item,sharedViewModel.opcionesListEditarTransferencia)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownProducto?.setAdapter(adapter)
+                DropDownProducto?.threshold = 1
                 DropDownProducto?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
                     if(binding.llCajasDeProductoElegirProducto.isVisible){
@@ -353,17 +545,56 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                         if(s != null && s.length == 13) {
                             codigoDeBarra()
                             Handler(Looper.getMainLooper()).postDelayed({
-                                if (DropDownProducto?.text.toString() != "Eliga una opción") {
+                                if(DropDownProducto?.text.toString().contains("(") &&
+                                    DropDownProducto?.text.toString().contains(")")){
                                     precioYCantidad(DropDownProducto?.text.toString())
+                                }else if(!DropDownProducto?.text.toString().contains("(") &&
+                                    !DropDownProducto?.text.toString().contains(")")){
+                                    Log.i("PrecioyCantidad2","${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                                    precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                                 }
                             }, 300)
                         }
                     }
 
                 })
+                DropDownProducto?.setOnClickListener {
+                    if(DropDownProducto?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableElegirProducto.setText("",false)
+                        DropDownProducto?.showDropDown()
+                    }
+                }
+                DropDownProducto?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && DropDownProducto?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableElegirProducto.setText("",false)
+                        DropDownProducto?.showDropDown()
+                    }
+                    encontrarProducto = sharedViewModel.opcionesListEditarTransferencia.any { item ->
+                        val trimmedItem = item.substringBefore(" (")
+                        trimmedItem == DropDownProducto?.text.toString().substringBefore(" (").uppercase()
+                    }
+                    //Si es un valor no válido con los parentesis
+                    if((binding.tvListaDesplegableElegirProducto.text.toString().contains("(") &&
+                                binding.tvListaDesplegableElegirProducto.text.toString().contains(")"))) {
+                        if (!hasFocus && !sharedViewModel.opcionesListEditarTransferencia.contains(
+                                DropDownProducto?.text.toString())) {
+                            Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
+                        }
+                        //Si es un valor no válido sin los parentesis
+                    }else if(!binding.tvListaDesplegableElegirProducto.text.toString().contains("(") &&
+                        !binding.tvListaDesplegableElegirProducto.text.toString().contains(")")){
+
+                        if(!hasFocus && !encontrarProducto){
+                            Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
+                        }
+                        if(!hasFocus){
+                            precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                        }
+                    }
+                }
             },
             { error ->
-                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()
             }) {
             override fun getParams(): MutableMap<String, String> {
                 val parametros = HashMap<String, String>()
@@ -378,16 +609,23 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
         super.onViewCreated(view, savedInstanceState)
         sharedViewModel.CodigoDeBarraTransferencia.observe(viewLifecycleOwner) { newText ->
             binding.etCodigoDeBarra.setText(newText)
-            codigoDeBarra()
             Handler(Looper.getMainLooper()).postDelayed({
-                if (DropDownProducto?.text.toString() != "Eliga una opción") {
+                if(DropDownProducto?.text.toString().contains("(") &&
+                    DropDownProducto?.text.toString().contains(")")){
                     precioYCantidad(DropDownProducto?.text.toString())
+                }else if(!DropDownProducto?.text.toString().contains("(") &&
+                    !DropDownProducto?.text.toString().contains(")")){
+                    Log.i("PrecioyCantidad","${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                    precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                 }
             }, 300)
         }
+        Handler(Looper.getMainLooper()).postDelayed({
+        codigoDeBarra()
+        }, 100)
 
     }
-    // codigoDeBarra()
+
 
 
     /* private fun ListaDesplegableElegirProveedor() {
@@ -428,7 +666,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
 
                  }
              }, { error ->
-                 //Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                 //Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()
              }
          )
          queue1.add(jsonObjectRequest1)
@@ -461,7 +699,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
             }, { error ->
                 /*if(binding.tvListaDesplegableElegirProveedor.text.toString() != "Eliga una opción" &&
             binding.tvListaDesplegableElegirProducto.text.toString() != "Eliga una opción") {*/
-                Toast.makeText(requireContext(), "No se ha podido cargar los parametros $error", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "No se ha podido cargar los parametros $error", Toast.LENGTH_SHORT).show()
                 // binding.etCantidad.setText(unidadesEmbalaje)
                 Log.i("Runtime","$error")
             }
@@ -516,14 +754,14 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                     }
                     catch(e: Exception){
                         Toast.makeText(requireContext(), "No hay producto o embalaje asociado a este código de barra",
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 },
                 { error ->
                     Toast.makeText(
                         requireContext(),
-                        "No hay producto o embalaje asociado a este código de barra, error: $error",
+                        "No hay producto o embalaje asociado a este código de barra",
                         Toast.LENGTH_SHORT
                     ).show()
                 }) {
@@ -541,63 +779,157 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
     }
 
     fun preguntarInventario(){
-        val queue = Volley.newRequestQueue(requireContext())
-        val url = "http://186.64.123.248/Transferencia/preguntarInventario.php"
-        val jsonObjectRequest = object : StringRequest(
-            Request.Method.POST, url,
-            { response ->
-                try {
-                    val cantidad = JSONObject(response).getString("Cantidad")
-                    if(binding.llUnidadesElegirProducto.isVisible) {
-                        if (cantidad.toInt() < binding.etCantidad.text.toString().toInt()) {
-                            val inflater = requireActivity().layoutInflater
-                            val layout = inflater.inflate(R.layout.toast_custom,null)
-                            val text = layout.findViewById<TextView>(R.id.text_view_toast)
-                            text.text = "La cantidad es mayor que la cantidad en inventario"
-                            val toast = Toast(requireContext())
-                            toast.duration = Toast.LENGTH_LONG
-                            toast.view = layout
-                            toast.setGravity(Gravity.BOTTOM, 0, 600)
-                            toast.show()
-                        }
-                    }
-                    else if(binding.llCajasDeProductoElegirProducto.isVisible) {
-                        if(binding.etNumeroDeCajas.text.isNotBlank() && binding.etArticulosPorCaja.text.isNotBlank()) {
-                            if (cantidad.toInt() < binding.etNumeroDeCajas.text.toString().toInt()
-                                    .times(binding.etArticulosPorCaja.text.toString().toInt())
-                            ) {
+        if (DropDownProducto?.text.toString().contains("(") &&
+            DropDownProducto?.text.toString().contains(")")
+        ) {
+            val queue = Volley.newRequestQueue(requireContext())
+            val url = "http://186.64.123.248/Transferencia/preguntarInventario.php"
+            val jsonObjectRequest = object : StringRequest(
+                Request.Method.POST, url,
+                { response ->
+                    try {
+                        val cantidad = JSONObject(response).getString("Cantidad")
+                        if (binding.llUnidadesElegirProducto.isVisible) {
+                            if (cantidad.toInt() < binding.etCantidad.text.toString().toInt()) {
                                 val inflater = requireActivity().layoutInflater
                                 val layout = inflater.inflate(R.layout.toast_custom, null)
                                 val text = layout.findViewById<TextView>(R.id.text_view_toast)
                                 text.text = "La cantidad es mayor que la cantidad en inventario"
                                 val toast = Toast(requireContext())
-                                toast.duration = Toast.LENGTH_LONG
+                                toast.duration = Toast.LENGTH_SHORT
                                 toast.view = layout
                                 toast.setGravity(Gravity.BOTTOM, 0, 600)
                                 toast.show()
                             }
+                        } else if (binding.llCajasDeProductoElegirProducto.isVisible) {
+                            if (binding.etNumeroDeCajas.text.isNotBlank() && binding.etArticulosPorCaja.text.isNotBlank()) {
+                                if (cantidad.toInt() < binding.etNumeroDeCajas.text.toString()
+                                        .toInt()
+                                        .times(binding.etArticulosPorCaja.text.toString().toInt())
+                                ) {
+                                    val inflater = requireActivity().layoutInflater
+                                    val layout = inflater.inflate(R.layout.toast_custom, null)
+                                    val text = layout.findViewById<TextView>(R.id.text_view_toast)
+                                    text.text = "La cantidad es mayor que la cantidad en inventario"
+                                    val toast = Toast(requireContext())
+                                    toast.duration = Toast.LENGTH_SHORT
+                                    toast.view = layout
+                                    toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                    toast.show()
+                                }
+                            }
                         }
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            requireContext(), "La excepcion es $e",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.i("Sebastián", "$e")
                     }
+                },
+                { error ->
+                    //  Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_SHORT).show()
+                    Log.i("Sebastián", "$error")
+                }) {
+                override fun getParams(): MutableMap<String, String> {
+                    val parametros = HashMap<String, String>()
+                    parametros.put("ALMACEN_ORIGEN", sharedViewModel.almacen)
+                    parametros.put("PRODUCTO", DropDownProducto?.text.toString())
+                    return parametros
                 }
-                catch(e: Exception){
-                    Toast.makeText(requireContext(), "La excepcion es $e",
-                        Toast.LENGTH_LONG
-                    ).show()
-                    Log.i("Sebastián", "$e")
-                }
-            },
-            { error ->
-                //  Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_LONG).show()
-                Log.i("Sebastián", "$error")
-            }) {
-            override fun getParams(): MutableMap<String, String> {
-                val parametros = HashMap<String, String>()
-                parametros.put("ALMACEN_ORIGEN", sharedViewModel.almacen)
-                parametros.put("PRODUCTO", DropDownProducto?.text.toString())
-                return parametros
             }
+            queue.add(jsonObjectRequest)
+        }else if (!DropDownProducto?.text.toString().contains("(") &&
+            !DropDownProducto?.text.toString().contains(")")
+        ) {
+            val queue = Volley.newRequestQueue(requireContext())
+            val url = "http://186.64.123.248/Transferencia/preguntarInventario.php"
+            val jsonObjectRequest = object : StringRequest(
+                Request.Method.POST, url,
+                { response ->
+                    try {
+                        val cantidad = JSONObject(response).getString("Cantidad")
+                        if (binding.llUnidadesElegirProducto.isVisible) {
+                            if (cantidad.toInt() < binding.etCantidad.text.toString().toInt()) {
+                                val inflater = requireActivity().layoutInflater
+                                val layout = inflater.inflate(R.layout.toast_custom, null)
+                                val text = layout.findViewById<TextView>(R.id.text_view_toast)
+                                text.text = "La cantidad es mayor que la cantidad en inventario"
+                                val toast = Toast(requireContext())
+                                toast.duration = Toast.LENGTH_SHORT
+                                toast.view = layout
+                                toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                toast.show()
+                            }
+                        } else if (binding.llCajasDeProductoElegirProducto.isVisible) {
+                            if (binding.etNumeroDeCajas.text.isNotBlank() && binding.etArticulosPorCaja.text.isNotBlank()) {
+                                if (cantidad.toInt() < binding.etNumeroDeCajas.text.toString()
+                                        .toInt()
+                                        .times(binding.etArticulosPorCaja.text.toString().toInt())
+                                ) {
+                                    val inflater = requireActivity().layoutInflater
+                                    val layout = inflater.inflate(R.layout.toast_custom, null)
+                                    val text = layout.findViewById<TextView>(R.id.text_view_toast)
+                                    text.text = "La cantidad es mayor que la cantidad en inventario"
+                                    val toast = Toast(requireContext())
+                                    toast.duration = Toast.LENGTH_SHORT
+                                    toast.view = layout
+                                    toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                    toast.show()
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            requireContext(), "La excepcion es $e",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.i("Sebastián", "$e")
+                    }
+                },
+                { error ->
+                    //  Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_SHORT).show()
+                    Log.i("Sebastián", "$error")
+                }) {
+                override fun getParams(): MutableMap<String, String> {
+                    val parametros = HashMap<String, String>()
+                    parametros.put("ALMACEN_ORIGEN", sharedViewModel.almacen)
+                    parametros.put("PRODUCTO", "${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                    return parametros
+                }
+            }
+            queue.add(jsonObjectRequest)
         }
-        queue.add(jsonObjectRequest)
+    }
+
+    fun eliminarElementoDeListaDesplegableSinParentesis(nombre: String) {
+        // Filtra la lista para encontrar el elemento a eliminar
+        val itemToRemove = sharedViewModel.opcionesListEditarTransferencia.find { it.startsWith(nombre) }
+        Log.i("eliminarElementoDeListaDesplegable","$itemToRemove")
+        // Si se encuentra el elemento, eliminarlo
+        if (itemToRemove != null) {
+            sharedViewModel.opcionesListEditarTransferencia.remove(itemToRemove)
+            // Notificar al adaptador que los datos han cambiado
+            adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, sharedViewModel.opcionesListEditarTransferencia)
+            DropDownProducto?.threshold = 1
+            DropDownProducto?.setAdapter(adapter)
+            adapter!!.notifyDataSetChanged()
+
+        }
+
+    }
+
+    fun eliminarElementoDeListaDesplegableConParentesis(nombre: String) {
+        // Filtra la lista para encontrar el elemento a eliminar
+        val itemToRemove = nombre
+        // Si se encuentra el elemento, eliminarlo
+        sharedViewModel.opcionesListEditarTransferencia.remove(itemToRemove)
+        // Notificar al adaptador que los datos han cambiado
+        adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, sharedViewModel.opcionesListEditarTransferencia)
+        DropDownProducto?.threshold = 1
+        DropDownProducto?.setAdapter(adapter)
+        adapter!!.notifyDataSetChanged()
+
     }
 
 

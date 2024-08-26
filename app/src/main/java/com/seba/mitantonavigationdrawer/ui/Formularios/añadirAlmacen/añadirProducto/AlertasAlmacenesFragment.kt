@@ -89,7 +89,7 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
             sharedViewModel.ListasDeAlertas.clear()
             sharedViewModel.ListasDeAlmacenes.clear()
             sharedViewModel.ListasDeProductosAlertas.clear()
-            Toast.makeText(requireContext(), "Se han eliminado las alertas exitosamente", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Se han eliminado las alertas exitosamente", Toast.LENGTH_SHORT).show()
         }
 
 
@@ -111,13 +111,13 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
                     setFragmentResult("AlertaAlmacen$i", bundleOf("Almacen$i" to sharedViewModel.listaDeBodegasAnadir[i], "Alerta$i" to sharedViewModel.listaDeAlertasAnadir[i]))
                     }
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente las alertas", Toast.LENGTH_LONG).show()
             }
                 binding.rlAlertasAlmacenes.isVisible = false
                 val anadirProductoFragment = AnadirProductoFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlAlertasAlmacenes, anadirProductoFragment)
                     .commitNow()
+             Toast.makeText(requireContext(), "Se han agregado exitosamente las alertas", Toast.LENGTH_SHORT).show()
             }
 
         return root
@@ -251,7 +251,7 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
              //nombreImagen?.isInEditMode
              nombreImagen?.text = resultado
              setFragmentResult(REQUEST_KEY_2, bundleOf("mensaje" to resultado))
-             Toast.makeText(requireContext(), "Texto recibido: ${adapter.alertasAlmacenesList[viewHolder.adapterPosition].Nombre} y $text", Toast.LENGTH_LONG).show()
+             Toast.makeText(requireContext(), "Texto recibido: ${adapter.alertasAlmacenesList[viewHolder.adapterPosition].Nombre} y $text", Toast.LENGTH_SHORT).show()
          }*/
    /* override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -268,7 +268,7 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
         AlertasAlmacenesAdapter(listaDeAlmacenes, this,
         {
                 text ->
-           // Toast.makeText(requireContext(),"El texto es $text",Toast.LENGTH_LONG).show()
+           // Toast.makeText(requireContext(),"El texto es $text",Toast.LENGTH_SHORT).show()
         },this)*/
  //   }
 

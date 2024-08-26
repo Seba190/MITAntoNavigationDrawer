@@ -43,7 +43,7 @@
         tools:text ="Nombre Factura"
         android:layout_marginStart="110dp"
         android:layout_marginTop="15dp"
-        android:textSize="22sp"/>
+        android:textSize="20sp"/>
 
     <TextView
         android:id="@+id/tvUnidadesSinFactura"
@@ -52,8 +52,8 @@
         android:textColor="@color/black"
         tools:text ="1000"
         android:layout_marginStart="105dp"
-        android:layout_marginTop="50dp"
-        android:textSize="18sp"/>
+        android:layout_marginTop="55dp"
+        android:textSize="15sp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -61,8 +61,8 @@
         android:textColor="@color/black"
         android:text =" units. del almacén "
         android:layout_marginStart="150dp"
-        android:layout_marginTop="50dp"
-        android:textSize="18sp"/>
+        android:layout_marginTop="55dp"
+        android:textSize="15sp"/>
 
     <TextView
         android:id="@+id/tvNombreAlmacenSinFactura"
@@ -71,8 +71,8 @@
         android:textColor="@color/black"
         tools:text ="Nombre Almacén"
         android:layout_marginStart="105dp"
-        android:layout_marginTop="80dp"
-        android:textSize="18sp"/>
+        android:layout_marginTop="85dp"
+        android:textSize="15sp"/>
 
 
 

@@ -89,13 +89,13 @@ class ClientePrecioVentaEditarFragment : Fragment(R.layout.fragment_cliente_prec
             sharedViewModel.ListasDePreciosDeVenta.clear()
             sharedViewModel.ListasDeProductosPrecioVenta.clear()
             sharedViewModel.numeroPreciosVenta.clear()
-            Toast.makeText(requireContext(), "Se han eliminado los precios exitosamente", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Se han eliminado los precios exitosamente", Toast.LENGTH_SHORT).show()
         }
 
         binding.bAgregarClienteEditar.setOnClickListener {
             adapterPrecioVenta.getAllEditTextContents()
             adapterPrecioVenta.getAllTextViewContents()
-            //Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_SHORT).show()
             Log.i("Sebastian2", "${sharedViewModel.listaDeClientes} y ${sharedViewModel.listaDePreciosVenta}")
 
             if (sharedViewModel.numeroPreciosVenta.isEmpty()) {
@@ -104,14 +104,13 @@ class ClientePrecioVentaEditarFragment : Fragment(R.layout.fragment_cliente_prec
                         sharedViewModel.numeroPreciosVenta.add(adapterPrecioVenta.clientePrecioVentaList[i].Nombre)
 
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de venta", Toast.LENGTH_LONG).show()
             }
                 binding.rlPrecioVentaClientesEditar.isVisible = false
                 val editarProductoFragment = EditarProductoFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlPrecioVentaClientesEditar, editarProductoFragment)
                     .commitNow()
-
+            Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de venta", Toast.LENGTH_SHORT).show()
         }
 
         return root

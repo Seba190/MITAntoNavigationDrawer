@@ -44,6 +44,7 @@ class TiposDeProductosFragment : Fragment(R.layout.fragment_tipos_de_productos) 
 
         _binding = FragmentTiposDeProductosBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        binding.tvTextoNoTiposDeProducto.isVisible = false
         //Aquí se programa
         retrofit = getRetrofit()
         initUI()
@@ -73,6 +74,7 @@ class TiposDeProductosFragment : Fragment(R.layout.fragment_tipos_de_productos) 
                     activity?.runOnUiThread {
                         adapter.updateList(response.TiposDeProductos)
                         binding.progressBarTiposDeProductos.isVisible = false
+                        binding.tvTextoNoTiposDeProducto.isVisible = response.TiposDeProductos.isEmpty()
                     }
                 }
 

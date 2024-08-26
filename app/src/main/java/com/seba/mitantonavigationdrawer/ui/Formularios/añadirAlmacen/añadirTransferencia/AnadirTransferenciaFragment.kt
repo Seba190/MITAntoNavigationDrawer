@@ -122,7 +122,8 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
 
         binding.nsvElegirProducto.isVisible = false
         binding.bAnadirNuevoProducto.setOnClickListener {
-            if (DropDownOrigen?.text.toString() != "Eliga una opción" && DropDownDestino?.text.toString() != "Eliga una opción") {
+            if (sharedViewModel.opcionesListTransferenciaOrigen.contains(DropDownOrigen?.text.toString()) &&
+                sharedViewModel.opcionesListTransferenciaDestino.contains(DropDownDestino?.text.toString())) {
                 sharedViewModel.almacen = DropDownOrigen?.text.toString()
                 sharedViewModel.listaDeAlmacenesTransferencia.add(DropDownOrigen?.text.toString())
                 binding.nsvElegirProducto.isVisible = true
@@ -153,9 +154,9 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                             Toast.makeText(
                                 requireContext(),
                                 "Conecte la aplicación al servidor",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_SHORT
                             ).show()
-                            //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                            //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                         }
                     ) {
                         override fun getParams(): MutableMap<String, String> {
@@ -174,53 +175,42 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 binding.tvProductosAnadidos.isVisible = true
 
                 // binding.tvProductosAnadidos.isVisible = !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Eliga el almacén de origen y de destino",
-                    Toast.LENGTH_LONG
-                ).show()
+            } else if((!sharedViewModel.opcionesListTransferenciaOrigen.contains(DropDownOrigen?.text.toString()) &&
+                        !sharedViewModel.opcionesListTransferenciaDestino.contains(DropDownDestino?.text.toString())) &&
+                       (DropDownOrigen?.text.toString() == "Eliga una opción" &&
+                        DropDownDestino?.text.toString() == "Eliga una opción")) {
+                Toast.makeText(requireContext(), "Eliga el almacén de origen y de destino", Toast.LENGTH_SHORT).show()
+            } else if((!sharedViewModel.opcionesListTransferenciaOrigen.contains(DropDownOrigen?.text.toString()) &&
+                        !sharedViewModel.opcionesListTransferenciaDestino.contains(DropDownDestino?.text.toString())) &&
+                (DropDownOrigen?.text.toString() != "Eliga una opción" &&
+                        DropDownDestino?.text.toString() != "Eliga una opción")){
+                Toast.makeText(requireContext(),"El nombre del almacén de origen o destino no es válido", Toast.LENGTH_SHORT).show()
             }
 
         }
         binding.TransferenciaButtonEnviar.setOnClickListener {
-            /*if(!segundaVez) {
-                for (i in 0..<sharedViewModel.listaDeCantidades.size) {
-                    if ((sharedViewModel.listaDeCantidadesAntigua.size < sharedViewModel.listaDeCantidades.size) ||
-                        (sharedViewModel.listaDeProductosAntigua.size < sharedViewModel.listaDeProductos.size)
-                    ) {
-                        sharedViewModel.listaDeCantidadesAntigua.add(sharedViewModel.listaDeCantidades[i])
-                        sharedViewModel.listaDeProductosAntigua.add(sharedViewModel.listaDeProductos[i])
-                    }
-
+                if ((sharedViewModel.listaDeProductos.size > 0 && sharedViewModel.listaDeCantidades.size > 0) &&
+                    sharedViewModel.opcionesListTransferenciaOrigen.contains(DropDownOrigen?.text.toString()) &&
+                    sharedViewModel.opcionesListTransferenciaDestino.contains(DropDownDestino?.text.toString())) {
+                    ValidacionesIdInsertarDatos()
+                    adapter.notifyDataSetChanged()
+                    binding.rvElegirProducto.requestLayout()
+                } else if(sharedViewModel.listaDeProductos.size == 0 && sharedViewModel.listaDeCantidades.size == 0) {
+                    Toast.makeText(requireContext(), "Tiene que elegir al menos un producto", Toast.LENGTH_SHORT).show()
+                } else if(!sharedViewModel.opcionesListTransferenciaOrigen.contains(DropDownOrigen?.text.toString()) ||
+                !sharedViewModel.opcionesListTransferenciaDestino.contains(DropDownDestino?.text.toString())) {
+            Toast.makeText(requireContext(), "El almacén de origen o de destino no es válido", Toast.LENGTH_SHORT).show()
+                } else if(DropDownOrigen?.text.toString() == "Eliga una opción" ||
+                    DropDownDestino?.text.toString() == "Eliga una opción"){
+                    Toast.makeText(requireContext(),"Debe elegir el almacén de origen y de destino", Toast.LENGTH_SHORT).show()
                 }
-                segundaVez = true
-            }*/
-            if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
-                ValidacionesIdInsertarDatos()
-                adapter.notifyDataSetChanged()
-                binding.rvElegirProducto.requestLayout()
-             /* Handler(Looper.getMainLooper()).postDelayed({
-                for (i in 0..<sharedViewModel.listaDeCantidades.size) {
-                    if(sharedViewModel.listaDeCantidadesAntigua[i] != sharedViewModel.listaDeCantidades[i]){
-                        sharedViewModel.listaDeCantidadesAntigua[i] = sharedViewModel.listaDeCantidades[i]
-                    }
-                    if(sharedViewModel.listaDeProductosAntigua[i] != sharedViewModel.listaDeProductos[i]){
-                        sharedViewModel.listaDeProductosAntigua[i] = sharedViewModel.listaDeProductos[i]
-                    }
-                }
-            }, 500)*/
-            }else{
-                Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
-            }
-
         }
 
         requestCamara = registerForActivityResult(ActivityResultContracts.RequestPermission(),) {
             if (it) {
                 findNavController().navigate(R.id.action_nav_añadir_transferencia_to_nav_barcode_scan)
             } else {
-                Toast.makeText(requireContext(), "Permiso denegado", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Permiso denegado", Toast.LENGTH_SHORT).show()
             }
         }
         binding.bEscanearCodigoDeBarra.setOnClickListener {
@@ -246,36 +236,12 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
         //var segundaVez = false
         binding.bActualizarRecyclerView.setOnClickListener {
             binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
+             binding.nsvElegirProducto.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
             adapter.notifyDataSetChanged()
             binding.rvElegirProducto.requestLayout()
-           /* if(!segundaVez) {
-                for (i in 0..<sharedViewModel.listaDeCantidades.size) {
-                    if ((sharedViewModel.listaDeCantidadesAntigua.size < sharedViewModel.listaDeCantidades.size) ||
-                        (sharedViewModel.listaDeProductosAntigua.size < sharedViewModel.listaDeProductos.size)
-                    ) {
-                        sharedViewModel.listaDeCantidadesAntigua.add(sharedViewModel.listaDeCantidades[i])
-                        sharedViewModel.listaDeProductosAntigua.add(sharedViewModel.listaDeProductos[i])
-                    }
-
-                }
-                segundaVez = true
-            }*/
-            //preguntarInventario()
-         /*   Handler(Looper.getMainLooper()).postDelayed({
-                for (i in 0..<sharedViewModel.listaDeCantidades.size) {
-                    if(sharedViewModel.listaDeCantidadesAntigua[i] != sharedViewModel.listaDeCantidades[i]){
-                        sharedViewModel.listaDeCantidadesAntigua[i] = sharedViewModel.listaDeCantidades[i]
-                    }
-                    if(sharedViewModel.listaDeProductosAntigua[i] != sharedViewModel.listaDeProductos[i]){
-                        sharedViewModel.listaDeProductosAntigua[i] = sharedViewModel.listaDeProductos[i]
-                    }
-                }
-            }, 500)*/
-
             Log.i(
                 "Sebastian",
                 "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}")
-
         }
 
         binding.tvProductosAnadidos.isVisible = sharedViewModel.listaDeCantidades.isNotEmpty()
@@ -325,24 +291,41 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'", "'"))
-                }
+               if(sharedViewModel.opcionesListTransferenciaDestino.isEmpty()) {
+                   for (i in 0 until jsonArray.length()) {
+                       sharedViewModel.opcionesListTransferenciaDestino.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                   }
+               }
+                sharedViewModel.opcionesListTransferenciaDestino.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(), R.layout.list_item, opcionesList)
+                val adapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line, sharedViewModel.opcionesListTransferenciaDestino)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownDestino?.setAdapter(adapter)
-
+                DropDownDestino?.threshold = 1
                 DropDownDestino?.onItemClickListener =
                     AdapterView.OnItemClickListener { parent, view, position, id ->
                         val itemSelected = parent.getItemAtPosition(position)
                     }
+                DropDownDestino?.setOnClickListener {
+                    if(DropDownDestino?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableAlmacenDestino.setText("",false)
+                        DropDownDestino?.showDropDown()
+                    }
+                }
+                DropDownDestino?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && DropDownDestino?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableAlmacenDestino.setText("",false)
+                        DropDownDestino?.showDropDown()
+                    }
+                    else if (!hasFocus && !sharedViewModel.opcionesListTransferenciaDestino.contains(DropDownDestino?.text.toString())){
+                        Toast.makeText(requireContext(),"El nombre del almacén de destino no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }, { error ->
                 Toast.makeText(
                     requireContext(),
                     " La aplicación no se ha conectado con el servidor",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
             }
         )
@@ -358,15 +341,17 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                if(sharedViewModel.opcionesListTransferenciaOrigen.isEmpty()) {
+                    for (i in 0 until jsonArray.length()) {
+                        sharedViewModel.opcionesListTransferenciaOrigen.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                    }
                 }
+                sharedViewModel.opcionesListTransferenciaOrigen.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(), R.layout.list_item, opcionesList)
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, sharedViewModel.opcionesListTransferenciaOrigen)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownOrigen?.setAdapter(adapter)
-
+                DropDownOrigen?.threshold = 1
                 DropDownOrigen?.onItemClickListener =
                     AdapterView.OnItemClickListener { parent, view, position, id ->
                         sharedViewModel.listaDeProductos.clear()
@@ -376,8 +361,23 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                         binding.rvElegirProducto.requestLayout()
                         val itemSelected = parent.getItemAtPosition(position)
                     }
+                DropDownOrigen?.setOnClickListener {
+                    if(DropDownOrigen?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableAlmacenOrigen.setText("",false)
+                        DropDownOrigen?.showDropDown()
+                    }
+                }
+                DropDownOrigen?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && DropDownOrigen?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableAlmacenOrigen.setText("",false)
+                        DropDownOrigen?.showDropDown()
+                    }
+                    else if (!hasFocus && !sharedViewModel.opcionesListTransferenciaOrigen.contains(DropDownOrigen?.text.toString())){
+                        Toast.makeText(requireContext(),"El nombre del almacén de origen no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }, { error ->
-                //Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -417,14 +417,14 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                 Toast.makeText(
                                     requireContext(),
                                     "Transferencia agregada exitosamente. El id de ingreso es el número $id ",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
 
 
                             },
                             { error ->
-                                Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
-                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                                Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                             }
                         ) {
                             override fun getParams(): MutableMap<String, String> {
@@ -453,26 +453,26 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                         Toast.makeText(
                             requireContext(),
                             "La transferencia ya se encuentra en la base de datos",
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
                     Toast.makeText(
                         requireContext(),
                         "El nombre de la transferencia es obligatorio",
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                 Toast.makeText(
                     requireContext(),
                     "Conecte la aplicación al servidor",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -526,7 +526,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                             Toast.makeText(
                                 requireContext(),
                                 "Error $error y ${sharedViewModel.listaDeProductos} y ${sharedViewModel.listaDeCantidades}",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_SHORT
                             ).show()
                         }
                     ) {
@@ -548,10 +548,10 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
-                //Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -592,7 +592,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 Toast.makeText(
                     requireContext(),
                     "Error $error y ${sharedViewModel.listaDeProductos} y ${sharedViewModel.listaDeCantidades}",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
             }
         ) {
@@ -674,7 +674,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                              text.text =
                                                  "La cantidad es mayor que la cantidad en inventario"
                                              val toast = Toast(requireContext())
-                                             toast.duration = Toast.LENGTH_LONG
+                                             toast.duration = Toast.LENGTH_SHORT
                                              toast.view = layout
                                              toast.setGravity(Gravity.BOTTOM, 0, 500)
                                              toast.show()
@@ -707,7 +707,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                          if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
                                              ValidacionesIdInsertarDatos()
                                          }else{
-                                             Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
+                                             Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_SHORT).show()
                                          }
                                             //   }
                                             //    return@setOnTouchListener false
@@ -721,7 +721,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                          /*   } catch (e: Exception) {
                                 Toast.makeText(
                                     requireContext(), "La excepcion es $e",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
                                 Log.i("Sebastián", "$e")
                             }*/
@@ -764,7 +764,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                 "Sebastian",
                                 "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}"
                             )
-                            //Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_LONG).show()
+                            //Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_SHORT).show()
                            // Log.i("Sebastián", "$error")
                             Log.i("Sebastian", "Mensaje 4")
                         }) {
@@ -804,7 +804,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                     }
                     queue.add(jsonObjectRequest)
                 }else if (encontrado == "0"){
-                    Toast.makeText(requireContext(), "El producto no se encuentra en la base de datos", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "El producto no se encuentra en la base de datos", Toast.LENGTH_SHORT).show()
                     Log.i(
                         "Sebastian",
                         "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}"
@@ -819,12 +819,12 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 if(sharedViewModel.listaDeProductos.size >0 && sharedViewModel.listaDeCantidades.size>0) {
                     ValidacionesIdInsertarDatos()
                 }else{
-                    Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_SHORT).show()
                 }
              //       }
              //       return@setOnTouchListener false
               //  }
-               // Toast.makeText(requireContext(),"Aquí esta el error de la api validacionProductos",Toast.LENGTH_LONG).show()
+               // Toast.makeText(requireContext(),"Aquí esta el error de la api validacionProductos",Toast.LENGTH_SHORT).show()
             }) {
             // Ejemplo: "PRODUCTO" :***AGUA CON GAS**
             //Los asteriscos son espacios

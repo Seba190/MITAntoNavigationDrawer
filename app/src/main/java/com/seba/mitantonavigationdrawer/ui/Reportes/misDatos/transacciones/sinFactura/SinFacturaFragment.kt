@@ -48,6 +48,7 @@ class SinFacturaFragment : Fragment(R.layout.fragment_sin_factura) {
 
         _binding = FragmentSinFacturaBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        binding.tvTextoNoFacturas.isVisible = false
         //Aquí se programa
         retrofit = getRetrofit()
         initUI()
@@ -76,6 +77,7 @@ class SinFacturaFragment : Fragment(R.layout.fragment_sin_factura) {
                     activity?.runOnUiThread {
                         adapter.updateList(response.SinFactura)
                         binding.progressBarSinFactura.isVisible = false
+                        binding.tvTextoNoFacturas.isVisible = response.SinFactura.isEmpty()
                     }
                 }
 

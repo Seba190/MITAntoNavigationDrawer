@@ -85,12 +85,12 @@ class ProveedorPrecioCompraEditarFragment : Fragment(R.layout.fragment_proveedor
             sharedViewModel.ListasDePreciosDeCompra.clear()
             sharedViewModel.ListasDeProductosPrecioCompra.clear()
             sharedViewModel.numeroPreciosCompra.clear()
-            Toast.makeText(requireContext(), "Se han eliminado los precios exitosamente", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Se han eliminado los precios de compra exitosamente", Toast.LENGTH_SHORT).show()
         }
         binding.bAgregarProveedorEditar.setOnClickListener {
             adapterPrecioCompra.getAllEditTextContents()
             adapterPrecioCompra.getAllTextViewContents()
-            //Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_SHORT).show()
             Log.i("Sebastian2", "${sharedViewModel.listaDeProveedores} y ${sharedViewModel.listaDePreciosCompra}")
            // if(!sharedViewModel.listaDePreciosCompra.all { it.isBlank() }){
             if (/*sharedViewModel.listaDePreciosCompra.size > 0 &&*/ sharedViewModel.numeroPreciosCompra.isEmpty()) {
@@ -99,13 +99,13 @@ class ProveedorPrecioCompraEditarFragment : Fragment(R.layout.fragment_proveedor
                     sharedViewModel.numeroPreciosCompra.add(adapterPrecioCompra.proveedorPrecioCompraList[i].Nombre)
 
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de compra", Toast.LENGTH_LONG).show()
             }//}
                 binding.rlProveedorPrecioCompraEditar.isVisible = false
                 val editarProductoFragment = EditarProductoFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlProveedorPrecioCompraEditar, editarProductoFragment)
                     .commitNow()
+            Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de compra", Toast.LENGTH_SHORT).show()
         }
         /*if(sharedViewModel.listaDePreciosCompra.lastIndexOf("") != -1){
             sharedViewModel.listaDePreciosCompra.removeAt(sharedViewModel.listaDePreciosCompra.lastIndexOf(""))

@@ -75,7 +75,7 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
             sharedViewModel.ListasDeProveedores.clear()
             sharedViewModel.ListasDePreciosDeCompra.clear()
             sharedViewModel.ListasDeProductosPrecioCompra.clear()
-            Toast.makeText(requireContext(), "Se han eliminado los precios exitosamente", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Se han eliminado los precios exitosamente", Toast.LENGTH_SHORT).show()
         }
 
         binding.bAgregarProveedor.setOnClickListener {
@@ -88,13 +88,13 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
                     setFragmentResult("PreciosCompraProveedores$i", bundleOf("Proveedores$i" to sharedViewModel.listaDeProveedoresAnadir[i], "PreciosCompra$i" to sharedViewModel.listaDePreciosCompraAnadir[i]))
                     }
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de compra", Toast.LENGTH_LONG).show()
             }
                 binding.rlProveedorPrecioCompra.isVisible = false
                 val anadirProductoFragment = AnadirProductoFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlProveedorPrecioCompra, anadirProductoFragment)
                     .commitNow()
+            Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de compra", Toast.LENGTH_SHORT).show()
             }
 
 

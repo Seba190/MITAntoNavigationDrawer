@@ -56,9 +56,14 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
             binding.etPrecioCompra.isEnabled = binding.cbSuppliers.isChecked
         }
             if (sharedViewModel.listaDePreciosCompra.isNotEmpty()) {
-                for (i in 0..<sharedViewModel.listaDePreciosCompra.size) {
-                    if (binding.etPrecioCompra.text.isBlank() && binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedores[i]) {
-                        binding.etPrecioCompra.setText(sharedViewModel.listaDePreciosCompra[i])
+                for (i in 0..<sharedViewModel.numeroPreciosCompra.size) {
+                    if (binding.etPrecioCompra.text.isBlank()) {
+                        if(binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedores[i]){
+                            binding.etPrecioCompra.setText(sharedViewModel.listaDePreciosCompra[i])
+                        }else{
+                            binding.etPrecioCompra.setText("")
+                        }
+
                     }
                 }
             }
@@ -97,13 +102,13 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
                     sharedViewModel.listaDePreciosCompra.removeAt(sharedViewModel.listaDePreciosCompra.lastIndexOf(""))
                 }*/
                 //Toast.makeText(itemView.context,"${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDeProveedores}",
-                //    Toast.LENGTH_LONG).show()
+                //    Toast.LENGTH_SHORT).show()
             },
             { error ->
-                //Toast.makeText(itemView.context, "$error", Toast.LENGTH_LONG).show()
+                //Toast.makeText(itemView.context, "$error", Toast.LENGTH_SHORT).show()
                 //Log.i("Sebastian","$error")
-                // Toast.makeText(itemView.context, "El error es $error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(itemView.context, "El error es $error", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -144,7 +149,7 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
                 }
 
             }, { error ->
-                Toast.makeText(itemView.context, "$error", Toast.LENGTH_LONG).show()
+                Toast.makeText(itemView.context, "$error", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)

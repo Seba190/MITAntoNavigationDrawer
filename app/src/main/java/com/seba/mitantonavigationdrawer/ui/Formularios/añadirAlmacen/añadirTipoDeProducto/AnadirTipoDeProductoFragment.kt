@@ -75,7 +75,7 @@ class AnadirTipoDeProductoFragment : Fragment(R.layout.fragment_anadir_tipo_de_p
                                 Toast.makeText(
                                     requireContext(),
                                     "Tipo de producto agregado exitosamente. Id número $id ",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
                                 TextNombre?.setText("")
                                 TextDescripcion?.setText("")
@@ -84,9 +84,9 @@ class AnadirTipoDeProductoFragment : Fragment(R.layout.fragment_anadir_tipo_de_p
                                 Toast.makeText(
                                     requireContext(),
                                     "No se ha introducido el tipo de producto a la base de datos",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
-                                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                             }
                         ) {
                             override fun getParams(): MutableMap<String, String> {
@@ -107,22 +107,22 @@ class AnadirTipoDeProductoFragment : Fragment(R.layout.fragment_anadir_tipo_de_p
                         Toast.makeText(
                             requireContext(),
                             "El tipo de productoya se encuentra en la base de datos",
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
                     Toast.makeText(
                         requireContext(),
                         "El nombre del tipo de producto es obligatorio",
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
-                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {

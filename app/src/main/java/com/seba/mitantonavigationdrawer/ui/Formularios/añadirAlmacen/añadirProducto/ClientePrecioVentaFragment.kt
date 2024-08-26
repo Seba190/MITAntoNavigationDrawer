@@ -76,7 +76,7 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
             sharedViewModel.ListasDeClientes.clear()
             sharedViewModel.ListasDePreciosDeVenta.clear()
             sharedViewModel.ListasDeProductosPrecioVenta.clear()
-            Toast.makeText(requireContext(), "Se han eliminado los precios exitosamente", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Se han eliminado los precios exitosamente", Toast.LENGTH_SHORT).show()
         }
 
         binding.bAgregarCliente.setOnClickListener {
@@ -89,7 +89,6 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
                     setFragmentResult("PreciosVentaClientes$i", bundleOf("Clientes$i" to sharedViewModel.listaDeClientesAnadir[i], "PreciosDeVenta$i" to sharedViewModel.listaDePreciosVentaAnadir[i]))
                     }
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de venta", Toast.LENGTH_LONG).show()
             }
 
                 binding.rlPrecioVentaClientes.isVisible = false
@@ -97,6 +96,7 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlPrecioVentaClientes, anadirProductoFragment)
                     .commitNow()
+            Toast.makeText(requireContext(), "Se han agregado exitosamente los precios de venta", Toast.LENGTH_SHORT).show()
             }
 
 

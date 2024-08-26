@@ -111,7 +111,7 @@ class CamaraFragment : Fragment(R.layout.fragment_camara){
 
             override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
                 Toast.makeText(requireContext(),"Tienes denegado los permisos de almacenamiento para seleccionar la imagen "
-                    ,Toast.LENGTH_LONG).show()
+                    ,Toast.LENGTH_SHORT).show()
 
                 showRotationalDIalogForPermmission()
             }

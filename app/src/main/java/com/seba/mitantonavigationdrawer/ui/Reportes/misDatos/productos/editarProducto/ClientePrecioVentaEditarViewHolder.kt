@@ -61,10 +61,23 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
             binding.etPrecioVenta.isEnabled = binding.cbCustomers.isChecked
         }
 
-        if (sharedViewModel.listaDePreciosVenta.isNotEmpty()) {
+       /* if (sharedViewModel.listaDePreciosVenta.isNotEmpty()) {
             for (i in 0..<sharedViewModel.listaDePreciosVenta.size) {
                 if (binding.etPrecioVenta.text.isBlank() && binding.tvCustomers.text.toString() == sharedViewModel.listaDeClientes[i]) {
                     binding.etPrecioVenta.setText(sharedViewModel.listaDePreciosVenta[i])
+                }
+            }
+        }*/
+
+        if (sharedViewModel.listaDePreciosVenta.isNotEmpty()) {
+            for (i in 0..<sharedViewModel.numeroPreciosVenta.size) {
+                if (binding.etPrecioVenta.text.isBlank()) {
+                    if(binding.tvCustomers.text.toString() == sharedViewModel.listaDeClientes[i]){
+                        binding.etPrecioVenta.setText(sharedViewModel.listaDePreciosVenta[i])
+                    }else{
+                        binding.etPrecioVenta.setText("")
+                    }
+
                 }
             }
         }
@@ -114,7 +127,7 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
                 }
 
             }, { error ->
-                Toast.makeText(itemView.context, "$error", Toast.LENGTH_LONG).show()
+                Toast.makeText(itemView.context, "$error", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -129,14 +142,14 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
                 val precioVenta = JSONObject(response).getString("PRECIO_VENTA")
                 binding.etPrecioVenta.setText(precioVenta)
                 sharedViewModel.listaDePreciosVenta[position]= precioVenta
-               // Toast.makeText(itemView.context,"${sharedViewModel.listaDePreciosVenta} y ${sharedViewModel.listaDeClientes}",Toast.LENGTH_LONG).show()
+               // Toast.makeText(itemView.context,"${sharedViewModel.listaDePreciosVenta} y ${sharedViewModel.listaDeClientes}",Toast.LENGTH_SHORT).show()
 
             },
             { error ->
-                //Toast.makeText(itemView.context, "$error", Toast.LENGTH_LONG).show()
+                //Toast.makeText(itemView.context, "$error", Toast.LENGTH_SHORT).show()
                 //Log.i("Sebastian","$error")
-                // Toast.makeText(itemView.context, "El error es $error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(itemView.context, "El error es $error", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {

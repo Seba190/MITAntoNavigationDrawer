@@ -43,6 +43,7 @@ class ProductosFragment : Fragment(R.layout.fragment_productos) {
         productosViewModel = ViewModelProvider(this).get(ProductosViewModel::class.java)
         _binding = FragmentProductosBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        binding.tvTextoNoProductos.isVisible = false
         //Aquí se programa
         retrofit = getRetrofit()
         initUI()
@@ -83,6 +84,7 @@ class ProductosFragment : Fragment(R.layout.fragment_productos) {
                         productosViewModel.updateProductos(it.Productos)
                        // adapter.updateList(response.Productos)
                         binding.progressBarProductos.isVisible = false
+                        binding.tvTextoNoProductos.isVisible = response.Productos.isEmpty()
                         Log.i("Sebastian", response.toString())
                     }
                 }

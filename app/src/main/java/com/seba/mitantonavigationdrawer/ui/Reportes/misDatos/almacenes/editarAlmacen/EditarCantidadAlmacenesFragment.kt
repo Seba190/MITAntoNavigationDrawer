@@ -88,15 +88,15 @@ class EditarCantidadAlmacenesFragment : Fragment(R.layout.fragment_editar_cantid
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Cantidad actualizada exitosamente", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Cantidad actualizada exitosamente", Toast.LENGTH_SHORT).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
                 //   TextDropdown?.setText("Eliga una opción",false)
             },
             { error ->
-                Toast.makeText(requireContext(), "Cantidad actualizada exitosamente", Toast.LENGTH_LONG).show()
-                //Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Cantidad actualizada exitosamente", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
 
@@ -125,10 +125,10 @@ class EditarCantidadAlmacenesFragment : Fragment(R.layout.fragment_editar_cantid
                 //   TextDropdown?.setText("Eliga una opción",false)
             },
             { error ->
-               // Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
+               // Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
                 Log.i("Sebastian","$error, ${sharedViewModel.id.last()}, ${sharedViewModel.productos.last()}, $cantidad")
 
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
 

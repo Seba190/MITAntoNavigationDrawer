@@ -94,11 +94,19 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
 
         //   Mostrar los usuarios responsables en la lista desplegable
         binding.buttonProveedor.setOnClickListener {
-          /*  borrarRegistros()
+            if (TextNombre?.text.toString().isNotBlank()) {
+                /*  borrarRegistros()
             Handler(Looper.getMainLooper()).postDelayed({
                 actualizarRegistros()
             },500)*/
-            actualizarProveedor()
+                actualizarProveedor()
+            }else {
+                Toast.makeText(
+                    requireContext(),
+                    "El nombre del proveedor es obligatorio",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
         try {
             sharedViewModel.id.add(args.id)
@@ -116,15 +124,15 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Proveedor actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Proveedor actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_SHORT).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
                 //   TextDropdown?.setText("Eliga una opción",false)
             },
             { error ->
                 Log.i("Sebastian","Error: $error")
-                Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
 
@@ -171,7 +179,7 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
                 }
 
             }, { error ->
-                Toast.makeText(requireContext(), "El id es $id", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -182,10 +190,10 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
         val queue = Volley.newRequestQueue(requireContext())
         var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
             { response ->
-                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
+                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_SHORT).show()
 
             },{error ->
-                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
             })
         {
             override fun getParams(): MutableMap<String, String> {
@@ -203,21 +211,21 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Proveedor actualizado exitosamente. El id de ingreso es el número ${args.id} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Proveedor actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_SHORT).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
                 //   TextDropdown?.setText("Eliga una opción",false)
             },
             { error ->
-                Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
 
         {
             override fun getParams(): MutableMap<String, String> {
                 val parametros = HashMap<String, String>()
-                parametros.put("ID_PROVEEDOR", args.id)
+                parametros.put("ID_PROVEEDOR", sharedViewModel.id.last())
                 parametros.put("PROVEEDOR", TextNombre?.text.toString().uppercase())
                 parametros.put("RUT_PROVEEDOR", TextRut?.text.toString())
                 parametros.put("CORREO_PROVEEDOR", TextCorreo?.text.toString())
@@ -248,10 +256,10 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
                         val queue = Volley.newRequestQueue(requireContext())
                         var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
                             { response ->
-                                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
+                                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_SHORT).show()
 
                             },{error ->
-                                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
+                                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
                             })
                         {
                             override fun getParams(): MutableMap<String, String> {
@@ -270,10 +278,10 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
                         val queue = Volley.newRequestQueue(requireContext())
                         var jsonObjectRequest = object : StringRequest(Request.Method.POST, url,
                             { response ->
-                                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_LONG).show()
+                                //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_SHORT).show()
 
                             },{error ->
-                                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
+                                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
                             })
                         {
                             override fun getParams(): MutableMap<String, String> {
@@ -288,18 +296,18 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
                         //VolleyError("El almacén ya se encuentra en la base de datos")
                         //queue1.cancelAll(TAG)
                         //jsonObjectRequest1.cancel()
-                        Toast.makeText(requireContext(), "El almacén ya se encuentra en la base de datos", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "El almacén ya se encuentra en la base de datos", Toast.LENGTH_SHORT).show()
                     }
                 }
                 else{
-                    Toast.makeText(requireContext(), "El nombre del almacén es obligatorio", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "El nombre del almacén es obligatorio", Toast.LENGTH_SHORT).show()
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
-                Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ){
             override fun getParams(): MutableMap<String, String> {

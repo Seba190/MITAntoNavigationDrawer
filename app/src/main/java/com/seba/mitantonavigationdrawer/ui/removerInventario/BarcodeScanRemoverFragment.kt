@@ -112,10 +112,10 @@ class BarcodeScanRemoverFragment : Fragment(R.layout.fragment_barcode_scan_remov
                         //activity?.finish()
                         setFragmentResult("Codigo de barra transferencia", bundleOf("codigo" to codigoDeBarraRemover))
                     }
-                    val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
-                    codigo?.setText(codigoDeBarraRemover)
+                  //  val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
+                  //  codigo?.setText(codigoDeBarraRemover)
                   //  activity?.runOnUiThread {
-                   //     Toast.makeText(requireContext(),codigoDeBarraRemover, Toast.LENGTH_LONG).show()
+                   //     Toast.makeText(requireContext(),codigoDeBarraRemover, Toast.LENGTH_SHORT).show()
                         //obtenerCodigo(codigoDeBarra!!)
                    // }
 

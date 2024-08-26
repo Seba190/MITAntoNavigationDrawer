@@ -85,9 +85,14 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
         }
 
             if (sharedViewModel.listaDeAlertas.isNotEmpty()) {
-                for (i in 0..<sharedViewModel.listaDeAlertas.size) {
-                    if (binding.etAlert.text.isBlank() && binding.tvWarehouse.text.toString() == sharedViewModel.listaDeBodegas[i]) {
-                        binding.etAlert.setText(sharedViewModel.listaDeAlertas[i])
+                for (i in 0..<sharedViewModel.numeroAlertas.size) {
+                    if (binding.etAlert.text.isBlank()) {
+                     if(binding.tvWarehouse.text.toString() == sharedViewModel.listaDeBodegas[i])   {
+                         binding.etAlert.setText(sharedViewModel.listaDeAlertas[i])
+                     }else{
+                         binding.etAlert.setText("")
+                     }
+
                     }
                 }
             }
@@ -153,7 +158,7 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
                     }
                 }*/
             }, { error ->
-                 Toast.makeText(itemView.context, "$error", Toast.LENGTH_LONG).show()
+                 Toast.makeText(itemView.context, "$error", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -171,13 +176,13 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
                /* if(sharedViewModel.listaDeAlertas.lastIndexOf("") != -1){
                     sharedViewModel.listaDeAlertas.removeAt(sharedViewModel.listaDeAlertas.lastIndexOf(""))
                 }*/
-                //Toast.makeText(itemView.context,"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
+                //Toast.makeText(itemView.context,"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_SHORT).show()
             },
             { error ->
-                //Toast.makeText(itemView.context, "$error", Toast.LENGTH_LONG).show()
+                //Toast.makeText(itemView.context, "$error", Toast.LENGTH_SHORT).show()
                 //Log.i("Sebastian","$error")
-               // Toast.makeText(itemView.context, "El error es $error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+               // Toast.makeText(itemView.context, "El error es $error", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {

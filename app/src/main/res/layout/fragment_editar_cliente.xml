@@ -180,6 +180,7 @@
                             android:id="@+id/EstadoClienteRadioButton1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/black"
                             android:layout_marginEnd="30dp"
                             android:text="Vigente" />
 
@@ -187,6 +188,7 @@
                             android:id="@+id/EstadoClienteRadioButton2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/black"
                             android:text="No vigente" />
                     </RadioGroup>
 

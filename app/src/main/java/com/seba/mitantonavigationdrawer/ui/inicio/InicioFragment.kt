@@ -126,7 +126,7 @@ class InicioFragment : Fragment() {
 
                 }
             },{error ->
-                Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
 
             } )
         queue2.add(jsonObjectRequest2)

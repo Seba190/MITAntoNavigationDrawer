@@ -55,7 +55,7 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="120dp"
+                android:layout_marginStart="100dp"
                 android:orientation="horizontal">
 
             <TextView
@@ -74,7 +74,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:scaleType="centerCrop"
-                    android:layout_marginStart="60dp"
+                    android:layout_marginStart="40dp"
                     android:layout_gravity="end|center"
                     android:src="@drawable/ic_trash"/>
 
@@ -102,7 +102,7 @@
                         android:textColor="@color/black"
                         android:hint="@string/placeholder_dropdown"
                         android:text="@string/item_label"
-                        android:inputType="none"/>
+                        android:inputType="text"/>
 
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -142,7 +142,7 @@
                         android:textColor="@color/black"
                         android:hint="@string/placeholder_dropdown"
                         android:text="@string/item_label"
-                        android:inputType="none"/>
+                        android:inputType="text"/>
 
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -226,6 +226,7 @@
                         android:id="@+id/SinFacturaRadioButton1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/black"
                         android:layout_marginEnd="30dp"
                         android:text="Factura Entrada" />
 
@@ -233,6 +234,7 @@
                         android:id="@+id/SinFacturaRadioButton2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textColor="@color/black"
                         android:text="Factura Salida" />
                 </RadioGroup>
 

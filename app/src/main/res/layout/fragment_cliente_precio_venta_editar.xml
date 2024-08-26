@@ -14,10 +14,9 @@
             android:layout_width="340dp"
             app:cardCornerRadius="20dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="150dp"
             android:layout_marginStart="35dp"
             android:background="@color/cream">
-
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -46,12 +45,10 @@
                         android:textSize="12sp"
                         android:textStyle="bold" />
 
-                    <ProgressBar
-                        android:id="@+id/progressBarPrecioVentaEditar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:visibility="gone"/>
+                    <androidx.core.widget.NestedScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp"
+                        android:fillViewport="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -64,8 +61,17 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp" />
 
+                        <ProgressBar
+                            android:id="@+id/progressBarPrecioVentaEditar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="150dp"
+                            android:visibility="gone"/>
 
                     </LinearLayout>
+
+                    </androidx.core.widget.NestedScrollView>
 
                     <LinearLayout
                         android:layout_width="wrap_content"

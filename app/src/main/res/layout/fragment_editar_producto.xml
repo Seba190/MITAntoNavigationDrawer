@@ -144,12 +144,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="30dp"
+                            android:textColor="@color/black"
                             android:text="Vigente" />
 
                         <RadioButton
                             android:id="@+id/EstadoProductoRadioButton2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textColor="@color/black"
                             android:text="No vigente" />
                     </RadioGroup>
 
@@ -186,7 +188,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Opciones"
-                            android:inputType="none"
+                            android:inputType="text"
+                            android:textColorHint="@color/color_list"
                             android:text="@string/item_label"
                             android:textColor="@color/black" />
 

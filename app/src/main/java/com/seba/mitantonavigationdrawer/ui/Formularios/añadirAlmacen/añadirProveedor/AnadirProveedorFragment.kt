@@ -92,7 +92,7 @@ class AnadirProveedorFragment : Fragment(R.layout.fragment_anadir_proveedor) {
                                 Toast.makeText(
                                     requireContext(),
                                     "Proveedor agregado exitosamente. El id de ingreso es el número $id ",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
                                 TextNombre?.setText("")
                                 TextRut?.setText("")
@@ -101,8 +101,8 @@ class AnadirProveedorFragment : Fragment(R.layout.fragment_anadir_proveedor) {
                                 TextDireccion?.setText("")
                             },
                             { error ->
-                               // Toast.makeText(requireContext(), "No se ha introducido el proveedor a la base de datos", Toast.LENGTH_LONG).show()
-                                 Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                               // Toast.makeText(requireContext(), "No se ha introducido el proveedor a la base de datos", Toast.LENGTH_SHORT).show()
+                                 Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                             }
                         ) {
                             override fun getParams(): MutableMap<String, String> {
@@ -126,26 +126,26 @@ class AnadirProveedorFragment : Fragment(R.layout.fragment_anadir_proveedor) {
                         Toast.makeText(
                             requireContext(),
                             "El proveedor ya se encuentra en la base de datos",
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
                     Toast.makeText(
                         requireContext(),
                         "El nombre del proveedor es obligatorio",
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                 Toast.makeText(
                     requireContext(),
                     "Conecte la aplicación al servidor",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -168,7 +168,7 @@ class AnadirProveedorFragment : Fragment(R.layout.fragment_anadir_proveedor) {
                     //unico = 1
                     //no unico = 0
                     val unico = response.getJSONArray("Lista")[1]
-                    Toast.makeText(requireContext(),"Id es $id y unico es $unico",Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(),"Id es $id y unico es $unico",Toast.LENGTH_SHORT).show()
                     if (unico == "1") {
                         //Aqui va el código para validar el almacen
                         val url1 =
@@ -181,7 +181,7 @@ class AnadirProveedorFragment : Fragment(R.layout.fragment_anadir_proveedor) {
                                 Toast.makeText(
                                     requireContext(),
                                     "Proveedor agregado exitosamente. El id de ingreso es el número $id ",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
                                 TextNombre?.setText("")
                                 TextRut?.setText("")
@@ -193,9 +193,9 @@ class AnadirProveedorFragment : Fragment(R.layout.fragment_anadir_proveedor) {
                                 Toast.makeText(
                                     requireContext(),
                                     "No se ha introducido el proveedor a la base de datos",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
-                                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                             }
                         ) {
                             override fun getParams(): MutableMap<String, String> {
@@ -222,23 +222,23 @@ class AnadirProveedorFragment : Fragment(R.layout.fragment_anadir_proveedor) {
                         Toast.makeText(
                             requireContext(),
                             "El proveedor ya se encuentra en la base de datos",
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
                     Toast.makeText(
                         requireContext(),
                         "El nombre del proveedor es obligatorio",
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
-                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
-               // Toast.makeText(requireContext(),"Id da $id y unico da $unico", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(requireContext(),"Id da $id y unico da $unico", Toast.LENGTH_SHORT).show()
             }
         )
         queue3.add(jsonObjectRequest3)

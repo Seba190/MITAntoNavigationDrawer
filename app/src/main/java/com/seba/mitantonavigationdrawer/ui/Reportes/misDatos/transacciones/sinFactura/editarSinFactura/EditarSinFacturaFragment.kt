@@ -88,17 +88,24 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
             mensajeEliminarSinFactura()
         }
 
-        binding.buttonEditarSinFactura.setOnClickListener {
-            actualizarRegistros()
-            Handler(Looper.getMainLooper()).postDelayed({
-            modificarInventario()
-            }, 2500)
-        }
-
         try {
             sharedViewModel.id.add(args.id)
         }
         catch(e:Exception){
+
+        }
+        binding.buttonEditarSinFactura.setOnClickListener {
+            if (sharedViewModel.opcionesListSinFacturaProducto.contains(DropDownProducto?.text.toString()) &&
+                        sharedViewModel.opcionesListSinFacturaAlmacen.contains(DropDownAlmacen?.text.toString())) {
+                actualizarRegistros()
+            }else if((!sharedViewModel.opcionesListSinFacturaProducto.contains(DropDownProducto?.text.toString()) ||
+                !sharedViewModel.opcionesListSinFacturaAlmacen.contains(DropDownAlmacen?.text.toString()))){
+                Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido",
+                    Toast.LENGTH_SHORT).show()
+            }else if(DropDownProducto?.text.toString() == "Eliga una opción" ||
+                DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                Toast.makeText(requireContext(),"Debe elegir el almacén y el producto", Toast.LENGTH_SHORT).show()
+            }
 
         }
 
@@ -114,21 +121,38 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'","'"))
+                if(sharedViewModel.opcionesListSinFacturaAlmacen.isEmpty()) {
+                    for (i in 0 until jsonArray.length()) {
+                        sharedViewModel.opcionesListSinFacturaAlmacen.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                    }
                 }
+                sharedViewModel.opcionesListSinFacturaAlmacen.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
+                val adapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,sharedViewModel.opcionesListSinFacturaAlmacen)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownAlmacen?.setAdapter(adapter)
-
+                DropDownAlmacen?.threshold = 1
                 DropDownAlmacen?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
                     val itemSelected = parent.getItemAtPosition(position)
                 }
+                DropDownAlmacen?.setOnClickListener {
+                    if(DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableAlmacen.setText("",false)
+                        DropDownAlmacen?.showDropDown()
+                    }
+                }
+                DropDownAlmacen?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableAlmacen.setText("",false)
+                        DropDownAlmacen?.showDropDown()
+                    }
+                    else if (!hasFocus && !sharedViewModel.opcionesListSinFacturaAlmacen.contains(DropDownAlmacen?.text.toString())){
+                        Toast.makeText(requireContext(),"El nombre del almacén no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }, { error ->
-                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -143,21 +167,38 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'","'"))
+                if(sharedViewModel.opcionesListSinFacturaProducto.isEmpty()) {
+                    for (i in 0 until jsonArray.length()) {
+                        sharedViewModel.opcionesListSinFacturaProducto.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                    }
                 }
+                sharedViewModel.opcionesListSinFacturaProducto.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
+                val adapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,sharedViewModel.opcionesListSinFacturaProducto)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownProducto?.setAdapter(adapter)
-
+                DropDownProducto?.threshold = 1
                 DropDownProducto?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
                     val itemSelected = parent.getItemAtPosition(position)
                 }
+                DropDownProducto?.setOnClickListener {
+                    if(DropDownProducto?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableProducto.setText("",false)
+                        DropDownProducto?.showDropDown()
+                    }
+                }
+                DropDownProducto?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && DropDownProducto?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableProducto.setText("",false)
+                        DropDownProducto?.showDropDown()
+                    }
+                    else if (!hasFocus && !sharedViewModel.opcionesListSinFacturaProducto.contains(DropDownProducto?.text.toString())){
+                        Toast.makeText(requireContext(),"El nombre del almacén no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }, { error ->
-                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -187,7 +228,7 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                     radio2?.isChecked = true
                 }
             }, { error ->
-                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -200,11 +241,17 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Registro sin factura actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Registro sin factura actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()}", Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).postDelayed({
+                    modificarInventario()
+                }, 100)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    Toast.makeText(requireContext(), "Inventario actualizado exitosamente", Toast.LENGTH_SHORT).show()
+                }, 3000)
             },
             { error ->
-                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
 
@@ -231,15 +278,14 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Inventario actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
                 DropDownAlmacen?.setText("Eliga una opción", false)
                 DropDownProducto?.setText("Eliga una opción", false)
                 TextCantidad?.setText("")
                 TextFecha?.setText("")
             },
             { error ->
-                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_LONG).show()
-                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
 

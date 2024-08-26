@@ -84,13 +84,13 @@ class AlertasAlmacenesEditarFragment() : Fragment(R.layout.fragment_alertas_alma
             sharedViewModel.ListasDeAlmacenes.clear()
             sharedViewModel.ListasDeProductosAlertas.clear()
             sharedViewModel.numeroAlertas.clear()
-            Toast.makeText(requireContext(), "Se han eliminado las alertas exitosamente", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), "Se han eliminado las alertas exitosamente", Toast.LENGTH_SHORT).show()
         }
 
         binding.bAgregarAlmacenEditar.setOnClickListener {
             adapter.getAllEditTextContents()
             adapter.getAllTextViewContents()
-            //Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_LONG).show()
+            //Toast.makeText(requireContext(),"${sharedViewModel.listaDeAlertas} y ${sharedViewModel.listaDeBodegas}",Toast.LENGTH_SHORT).show()
 
 
             if (sharedViewModel.numeroAlertas.isEmpty()) {
@@ -100,7 +100,6 @@ class AlertasAlmacenesEditarFragment() : Fragment(R.layout.fragment_alertas_alma
                        sharedViewModel.numeroAlertas.add(adapter.alertasAlmacenesList[i].Nombre)
                    // }
                 }
-                Toast.makeText(requireContext(), "Se han agregado exitosamente las alertas", Toast.LENGTH_LONG).show()
 
             }
                 binding.rlAlertasAlmacenesEditar.isVisible = false
@@ -108,6 +107,7 @@ class AlertasAlmacenesEditarFragment() : Fragment(R.layout.fragment_alertas_alma
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlAlertasAlmacenesEditar, editarProductoFragment)
                     .commit()
+            Toast.makeText(requireContext(), "Se han agregado exitosamente las alertas", Toast.LENGTH_SHORT).show()
             Log.i("Sebastian2", "${sharedViewModel.listaDeBodegas} , ${sharedViewModel.listaDeAlertas} , ${sharedViewModel.numeroAlertas} ")
         }
 

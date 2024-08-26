@@ -45,6 +45,7 @@ class ProveedoresFragment : Fragment(R.layout.fragment_proveedores) {
 
         _binding = FragmentProveedoresBinding.inflate(inflater, container, false)
         val root: View = binding.root
+        binding.tvTextoNoProveedores.isVisible = false
         //Aquí se programa
         retrofit = getRetrofit()
         initUI()
@@ -81,6 +82,7 @@ class ProveedoresFragment : Fragment(R.layout.fragment_proveedores) {
                     activity?.runOnUiThread {
                         adapter.updateList(response.Proveedores)
                         binding.progressBar.isVisible = false
+                        binding.tvTextoNoProveedores.isVisible = response.Proveedores.isEmpty()
                     }
                 }
 

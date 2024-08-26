@@ -115,7 +115,7 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
             if (it) {
                 findNavController().navigate(R.id.action_nav_editar_factura_salida_to_nav_barcode_scan_factura_salida)
             } else {
-                Toast.makeText(requireContext(), "Permiso denegado", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Permiso denegado", Toast.LENGTH_SHORT).show()
             }
         }
         binding.bEscanearCodigoDeBarraFacturaSalidaEditar.setOnClickListener {
@@ -133,47 +133,67 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                     sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
             }, 300)
             sharedViewModel.listaDePreciosDeProductosRemover.clear()
+            binding.nsvElegirProductoFacturaSalidaEditar.isVisible = !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
             binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
         }
         binding.nsvElegirProductoFacturaSalidaEditar.isVisible = true
         binding.llMontoFacturaSalidaEditar.isVisible = true
         binding.bAnadirNuevoProductoFacturaSalidaEditar.setOnClickListener {
-            if (DropDownCliente?.text.toString() != "Eliga una opción" && DropDownAlmacen?.text.toString() != "Eliga una opción") {
+            if (sharedViewModel.opcionesListSalidaCliente.contains(DropDownCliente?.text.toString()) &&
+                sharedViewModel.opcionesListSalidaAlmacen.contains(DropDownAlmacen?.text.toString())) {
                 sharedViewModel.clienteRemover = DropDownCliente?.text.toString()
                 sharedViewModel.almacenRemover = DropDownAlmacen?.text.toString()
                 sharedViewModel.listaDeAlmacenesSalida.add(DropDownAlmacen?.text.toString())
                 binding.nsvElegirProductoFacturaSalidaEditar.isVisible = true
                 binding.llMontoFacturaSalidaEditar.isVisible = true
                 //setFragmentResult("Proveedor", bundleOf("Proveedor" to DropDownProveedor?.text.toString()))
-                //Toast.makeText(requireContext(),"Funciona el traspaso de información", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"Funciona el traspaso de información", Toast.LENGTH_SHORT).show()
                 val elegirProductoFacturaSalidaFragment = ElegirProductoFacturaSalidaFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.clFacturaSalidaEditar, elegirProductoFacturaSalidaFragment)
                     .commit()
                 binding.tvProductosAnadidosFacturaSalidaEditar.isVisible = true
                 // binding.tvProductosAnadidosAnadir.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 && adapter.listaDeProductosAnadir.size == 0 && adapter.listaDePreciosAnadir.size == 0)
-            } else {
-                Toast.makeText(
-                    requireContext(),
-                    "Eliga el proveedor y el cliente",
-                    Toast.LENGTH_SHORT
-                ).show()
+            } else if ((!sharedViewModel.opcionesListSalidaCliente.contains(DropDownCliente?.text.toString()) &&
+                        !sharedViewModel.opcionesListSalidaAlmacen.contains(DropDownAlmacen?.text.toString())) &&
+                (DropDownCliente?.text.toString() == "Eliga una opción" ||
+                        DropDownAlmacen?.text.toString() == "Eliga una opción")){
+                Toast.makeText(requireContext(),"Debe elegir cliente y almacén", Toast.LENGTH_SHORT).show()
+
+             }else if((DropDownCliente?.text.toString() != "Eliga una opción" ||
+                        DropDownAlmacen?.text.toString() != "Eliga una opción") &&
+                (!sharedViewModel.opcionesListSalidaCliente.contains(DropDownCliente?.text.toString()) ||
+                        !sharedViewModel.opcionesListSalidaAlmacen.contains(DropDownAlmacen?.text.toString()))){
+                Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido", Toast.LENGTH_SHORT).show()
+            }
             }
 
-        }
+
         try {
             sharedViewModel.id.add(args.id)
         } catch (e: Exception) {
         }
         binding.FacturaSalidaButtonEnviarEditar.setOnClickListener {
-            if (sharedViewModel.listaDeProductosRemover.size > 0 && sharedViewModel.listaDeCantidadesRemover.size> 0 && sharedViewModel.listaDePreciosRemover.size > 0) {
-                actualizarFacturaDeEntrada()
-                adapter.notifyDataSetChanged()
-                binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
-            }else{
-                Toast.makeText(requireContext(),"Tiene que elegir al menos un producto", Toast.LENGTH_LONG).show()
+                if ((sharedViewModel.listaDeCantidadesRemover.size > 0 && sharedViewModel.listaDeProductosRemover.size > 0 && sharedViewModel.listaDePreciosRemover.size > 0) &&
+                    (sharedViewModel.opcionesListSalidaCliente.contains(DropDownCliente?.text.toString()) &&
+                            sharedViewModel.opcionesListSalidaAlmacen.contains(DropDownAlmacen?.text.toString()))) {
+                    actualizarFacturaDeEntrada()
+                    adapter.notifyDataSetChanged()
+                    binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
+                } else if(sharedViewModel.listaDeCantidadesRemover.size == 0 &&
+                    sharedViewModel.listaDeProductosRemover.size == 0 &&
+                    sharedViewModel.listaDePreciosRemover.size == 0) {
+                    Toast.makeText(requireContext(),
+                        "Debe elegir al menos un producto para remover inventario", Toast.LENGTH_SHORT).show()
+                }else if(!sharedViewModel.opcionesListSalidaCliente.contains(DropDownCliente?.text.toString()) ||
+                    !sharedViewModel.opcionesListSalidaAlmacen.contains(DropDownAlmacen?.text.toString())){
+                    Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido",
+                        Toast.LENGTH_SHORT).show()
+                }else if(DropDownCliente?.text.toString() == "Eliga una opción" ||
+                    DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                    Toast.makeText(requireContext(),"Debe elegir el cliente y el almacén", Toast.LENGTH_SHORT).show()
+                }
             }
-        }
 
 
         return root
@@ -238,7 +258,7 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                 Toast.makeText(
                     requireContext(),
                     "El id es ${sharedViewModel.id.last()}",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
             }
         )
@@ -284,207 +304,144 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
     }
 
     private fun actualizarFacturaDeEntrada() {
-        val queue = Volley.newRequestQueue(requireContext())
-        val url = "http://186.64.123.248/Reportes/Transacciones/FacturaSalida/registro.php"
-        val jsonObjectRequest = object : StringRequest(
-            Request.Method.POST, url,
-            { response ->
-                if (TextNombre?.text.toString().isNotBlank()) {
-                    val id = JSONObject(response).getString("ID_FACTURA_SALIDA")
-                    //Aqui va el código para validar el almacen
-                    val url1 = "http://186.64.123.248/Reportes/Transacciones/FacturaSalida/actualizarFacturaSalida.php" // Reemplaza esto con tu URL de la API
-                    val queue1 = Volley.newRequestQueue(requireContext())
-                    val stringRequest = object : StringRequest(
-                        Request.Method.POST,
-                        url1,
-                        { response ->
-                            if (binding.etNombreFacturaSalidaEditar.text.isNotBlank() && binding.tvListaDesplegableAlmacenEditar.text.toString() != "Eliga una opción" && binding.tvListaDesplegableClienteEditar.text.toString() != "Eliga una opción") {
-                             //   Handler(Looper.getMainLooper()).postDelayed({
-                                    eliminarProductos()
-                                    removerInventario()
-                             //   }, 2500)
-                                Handler(Looper.getMainLooper()).postDelayed({
-                                    InsertarPreciosYCantidades()
-                                }, 500)
-                                binding.tvProductosAnadidosFacturaSalidaEditar.isVisible =
-                                    !(adapter.listaDeCantidadesRemover.size == 0 && adapter.listaDeProductosRemover.size == 0 && adapter.listaDePreciosRemover.size == 0)
-                            }
-
-                            Toast.makeText(
-                                requireContext(),
-                                "Factura actualizada exitosamente. El id de ingreso es el número $id ",
-                                Toast.LENGTH_LONG
-                            ).show()
-
-
-                        },
-                        { error ->
-                            Toast.makeText(requireContext(), "$error", Toast.LENGTH_LONG).show()
-                            //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
-                        }
-                    ) {
-                        override fun getParams(): MutableMap<String, String> {
-                            val parametros = HashMap<String, String>()
-                            parametros.put("ID_FACTURA_SALIDA", id.toString())
-                            parametros.put("FACTURA_SALIDA", TextNombre?.text.toString().uppercase())
-                            parametros.put("CLIENTE", DropDownCliente?.text.toString())
-                            parametros.put("ALMACEN", DropDownAlmacen?.text.toString())
-                            parametros.put("FECHA_TRANSACCION", TextFecha?.text.toString())
-                            parametros.put("COMENTARIOS", TextComentarios?.text.toString().uppercase())
-                            /* parametros.put("NUMERO_DE_PRODUCTOS",sharedViewModel.listaDeProductos.size.toString())
-                            for (i in 0..<sharedViewModel.listaDeProductos.size) {
-                                parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
-                                parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
-                            }*/
-                            return parametros
-                        }
+        if (TextNombre?.text.toString().isNotBlank()) {
+            val url1 =
+                "http://186.64.123.248/Reportes/Transacciones/FacturaSalida/actualizarFacturaSalida.php" // Reemplaza esto con tu URL de la API
+            val queue1 = Volley.newRequestQueue(requireContext())
+            val stringRequest = object : StringRequest(
+                Request.Method.POST,
+                url1,
+                { response ->
+                    if (binding.etNombreFacturaSalidaEditar.text.isNotBlank() && binding.tvListaDesplegableAlmacenEditar.text.toString() != "Eliga una opción" && binding.tvListaDesplegableClienteEditar.text.toString() != "Eliga una opción") {
+                        //   Handler(Looper.getMainLooper()).postDelayed({
+                        eliminarProductos()
+                        removerInventario()
+                        //   }, 2500)
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            InsertarPreciosYCantidades()
+                        }, 200)
+                        binding.tvProductosAnadidosFacturaSalidaEditar.isVisible =
+                            !(adapter.listaDeCantidadesRemover.size == 0 && adapter.listaDeProductosRemover.size == 0 && adapter.listaDePreciosRemover.size == 0)
                     }
-                    queue1.add(stringRequest)
 
-                    /*   } else if (unico == "0") {
-                           //VolleyError("El almacén ya se encuentra en la base de datos")
-                           //queue1.cancelAll(TAG)
-                           //jsonObjectRequest1.cancel()
-                           Toast.makeText(
-                               requireContext(),
-                               "La transferencia ya se encuentra en la base de datos",
-                               Toast.LENGTH_LONG
-                           ).show()
-                       }*/
-                } else {
                     Toast.makeText(
                         requireContext(),
-                        "El nombre de la factura de salida es obligatorio",
-                        Toast.LENGTH_LONG
+                        "Factura actualizada exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ",
+                        Toast.LENGTH_SHORT
                     ).show()
-                }
 
-                // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
-            }, { error ->
-                Toast.makeText(
-                    requireContext(),
-                    "Conecte la aplicación al servidor",
-                    Toast.LENGTH_LONG
-                ).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+
+                },
+                { error ->
+                    Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                }
+            ) {
+                override fun getParams(): MutableMap<String, String> {
+                    val parametros = HashMap<String, String>()
+                    parametros.put("ID_FACTURA_SALIDA", sharedViewModel.id.last())
+                    parametros.put("FACTURA_SALIDA", TextNombre?.text.toString().uppercase())
+                    parametros.put("CLIENTE", DropDownCliente?.text.toString())
+                    parametros.put("ALMACEN", DropDownAlmacen?.text.toString())
+                    parametros.put("FECHA_TRANSACCION", TextFecha?.text.toString())
+                    parametros.put("COMENTARIOS", TextComentarios?.text.toString().uppercase())
+                    /* parametros.put("NUMERO_DE_PRODUCTOS",sharedViewModel.listaDeProductos.size.toString())
+                for (i in 0..<sharedViewModel.listaDeProductos.size) {
+                    parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductos[i].uppercase()
+                    parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidades[i]
+                }*/
+                    return parametros
+                }
             }
-        ) {
-            override fun getParams(): MutableMap<String, String> {
-                val parametros = HashMap<String, String>()
-                parametros.put("FACTURA_SALIDA", TextNombre?.text.toString().uppercase())
-                return parametros
-            }
+            queue1.add(stringRequest)
+        }else {
+            Toast.makeText(
+                requireContext(),
+                "El nombre de la factura de salida es obligatorio",
+                Toast.LENGTH_SHORT
+            ).show()
         }
-        queue.add(jsonObjectRequest)
     }
 
     private fun InsertarPreciosYCantidades() {
         //INICIO EXPERIMIENTO!!!!!!!!!!!!!!!!!!!!!!!!!! (FUNCIONO)
-        val queue = Volley.newRequestQueue(requireContext())
-        val url = "http://186.64.123.248/Reportes/Transacciones/FacturaSalida/registroProductos.php"
-        val jsonObjectRequest = object : StringRequest(
-            Request.Method.POST, url,
+        val url1 =
+            "http://186.64.123.248/Reportes/Transacciones/FacturaSalida/insertarProductosFacturaSalida.php" // Reemplaza esto con tu URL de la API
+        val queue1 = Volley.newRequestQueue(requireContext())
+        val stringRequest = object : StringRequest(
+            Request.Method.POST,
+            url1,
             { response ->
-                if (TextNombre?.text.toString().isNotBlank()) {
-                    val id = JSONObject(response).getString("ID_FACTURA_SALIDA")
-                    //unico = 1
-                    //no unico = 0
-                    //Aqui va el código para validar el almacen
-                    val url1 =
-                        "http://186.64.123.248/Reportes/Transacciones/FacturaSalida/insertarProductosFacturaSalida.php" // Reemplaza esto con tu URL de la API
-                    val queue1 = Volley.newRequestQueue(requireContext())
-                    val stringRequest = object : StringRequest(
-                        Request.Method.POST,
-                        url1,
-                        { response ->
-                            Toast.makeText(
-                                requireContext(),
-                                "Productos agregados exitosamente a la factura",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            TextNombre?.setText("")
-                            TextFecha?.setText(
-                                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(
-                                    Calendar.getInstance().time
-                                )
-                            )
-                            DropDownCliente?.setText("Eliga una opción", false)
-                            DropDownAlmacen?.setText("Eliga una opción", false)
-                            TextComentarios?.setText("")
-                            sharedViewModel.listaDeCantidadesRemover.removeAll(sharedViewModel.listaDeCantidadesRemover)
-                            sharedViewModel.listaDeProductosRemover.removeAll(sharedViewModel.listaDeProductosRemover)
-                            sharedViewModel.listaDePreciosRemover.removeAll(sharedViewModel.listaDePreciosRemover)
-                            sharedViewModel.listaDePreciosDeProductosRemover.clear()
-                            adapter.notifyDataSetChanged()
-                            binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
-                            binding.tvProductosAnadidosFacturaSalidaEditar.isVisible = false
-                            binding.nsvElegirProductoFacturaSalidaEditar.isVisible = false
-                            binding.tvMontoFacturaSalidaEditar.text =
-                                sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
-                            binding.llMontoFacturaSalidaEditar.isVisible =
-                                !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
-                            sharedViewModel.opcionesListSalida.clear()
-                        },
-                        { error ->
-                            Toast.makeText(
-                                requireContext(),
-                                "Productos agregados exitosamente a la factura",
-                                Toast.LENGTH_LONG
-                            ).show()
-                            TextNombre?.setText("")
-                            TextFecha?.setText(
-                                SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(
-                                    Calendar.getInstance().time
-                                )
-                            )
-                            DropDownCliente?.setText("Eliga una opción", false)
-                            DropDownAlmacen?.setText("Eliga una opción", false)
-                            TextComentarios?.setText("")
-                            sharedViewModel.listaDeCantidadesRemover.removeAll(sharedViewModel.listaDeCantidadesRemover)
-                            sharedViewModel.listaDeProductosRemover.removeAll(sharedViewModel.listaDeProductosRemover)
-                            sharedViewModel.listaDePreciosRemover.removeAll(sharedViewModel.listaDePreciosRemover)
-                            sharedViewModel.listaDePreciosDeProductosRemover.clear()
-                            adapter.notifyDataSetChanged()
-                            binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
-                            binding.tvProductosAnadidosFacturaSalidaEditar.isVisible = false
-                            binding.nsvElegirProductoFacturaSalidaEditar.isVisible = false
-                            binding.tvMontoFacturaSalidaEditar.text =
-                                sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
-                            binding.llMontoFacturaSalidaEditar.isVisible =
-                                !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
-                            sharedViewModel.opcionesListSalida.clear()
-                        }
-                    ) {
-                        override fun getParams(): MutableMap<String, String> {
-                            val parametros = HashMap<String, String>()
-                            parametros.put("ID_FACTURA_SALIDA", id.toString())
-                            parametros.put("NUMERO_DE_PRODUCTOS", sharedViewModel.listaDeProductosRemover.size.toString())
-                            for (i in 0..<sharedViewModel.listaDeProductosRemover.size) {
-                                parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductosRemover[i].uppercase()
-                                parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidadesRemover[i]
-                                parametros["PRECIO_VENTA$i"] = sharedViewModel.listaDePreciosRemover[i]}
-                            return parametros
-                        }
-                    }
-                    queue1.add(stringRequest)
-
-                }
-
-                // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
-            }, { error ->
-                //Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    requireContext(),
+                    "Productos agregados exitosamente a la factura",
+                    Toast.LENGTH_SHORT
+                ).show()
+                TextNombre?.setText("")
+                TextFecha?.setText(
+                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(
+                        Calendar.getInstance().time
+                    )
+                )
+                DropDownCliente?.setText("Eliga una opción", false)
+                DropDownAlmacen?.setText("Eliga una opción", false)
+                TextComentarios?.setText("")
+                sharedViewModel.listaDeCantidadesRemover.clear()
+                sharedViewModel.listaDeProductosRemover.clear()
+                sharedViewModel.listaDePreciosRemover.clear()
+                sharedViewModel.listaDePreciosDeProductosRemover.clear()
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
+                binding.tvProductosAnadidosFacturaSalidaEditar.isVisible = false
+                binding.nsvElegirProductoFacturaSalidaEditar.isVisible = false
+                binding.tvMontoFacturaSalidaEditar.text =
+                    sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
+                binding.llMontoFacturaSalidaEditar.isVisible =
+                    !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
+                sharedViewModel.opcionesListSalida.clear()
+            },
+            { error ->
+                Toast.makeText(
+                    requireContext(),
+                    "Productos agregados exitosamente a la factura",
+                    Toast.LENGTH_SHORT
+                ).show()
+                TextNombre?.setText("")
+                TextFecha?.setText(
+                    SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(
+                        Calendar.getInstance().time
+                    )
+                )
+                DropDownCliente?.setText("Eliga una opción", false)
+                DropDownAlmacen?.setText("Eliga una opción", false)
+                TextComentarios?.setText("")
+                sharedViewModel.listaDeCantidadesRemover.removeAll(sharedViewModel.listaDeCantidadesRemover)
+                sharedViewModel.listaDeProductosRemover.removeAll(sharedViewModel.listaDeProductosRemover)
+                sharedViewModel.listaDePreciosRemover.removeAll(sharedViewModel.listaDePreciosRemover)
+                sharedViewModel.listaDePreciosDeProductosRemover.clear()
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
+                binding.tvProductosAnadidosFacturaSalidaEditar.isVisible = false
+                binding.nsvElegirProductoFacturaSalidaEditar.isVisible = false
+                binding.tvMontoFacturaSalidaEditar.text =
+                    sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
+                binding.llMontoFacturaSalidaEditar.isVisible =
+                    !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
+                sharedViewModel.opcionesListSalida.clear()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
                 val parametros = HashMap<String, String>()
-                parametros.put("FACTURA_SALIDA", TextNombre?.text.toString().uppercase())
+                parametros.put("ID_FACTURA_SALIDA", sharedViewModel.id.last())
+                parametros.put("NUMERO_DE_PRODUCTOS", sharedViewModel.listaDeProductosRemover.size.toString())
+                for (i in 0..<sharedViewModel.listaDeProductosRemover.size) {
+                    parametros["PRODUCTO$i"] = sharedViewModel.listaDeProductosRemover[i].uppercase()
+                    parametros["CANTIDAD$i"] = sharedViewModel.listaDeCantidadesRemover[i]
+                    parametros["PRECIO_VENTA$i"] = sharedViewModel.listaDePreciosRemover[i]}
                 return parametros
             }
         }
-        queue.add(jsonObjectRequest)
+        queue1.add(stringRequest)
     }
 
     fun modificarInventario() {
@@ -509,9 +466,9 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                 DropDownCliente?.setText("Eliga una opción", false)
                 DropDownAlmacen?.setText("Eliga una opción", false)
                 TextComentarios?.setText("")
-                sharedViewModel.listaDeCantidadesRemover.removeAll(sharedViewModel.listaDeCantidadesRemover)
-                sharedViewModel.listaDeProductosRemover.removeAll(sharedViewModel.listaDeProductosRemover)
-                sharedViewModel.listaDePreciosRemover.removeAll(sharedViewModel.listaDePreciosRemover)
+                sharedViewModel.listaDeCantidadesRemover.clear()
+                sharedViewModel.listaDeProductosRemover.clear()
+                sharedViewModel.listaDePreciosRemover.clear()
                 sharedViewModel.listaDePreciosDeProductosRemover.clear()
                 adapter.notifyDataSetChanged()
                 binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
@@ -533,7 +490,7 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                 Toast.makeText(
                     requireContext(),
                     "Error $error y ${sharedViewModel.listaDeProductos} y ${sharedViewModel.listaDeCantidades}",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
                 Log.i(
                     "Sebastian",
@@ -643,15 +600,17 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'", "'"))
-                }
+               if(sharedViewModel.opcionesListSalidaAlmacen.isEmpty()) {
+                   for (i in 0 until jsonArray.length()) {
+                       sharedViewModel.opcionesListSalidaAlmacen.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                   }
+               }
+                sharedViewModel.opcionesListSalidaAlmacen.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(), R.layout.list_item, opcionesList)
+                val adapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,sharedViewModel.opcionesListSalidaAlmacen)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownAlmacen?.setAdapter(adapter)
-
+                DropDownAlmacen?.threshold = 1
                 DropDownAlmacen?.onItemClickListener =
                     AdapterView.OnItemClickListener { parent, view, position, id ->
                         sharedViewModel.listaDeProductosRemover.clear()
@@ -663,11 +622,26 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                         binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
                         val itemSelected = parent.getItemAtPosition(position)
                     }
+                DropDownAlmacen?.setOnClickListener {
+                    if(DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableAlmacenEditar.setText("",false)
+                        DropDownAlmacen?.showDropDown()
+                    }
+                }
+                DropDownAlmacen?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableAlmacenEditar.setText("",false)
+                        DropDownAlmacen?.showDropDown()
+                    }
+                    else if (!hasFocus && !sharedViewModel.opcionesListSalidaAlmacen.contains(DropDownAlmacen?.text.toString())){
+                        Toast.makeText(requireContext(),"El nombre del almacén no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }, { error ->
                 Toast.makeText(
                     requireContext(),
                     " La aplicación no se ha conectado con el servidor",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
             }
         )
@@ -683,24 +657,42 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'", "'"))
-                }
+               if(sharedViewModel.opcionesListSalidaCliente.isEmpty()) {
+                   for (i in 0 until jsonArray.length()) {
+                       sharedViewModel.opcionesListSalidaCliente.add(
+                           jsonArray.getString(i).removeSurrounding("'", "'"))
+                   }
+               }
+                sharedViewModel.opcionesListSalidaCliente.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(), R.layout.list_item, opcionesList)
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line,sharedViewModel.opcionesListSalidaCliente)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownCliente?.setAdapter(adapter)
-
+                DropDownCliente?.threshold = 1
                 DropDownCliente?.onItemClickListener =
                     AdapterView.OnItemClickListener { parent, view, position, id ->
                         val itemSelected = parent.getItemAtPosition(position)
                     }
+                DropDownCliente?.setOnClickListener {
+                    if(DropDownCliente?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableClienteEditar.setText("",false)
+                        DropDownCliente?.showDropDown()
+                    }
+                }
+                DropDownCliente?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && DropDownCliente?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableClienteEditar.setText("",false)
+                        DropDownCliente?.showDropDown()
+                    }
+                    else if (!hasFocus && !sharedViewModel.opcionesListSalidaCliente.contains(DropDownCliente?.text.toString())){
+                        Toast.makeText(requireContext(),"El nombre del cliente no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }, { error ->
                 Toast.makeText(
                     requireContext(),
                     " La aplicación no se ha conectado con el servidor",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
                 ).show()
             }
         )

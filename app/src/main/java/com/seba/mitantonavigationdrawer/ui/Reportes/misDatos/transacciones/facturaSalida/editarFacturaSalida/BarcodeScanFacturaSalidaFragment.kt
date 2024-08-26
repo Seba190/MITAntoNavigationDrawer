@@ -141,13 +141,13 @@ class BarcodeScanFacturaSalidaFragment : Fragment(R.layout.fragment_barcode_scan
                         setFragmentResult("Codigo de barra transferencia",
                             bundleOf("codigo" to codigoDeBarraFacturaSalida))
                     }
-                    val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
-                    codigo?.setText(codigoDeBarraFacturaSalida)
+                   // val codigo = activity?.findViewById<EditText>(R.id.etCodigoDeBarra)
+                   // codigo?.setText(codigoDeBarraFacturaSalida)
                   /*  activity?.runOnUiThread {
                         Toast.makeText(
                             requireContext(),
                             codigoDeBarraFacturaSalida,
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
                     }*/
                 }

@@ -102,7 +102,15 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
 
         //   Mostrar los usuarios responsables en la lista desplegable
         binding.buttonTipoDeProductoEditar.setOnClickListener {
-            actualizarTipoDeProducto()
+            if (TextNombre?.text.toString().isNotBlank()) {
+                actualizarTipoDeProducto()
+            }else {
+                Toast.makeText(
+                    requireContext(),
+                    "El nombre del tipo de producto es obligatorio",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
         if(binding.buttonTipoDeProductoEditar.isPressed){
             radio1?.isChecked
@@ -186,7 +194,7 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
                 }
 
             }, { error ->
-                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -209,14 +217,14 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Tipo de producto agregado exitosamente. Id número ${sharedViewModel.id.last()} ", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Tipo de producto agregado exitosamente. Id número ${sharedViewModel.id.last()} ", Toast.LENGTH_SHORT).show()
 
             },
             { error ->
-                //Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
-                Toast.makeText(requireContext(),"$error",Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),"$error",Toast.LENGTH_SHORT).show()
                 Log.i("Sebastian", "$error")
-                //Toast.makeText(requireContext(),"Error $fotoBase64", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"Error $fotoBase64", Toast.LENGTH_SHORT).show()
 
 
             }
@@ -236,7 +244,7 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
         queue1.add(stringRequest)
 
         // TextId?.setText(response.getString("ID_ALMACEN"))
-        // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+        // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
     }
 
     private fun inventarioDeProductos(){
@@ -284,7 +292,7 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
                 }catch(e:Exception){
                     binding.llInventariosDeProducto.isVisible = false
                 }
-                //Toast.makeText(requireContext(),"${listaAlmacenes[0][0]} y $listaAlmacenes",Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"${listaAlmacenes[0][0]} y $listaAlmacenes",Toast.LENGTH_SHORT).show()
 
             }, { error ->
                 binding.llInventariosDeProducto.isVisible = false
@@ -353,7 +361,7 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
                         } )
                     queue2.add(jsonObjectRequest2)
                 }
-                //Toast.makeText(requireContext(),"${listaAlmacenes[0][0]} y $listaAlmacenes",Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"${listaAlmacenes[0][0]} y $listaAlmacenes",Toast.LENGTH_SHORT).show()
 
             }, { error ->
                 val queue3 = Volley.newRequestQueue(requireContext())

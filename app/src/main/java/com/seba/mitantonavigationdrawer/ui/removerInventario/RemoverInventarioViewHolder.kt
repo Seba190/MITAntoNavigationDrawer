@@ -10,7 +10,7 @@ class RemoverInventarioViewHolder(view: View, private val sharedViewModel: Share
     private val binding = ItemAnadirBinding.bind(view)
     fun bind(cantidad:String,producto: String ,precio: String, onClickDelete: (Int) -> Unit){
         binding.tvUnidades.text = cantidad
-        binding.tvProducto.text = producto.substringBefore('(',producto)
+        binding.tvProducto.text = producto.substringBefore('(',producto).uppercase()
         if(precio.isNotEmpty()){
             binding.tvPrecio.text= "$ ${precio.toInt().times(cantidad.toInt())}"
             sharedViewModel.listaDePreciosDeProductosRemover.add(precio.toInt().times(cantidad.toInt()))

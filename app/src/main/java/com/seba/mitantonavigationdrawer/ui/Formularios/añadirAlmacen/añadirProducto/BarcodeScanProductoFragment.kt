@@ -109,7 +109,7 @@ class BarcodeScanProductoFragment : Fragment() {
         barcodeDetector.setProcessor(object : Detector.Processor<Barcode>{
             override fun release() {
                // Toast.makeText(requireContext()," El scanner del código de barra ha sido detenido",
-                 //   Toast.LENGTH_LONG).show()
+                 //   Toast.LENGTH_SHORT).show()
 
 
             }
@@ -144,7 +144,7 @@ class BarcodeScanProductoFragment : Fragment() {
                     val codigo = activity?.findViewById<EditText>(R.id.tvCodigoBarraProducto)
                     codigo?.setText(codigoDeBarraProducto)
                   //  activity?.runOnUiThread {
-                  //      Toast.makeText(requireContext(),codigoDeBarraProducto, Toast.LENGTH_LONG).show()
+                  //      Toast.makeText(requireContext(),codigoDeBarraProducto, Toast.LENGTH_SHORT).show()
                         //obtenerCodigo(codigoDeBarra!!)
                   //  }
                 }
@@ -171,7 +171,7 @@ class BarcodeScanProductoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         /*requireActivity().onBackPressedDispatcher
             .addCallback(viewLifecycleOwner) {
-                activity?.runOnUiThread { Toast.makeText(requireContext(),codigoDeBarraProducto, Toast.LENGTH_LONG).show()}
+                activity?.runOnUiThread { Toast.makeText(requireContext(),codigoDeBarraProducto, Toast.LENGTH_SHORT).show()}
             }*/
         setFragmentResultListener("Añadir Producto") {key, bundle ->
             anadirProducto.add(bundle.getString("nombre")!!)

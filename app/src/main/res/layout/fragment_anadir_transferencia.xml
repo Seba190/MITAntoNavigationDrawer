@@ -109,7 +109,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/placeholder_dropdown"
-                        android:inputType="none"
+                        android:inputType="text"
                         android:text="@string/item_label"
                         android:textColor="@color/black"
                         android:textColorHint="@color/color_list" />
@@ -150,7 +150,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/placeholder_dropdown"
-                        android:inputType="none"
+                        android:inputType="text"
                         android:text="@string/item_label"
                         android:textColor="@color/black"
                         android:textColorHint="@color/color_list" />

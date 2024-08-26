@@ -89,7 +89,7 @@ class AnadirClienteFragment : Fragment(R.layout.fragment_anadir_cliente) {
                                 Toast.makeText(
                                     requireContext(),
                                     "Cliente agregado exitosamente. El id de ingreso es el número $id ",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
                                 TextNombre?.setText("")
                                 TextRut?.setText("")
@@ -101,9 +101,9 @@ class AnadirClienteFragment : Fragment(R.layout.fragment_anadir_cliente) {
                                 Toast.makeText(
                                     requireContext(),
                                     "No se ha introducido el cliente a la base de datos",
-                                    Toast.LENGTH_LONG
+                                    Toast.LENGTH_SHORT
                                 ).show()
-                                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                             }
                         ) {
                             override fun getParams(): MutableMap<String, String> {
@@ -127,22 +127,22 @@ class AnadirClienteFragment : Fragment(R.layout.fragment_anadir_cliente) {
                         Toast.makeText(
                             requireContext(),
                             "El cliente ya se encuentra en la base de datos",
-                            Toast.LENGTH_LONG
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                 } else {
                     Toast.makeText(
                         requireContext(),
                         "El nombre del cliente es obligatorio",
-                        Toast.LENGTH_LONG
+                        Toast.LENGTH_SHORT
                     ).show()
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
-                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-               // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {

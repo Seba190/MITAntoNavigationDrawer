@@ -1,11 +1,13 @@
 package com.seba.mitantonavigationdrawer.ui.removerInventario
 
+import android.annotation.SuppressLint
 import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -93,7 +95,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
             if(it){
                 findNavController().navigate(R.id.action_nav_remover_inventario_to_nav_barcode_scan_remover)
             }else{
-                Toast.makeText(requireContext(),"Permiso denegado",Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Permiso denegado",Toast.LENGTH_SHORT).show()
             }
         }
         binding.bEscanearCodigoDeBarraRemover.setOnClickListener {
@@ -102,14 +104,25 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
        // searchByName()
 
         binding.FacturaSalidaButtonEnviar.setOnClickListener {
-            if(sharedViewModel.listaDeCantidadesRemover.size > 0 && sharedViewModel.listaDeProductosRemover.size > 0 && sharedViewModel.listaDePreciosRemover.size >0) {
-                ValidacionesIdInsertarDatos()
-                adapter.notifyDataSetChanged()
-                binding.rvElegirProductoRemover.requestLayout()
-            }
-            else{
-                Toast.makeText(requireContext(),"Debe elegir al menos un producto para remover inventario", Toast.LENGTH_LONG).show()
-            }
+                if ((sharedViewModel.listaDeCantidadesRemover.size > 0 && sharedViewModel.listaDeProductosRemover.size > 0 && sharedViewModel.listaDePreciosRemover.size > 0) &&
+                    (sharedViewModel.opcionesListRemoverCliente.contains(DropDownCliente?.text.toString()) &&
+                    sharedViewModel.opcionesListRemoverAlmacen.contains(DropDownAlmacen?.text.toString()))) {
+                    ValidacionesIdInsertarDatos()
+                    adapter.notifyDataSetChanged()
+                    binding.rvElegirProductoRemover.requestLayout()
+                }else if(sharedViewModel.listaDeCantidadesRemover.size == 0 &&
+                    sharedViewModel.listaDeProductosRemover.size == 0 &&
+                    sharedViewModel.listaDePreciosRemover.size == 0) {
+                    Toast.makeText(requireContext(),
+                        "Debe elegir al menos un producto para remover inventario", Toast.LENGTH_SHORT).show()
+                }else if(!sharedViewModel.opcionesListRemoverCliente.contains(DropDownCliente?.text.toString()) ||
+                      !sharedViewModel.opcionesListRemoverAlmacen.contains(DropDownAlmacen?.text.toString())){
+                Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido",
+                    Toast.LENGTH_SHORT).show()
+               }else if(DropDownCliente?.text.toString() == "Eliga una opción" ||
+                    DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                   Toast.makeText(requireContext(),"Debe elegir el cliente y el almacén", Toast.LENGTH_SHORT).show()
+                }
         }
 
         binding.tvProductosAnadidosRemover.isVisible = false
@@ -127,22 +140,33 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         }
         binding.nsvElegirProductoRemover.isVisible = false
         binding.llMontoRemover.isVisible = false
+
         binding.bAnadirNuevoProductoRemover.setOnClickListener {
-            if(DropDownCliente?.text.toString() != "Eliga una opción" && DropDownAlmacen?.text.toString() != "Eliga una opción"){
+            if(sharedViewModel.opcionesListRemoverCliente.contains(DropDownCliente?.text.toString()) &&
+                sharedViewModel.opcionesListRemoverAlmacen.contains(DropDownAlmacen?.text.toString())){
                 sharedViewModel.almacenRemover = DropDownAlmacen?.text.toString()
                 sharedViewModel.listaDeAlmacenesRemover.add(DropDownAlmacen?.text.toString())
                 sharedViewModel.clienteRemover = DropDownCliente?.text.toString()
                 binding.nsvElegirProductoRemover.isVisible = true
                 binding.llMontoRemover.isVisible = true
                 //setFragmentResult("Proveedor", bundleOf("Proveedor" to DropDownProveedor?.text.toString()))
-                //Toast.makeText(requireContext(),"Funciona el traspaso de información", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"Funciona el traspaso de información", Toast.LENGTH_SHORT).show()
                 val elegirProductoRemoverFragment = ElegirProductoRemoverFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.clRemoverInventario, elegirProductoRemoverFragment)
                     .commit()
                 binding.tvProductosAnadidosRemover.isVisible = true
-            }else{
-                Toast.makeText(requireContext(),"Eliga el cliente y el almacén", Toast.LENGTH_SHORT).show()
+            }else if ((!sharedViewModel.opcionesListRemoverCliente.contains(DropDownCliente?.text.toString()) &&
+                !sharedViewModel.opcionesListRemoverAlmacen.contains(DropDownAlmacen?.text.toString())) &&
+                (DropDownCliente?.text.toString() == "Eliga una opción" ||
+                DropDownAlmacen?.text.toString() == "Eliga una opción")){
+                Toast.makeText(requireContext(),"Debe elegir cliente y almacén", Toast.LENGTH_SHORT).show()
+
+            } else if((DropDownCliente?.text.toString() != "Eliga una opción" ||
+                        DropDownAlmacen?.text.toString() != "Eliga una opción") &&
+                    (!sharedViewModel.opcionesListRemoverCliente.contains(DropDownCliente?.text.toString()) ||
+                      !sharedViewModel.opcionesListRemoverAlmacen.contains(DropDownAlmacen?.text.toString()))){
+                Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -227,10 +251,10 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                                  //   }, 2500)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosYCantidades()
-                                    }, 500)
+                                    }, 200)
                                     binding.tvProductosAnadidosRemover.isVisible = !(adapter.listaDeCantidadesRemover.size == 0 && adapter.listaDeProductosRemover.size == 0 && adapter.listaDePreciosRemover.size == 0)
                                 }
-                                Toast.makeText(requireContext(), "Factura agregada exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_LONG).show()
+                                Toast.makeText(requireContext(), "Factura agregada exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
                                /* TextNombre?.setText("")
                                 TextFecha?.setText("")
                                 DropDownCliente?.setText("Eliga una opción",false)
@@ -239,8 +263,8 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
 
                             },
                             { error ->
-                                Toast.makeText(requireContext(),"El cliente y el almacén son obligatorios", Toast.LENGTH_LONG).show()
-                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                                Toast.makeText(requireContext(),"El cliente y el almacén son obligatorios", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                             }
                         )
 
@@ -264,18 +288,18 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                         //VolleyError("El almacén ya se encuentra en la base de datos")
                         //queue1.cancelAll(TAG)
                         //jsonObjectRequest1.cancel()
-                        Toast.makeText(requireContext(), "La factura ya se encuentra en la base de datos", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "La factura ya se encuentra en la base de datos", Toast.LENGTH_SHORT).show()
                     }
                 }
                 else{
-                    Toast.makeText(requireContext(), "El nombre de la factura es obligatorio", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "El nombre de la factura es obligatorio", Toast.LENGTH_SHORT).show()
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
-                Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ){
             override fun getParams(): MutableMap<String, String> {
@@ -296,15 +320,17 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'","'"))
+                if(sharedViewModel.opcionesListRemoverAlmacen.isEmpty()) {
+                  for (i in 0 until jsonArray.length()) {
+                    sharedViewModel.opcionesListRemoverAlmacen.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                    }
                 }
+                sharedViewModel.opcionesListRemoverAlmacen.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
+                val adapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,sharedViewModel.opcionesListRemoverAlmacen)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownAlmacen?.setAdapter(adapter)
-
+                DropDownAlmacen?.threshold = 1
                 DropDownAlmacen?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
                     sharedViewModel.listaDeProductosRemover.clear()
@@ -316,12 +342,28 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                     binding.rvElegirProductoRemover.requestLayout()
                     val itemSelected = parent.getItemAtPosition(position)
                 }
+                DropDownAlmacen?.setOnClickListener {
+                    if(DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableAlmacen.setText("",false)
+                        DropDownAlmacen?.showDropDown()
+                    }
+                }
+                DropDownAlmacen?.setOnFocusChangeListener { _, hasFocus ->
+                    if(hasFocus && DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableAlmacen.setText("",false)
+                        DropDownAlmacen?.showDropDown()
+                    }
+                    else if (!hasFocus && !sharedViewModel.opcionesListRemoverAlmacen.contains(DropDownAlmacen?.text.toString())){
+                        Toast.makeText(requireContext(),"El nombre del almacén no es válido", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }, { error ->
-                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
     }
+
 
     private fun ListaDesplegableCliente() {
         val queue1 = Volley.newRequestQueue(requireContext())
@@ -332,21 +374,39 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'","'"))
+                if(sharedViewModel.opcionesListRemoverCliente.isEmpty()) {
+                    for (i in 0 until jsonArray.length()) {
+                        sharedViewModel.opcionesListRemoverCliente.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                    }
                 }
+                sharedViewModel.opcionesListRemoverCliente.sort()
                 //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
+                val adapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line,sharedViewModel.opcionesListRemoverCliente)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownCliente?.setAdapter(adapter)
-
+                DropDownCliente?.threshold = 1
                 DropDownCliente?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
                     val itemSelected = parent.getItemAtPosition(position)
                 }
+                DropDownCliente?.setOnClickListener {
+                    if(DropDownCliente?.text.toString() == "Eliga una opción"){
+                        binding.tvListaDesplegableCliente.setText("",false)
+                        DropDownCliente?.showDropDown()
+                    }
+                }
+                DropDownCliente?.setOnFocusChangeListener { _, hasFocus ->
+                   if(hasFocus && DropDownCliente?.text.toString() == "Eliga una opción"){
+                       binding.tvListaDesplegableCliente.setText("",false)
+                       DropDownCliente?.showDropDown()
+                   }
+                   else if (!hasFocus && !sharedViewModel.opcionesListRemoverCliente.contains(DropDownCliente?.text.toString())){
+                       Toast.makeText(requireContext(),"El nombre del cliente no es válido", Toast.LENGTH_SHORT).show()
+                   }
+                }
+
             }, { error ->
-                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -369,15 +429,15 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                         Request.Method.POST,
                         url1,
                         { response ->
-                            Toast.makeText(requireContext(),"Productos removidos exitosamente", Toast.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(),"Productos removidos exitosamente", Toast.LENGTH_SHORT).show()
                             TextNombre?.setText("")
                             TextFecha?.setText("")
                             binding.tvListaDesplegableCliente.setText("Eliga una opción",false)
                             binding.tvListaDesplegableAlmacen.setText("Eliga una opción",false)
                             TextComentarios?.setText("")
-                            sharedViewModel.listaDeCantidadesRemover.removeAll(sharedViewModel.listaDeCantidadesRemover)
-                            sharedViewModel.listaDeProductosRemover.removeAll(sharedViewModel.listaDeProductosRemover)
-                            sharedViewModel.listaDePreciosRemover.removeAll(sharedViewModel.listaDePreciosRemover)
+                            sharedViewModel.listaDeCantidadesRemover.clear()
+                            sharedViewModel.listaDeProductosRemover.clear()
+                            sharedViewModel.listaDePreciosRemover.clear()
                             adapter.notifyDataSetChanged()
                             binding.rvElegirProductoRemover.requestLayout()
                             binding.tvProductosAnadidosRemover.isVisible = false
@@ -392,7 +452,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                             binding.tvListaDesplegableCliente.setText("Eliga una opción",false)
                             binding.tvListaDesplegableAlmacen.setText("Eliga una opción",false)
                             TextComentarios?.setText("")*/
-                            Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosRemover} y ${sharedViewModel.listaDeCantidadesRemover}", Toast.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosRemover} y ${sharedViewModel.listaDeCantidadesRemover}", Toast.LENGTH_SHORT).show()
                         }
                     )
 
@@ -415,10 +475,10 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                 }
 
                 // TextId?.setText(response.getString("ID_ALMACEN"))
-                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_LONG).show()
+                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
-                //Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_LONG).show()
-                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_LONG).show()
+                //Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
             }
         ){
             override fun getParams(): MutableMap<String, String> {
@@ -448,7 +508,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                   DropDownDestino?.setText("Eliga una opción",false)
                   TextComentarios?.setText("")
                   TextCodigoDeBarra?.setText("")*/
-                Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosRemover} y ${sharedViewModel.listaDeCantidadesRemover}", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosRemover} y ${sharedViewModel.listaDeCantidadesRemover}", Toast.LENGTH_SHORT).show()
             }
         )
 
@@ -520,9 +580,9 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                       Log.i("Sebastian", "No funciona.")
                   }
               }catch (e: SocketTimeoutException){
-                  activity?.runOnUiThread { Toast.makeText(requireContext(),"Se acabo el tiempo de espera para conectar la aplicación al servidor",Toast.LENGTH_LONG).show()}
+                  activity?.runOnUiThread { Toast.makeText(requireContext(),"Se acabo el tiempo de espera para conectar la aplicación al servidor",Toast.LENGTH_SHORT).show()}
               }catch(e:Exception){
-                  activity?.runOnUiThread { Toast.makeText(requireContext(),"No se puedo conectar la aplicación al servidor",Toast.LENGTH_LONG).show()}
+                  activity?.runOnUiThread { Toast.makeText(requireContext(),"No se puedo conectar la aplicación al servidor",Toast.LENGTH_SHORT).show()}
               }
           }
       }
