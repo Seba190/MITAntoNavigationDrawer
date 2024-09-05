@@ -9,6 +9,4 @@ data class ClientesDataResponse (
 data class ClientesItemResponse(
     @SerializedName("Id")  val Id: String,
     @SerializedName("Nombre")  val Nombre: String,
-    @SerializedName("Imagen")  val Imagen: String,
-    @SerializedName("Descripcion")  val Descripcion: String
 )

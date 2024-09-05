@@ -76,15 +76,15 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
         //Botón enviar datos
         binding.button.setOnClickListener {
             if(sharedViewModel.opcionesListAlmacenUsuario.contains(TvHolaMundo?.text.toString()) &&
-                TvHolaMundo?.text.toString() != "Eliga una opción"){
+                TvHolaMundo?.text.toString() != "Elija una opción"){
                     ValidacionesIdInsertarDatos()
                 }
             else if(!sharedViewModel.opcionesListAlmacenUsuario.contains(TvHolaMundo?.text.toString()) &&
-                TvHolaMundo?.text.toString() == "Eliga una opción"){
+                TvHolaMundo?.text.toString() == "Elija una opción"){
                 Toast.makeText(requireContext(),"Debe elegir nombre de usuario", Toast.LENGTH_SHORT).show()
             }
             else if(!sharedViewModel.opcionesListAlmacenUsuario.contains(TvHolaMundo?.text.toString()) &&
-                TvHolaMundo?.text.toString() != "Eliga una opción"){
+                TvHolaMundo?.text.toString() != "Elija una opción"){
                 Toast.makeText(requireContext(),"El usuario no es válido", Toast.LENGTH_SHORT).show()
             }
         }
@@ -261,13 +261,13 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                     val itemSelected = parent.getItemAtPosition(position)
                 }
                 TvHolaMundo?.setOnClickListener {
-                    if(TvHolaMundo?.text.toString() == "Eliga una opción"){
+                    if(TvHolaMundo?.text.toString() == "Elija una opción"){
                         binding.tvholaMundo.setText("",false)
                         TvHolaMundo?.showDropDown()
                     }
                 }
                 TvHolaMundo?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && TvHolaMundo?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && TvHolaMundo?.text.toString() == "Elija una opción"){
                         binding.tvholaMundo.setText("",false)
                         TvHolaMundo?.showDropDown()
                     }
@@ -305,7 +305,7 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                                 Toast.makeText(requireContext(), "Almacén agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
                                 TextNombre?.setText("")
                                 TextDireccion?.setText("")
-                                TvHolaMundo?.setText("Eliga una opción",false)
+                                TvHolaMundo?.setText("Elija una opción",false)
                             },
                             { error ->
                                 Toast.makeText(requireContext(),"El usuario responsable del almacén es obligatorio", Toast.LENGTH_SHORT).show()

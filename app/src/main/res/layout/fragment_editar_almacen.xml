@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/rlEditarAlmacen"
+    android:tag="fragment_almacenes"
     tools:context=".ui.Reportes.misDatos.almacenes.editarAlmacen.EditarAlmacenFragment">
 
     <ScrollView
@@ -143,6 +144,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColorHint="@color/color_list"
+                    app:boxStrokeColor="@color/color_list"
                     android:layout_marginHorizontal="70dp"
                     style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 

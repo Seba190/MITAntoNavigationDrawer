@@ -12,6 +12,11 @@ class AnadirTransferenciaAdapter (var listaDeCantidades: MutableList<String>
 ,private val onClickDelete:(Int) -> Unit)
     : RecyclerView.Adapter<AnadirTransferenciaViewHolder>() {
 
+       /* var ProductosOrdenados = listaDeProductos.sorted()
+        val listaCombinada = listaDeProductos.zip(listaDeCantidades)
+        val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
+        var CantidadesOrdenadas = listaOrdenadaCombinada.map { it.second}*/
+
      fun updateList(listaDeCantidad: MutableList<String>,listaDeProducto: MutableList<String>){
          this.listaDeCantidades =listaDeCantidad
          this.listaDeProductos = listaDeProducto

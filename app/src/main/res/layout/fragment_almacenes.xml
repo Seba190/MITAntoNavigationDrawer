@@ -8,6 +8,56 @@
     android:id="@+id/clalmacenes"
     tools:context=".ui.Reportes.misDatos.almacenes.AlmacenesFragment">
 
+    <LinearLayout
+        android:id="@+id/llfiltradoAlmacenes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/rvAlmacenes"
+        android:layout_marginTop="10dp"
+        android:focusableInTouchMode="true">
+
+    <EditText
+        android:id="@+id/etFiltradoAlmacenes"
+        android:layout_width="170dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="22dp"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:hint="Elija el almacén"
+        android:imeOptions="actionDone"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/black"
+        android:textColorHint="@color/color_list"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ListaDesplegableFiltradoAlmacenes"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/color_list"
+            android:layout_gravity="end"
+            android:gravity="end"
+            style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/tvAutoCompleteFiltradoAlmacenes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/color_list"
+                android:textColor="@color/black"
+                android:hint="Opciones"
+                android:text="ACTIVOS"
+                android:inputType="none"/>
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
@@ -36,9 +86,10 @@
         android:id="@+id/rvAlmacenes"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llfiltradoAlmacenes"
         app:layout_constraintBottom_toBottomOf="parent"/>
     
 

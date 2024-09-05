@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -20,6 +21,7 @@ import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesAd
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesDataResponse
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesViewModel
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.TransaccionesFragmentDirections
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaEntrada.FacturaEntradaItemResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,6 +39,7 @@ class SinFacturaFragment : Fragment(R.layout.fragment_sin_factura) {
     private val binding get() = _binding!!
     private lateinit var retrofit: Retrofit
     private lateinit var adapter: SinFacturaAdapter
+    private var listaDeSinFacturasMutableList : MutableList<SinFacturaItemResponse> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,7 +59,7 @@ class SinFacturaFragment : Fragment(R.layout.fragment_sin_factura) {
     }
     private fun initUI() {
         searchByName()
-        adapter = SinFacturaAdapter{navigateToEditarSinFactura(it)}
+        adapter = SinFacturaAdapter(listaDeSinFacturasMutableList){navigateToEditarSinFactura(it)}
         // adapter2 = CaracteristicasAdapter()
         binding.rvSinFactura.setHasFixedSize(true)
         binding.rvSinFactura.layoutManager = LinearLayoutManager(requireContext())
@@ -75,8 +78,28 @@ class SinFacturaFragment : Fragment(R.layout.fragment_sin_factura) {
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapter.updateList(response.SinFactura)
+                        adapter.updateList(response.SinFactura.sortedBy { it.Producto })
                         binding.progressBarSinFactura.isVisible = false
+                        listaDeSinFacturasMutableList.clear()
+                        listaDeSinFacturasMutableList.addAll(response.SinFactura)
+                        binding.etFiltradoSinFactura.addTextChangedListener { filtro ->
+                            // Convierte 'filtro' a String de manera segura manejando el caso null
+                            val filtroTexto = filtro.toString()
+                            // Filtra la lista con el texto del filtro
+                            val almacenesFiltrados =
+                                listaDeSinFacturasMutableList.filter { bodega ->
+                                    bodega.Producto.lowercase().contains(filtroTexto.lowercase())
+                                }.sortedBy { it.Producto }
+                            Log.i(
+                                "SebaAntes",
+                                "$almacenesFiltrados , $filtroTexto , $listaDeSinFacturasMutableList "
+                            )
+                            adapter.updateList(almacenesFiltrados)
+                            Log.i(
+                                "SebaDespues",
+                                "$almacenesFiltrados , $filtroTexto , $listaDeSinFacturasMutableList "
+                            )
+                        }
                         binding.tvTextoNoFacturas.isVisible = response.SinFactura.isEmpty()
                     }
                 }

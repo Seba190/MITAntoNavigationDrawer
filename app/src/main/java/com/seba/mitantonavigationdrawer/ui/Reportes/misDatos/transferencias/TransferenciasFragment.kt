@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -20,6 +21,7 @@ import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ApiService
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesAdapter
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesDataResponse
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.editarProducto.AlertasAlmacenesItemResponseEditar
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaEntrada.FacturaEntradaItemResponse
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.estadística.EstadisticaViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +38,7 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
     private lateinit var adapter: TransferenciasAdapter
     private val sharedViewModel by activityViewModels<SharedViewModel>()
     private var listaDeTransferencias : List<TransferenciasItemResponse> = emptyList()
+    private var listaDeTransferenciasMutableList : MutableList<TransferenciasItemResponse> = mutableListOf()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -50,13 +53,13 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
         //Aquí se programa
         retrofit = getRetrofit()
         initUI()
-        sharedViewModel.transferenciasId.removeAll(sharedViewModel.transferenciasId)
+        sharedViewModel.transferenciasId.clear()
         return root
     }
 
     private fun initUI() {
         searchByName()
-        adapter = TransferenciasAdapter(listaDeTransferencias,sharedViewModel){navigateToEditarTransferencia(it)}
+        adapter = TransferenciasAdapter(listaDeTransferenciasMutableList,sharedViewModel){navigateToEditarTransferencia(it)}
         // adapter2 = CaracteristicasAdapter()
         binding.rvTransferencias.setHasFixedSize(true)
         binding.rvTransferencias.layoutManager = LinearLayoutManager(requireContext())
@@ -76,8 +79,28 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapter.updateList(response.Transferencias)
+                        adapter.updateList(response.Transferencias.sortedBy { it.Transferencia })
                         binding.progressBarTransferencias.isVisible = false
+                        listaDeTransferenciasMutableList.clear()
+                        listaDeTransferenciasMutableList.addAll(response.Transferencias)
+                        binding.etFiltradoTransferencias.addTextChangedListener { filtro ->
+                            // Convierte 'filtro' a String de manera segura manejando el caso null
+                            val filtroTexto = filtro.toString()
+                            // Filtra la lista con el texto del filtro
+                            val almacenesFiltrados =
+                                listaDeTransferenciasMutableList.filter { bodega ->
+                                    bodega.Transferencia.lowercase().contains(filtroTexto.lowercase())
+                                }.sortedBy { it.Transferencia }
+                            Log.i(
+                                "SebaAntes",
+                                "$almacenesFiltrados , $filtroTexto , $listaDeTransferenciasMutableList "
+                            )
+                            adapter.updateList(almacenesFiltrados)
+                            Log.i(
+                                "SebaDespues",
+                                "$almacenesFiltrados , $filtroTexto , $listaDeTransferenciasMutableList "
+                            )
+                        }
                         binding.tvTextoNoTransferencias.isVisible = response.Transferencias.isEmpty()
                     }
                 }

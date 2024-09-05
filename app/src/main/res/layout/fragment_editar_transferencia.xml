@@ -119,7 +119,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginHorizontal="70dp"
-                        android:textColorHint="@color/color_list">
+                        android:textColorHint="@color/color_list"
+                        app:boxStrokeColor="@color/color_list">
 
                         <AutoCompleteTextView
                             android:id="@+id/tvListaDesplegableAlmacenOrigen"

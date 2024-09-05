@@ -119,15 +119,30 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                       !sharedViewModel.opcionesListRemoverAlmacen.contains(DropDownAlmacen?.text.toString())){
                 Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido",
                     Toast.LENGTH_SHORT).show()
-               }else if(DropDownCliente?.text.toString() == "Eliga una opción" ||
-                    DropDownAlmacen?.text.toString() == "Eliga una opción"){
+               }else if(DropDownCliente?.text.toString() == "Elija una opción" ||
+                    DropDownAlmacen?.text.toString() == "Elija una opción"){
                    Toast.makeText(requireContext(),"Debe elegir el cliente y el almacén", Toast.LENGTH_SHORT).show()
                 }
         }
 
         binding.tvProductosAnadidosRemover.isVisible = false
-        recyclerViewElegirProducto()
+        val productosOrdenados = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
+        val listaCombinada = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDeCantidadesRemover)
+        val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
+        val cantidadesOrdenadas = listaOrdenadaCombinada.map { it.second }.toMutableList()
+        val listaCombinada2 = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDePreciosRemover)
+        val listaOrdenadaCombinada2 = listaCombinada2.sortedBy { it.first }
+        val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()
+        recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados,preciosOrdenados)
         binding.bActualizarRecyclerViewRemover.setOnClickListener {
+            val productosOrdenadosActualizado = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
+            val listaCombinadaActualizada = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDeCantidadesRemover)
+            val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
+            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
+            val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDePreciosRemover)
+            val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
+            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()
+            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizado,preciosOrdenadosActualizado)
             binding.tvProductosAnadidosRemover.isVisible = !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
             binding.llMontoRemover.isVisible = !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
             adapter.notifyDataSetChanged()
@@ -158,12 +173,12 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                 binding.tvProductosAnadidosRemover.isVisible = true
             }else if ((!sharedViewModel.opcionesListRemoverCliente.contains(DropDownCliente?.text.toString()) &&
                 !sharedViewModel.opcionesListRemoverAlmacen.contains(DropDownAlmacen?.text.toString())) &&
-                (DropDownCliente?.text.toString() == "Eliga una opción" ||
-                DropDownAlmacen?.text.toString() == "Eliga una opción")){
+                (DropDownCliente?.text.toString() == "Elija una opción" ||
+                DropDownAlmacen?.text.toString() == "Elija una opción")){
                 Toast.makeText(requireContext(),"Debe elegir cliente y almacén", Toast.LENGTH_SHORT).show()
 
-            } else if((DropDownCliente?.text.toString() != "Eliga una opción" ||
-                        DropDownAlmacen?.text.toString() != "Eliga una opción") &&
+            } else if((DropDownCliente?.text.toString() != "Elija una opción" ||
+                        DropDownAlmacen?.text.toString() != "Elija una opción") &&
                     (!sharedViewModel.opcionesListRemoverCliente.contains(DropDownCliente?.text.toString()) ||
                       !sharedViewModel.opcionesListRemoverAlmacen.contains(DropDownAlmacen?.text.toString()))){
                 Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido", Toast.LENGTH_SHORT).show()
@@ -194,8 +209,8 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         binding.rvElegirProductoRemover.requestLayout()
     }
 
-    fun recyclerViewElegirProducto(){
-        adapter = RemoverInventarioAdapter(sharedViewModel.listaDeCantidadesRemover,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosRemover,sharedViewModel) { position ->
+    fun recyclerViewElegirProducto(listaDeCantidades: MutableList<String>, listaDeProductos: MutableList<String>, listaDePrecios: MutableList<String>){
+        adapter = RemoverInventarioAdapter(listaDeCantidades,listaDeProductos,listaDePrecios,sharedViewModel) { position ->
             onDeletedItem(position)}
         binding.rvElegirProductoRemover.setHasFixedSize(true)
         binding.rvElegirProductoRemover.adapter = adapter
@@ -245,7 +260,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                             Request.Method.POST,
                             url1,
                             { response ->
-                                if(binding.etNombreFacturaSalida.text.isNotBlank() && binding.tvListaDesplegableCliente.text.toString() != "Eliga una opción" && binding.tvListaDesplegableAlmacen.text.toString() != "Eliga una opción") {
+                                if(binding.etNombreFacturaSalida.text.isNotBlank() && binding.tvListaDesplegableCliente.text.toString() != "Elija una opción" && binding.tvListaDesplegableAlmacen.text.toString() != "Elija una opción") {
                                  //   Handler(Looper.getMainLooper()).postDelayed({
                                     removerInventario()
                                  //   }, 2500)
@@ -257,8 +272,8 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                                 Toast.makeText(requireContext(), "Factura agregada exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
                                /* TextNombre?.setText("")
                                 TextFecha?.setText("")
-                                DropDownCliente?.setText("Eliga una opción",false)
-                                DropDownAlmacen?.setText("Eliga una opción",false)
+                                DropDownCliente?.setText("Elija una opción",false)
+                                DropDownAlmacen?.setText("Elija una opción",false)
                                 TextComentarios?.setText("")*/
 
                             },
@@ -343,13 +358,13 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                     val itemSelected = parent.getItemAtPosition(position)
                 }
                 DropDownAlmacen?.setOnClickListener {
-                    if(DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                    if(DropDownAlmacen?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacen.setText("",false)
                         DropDownAlmacen?.showDropDown()
                     }
                 }
                 DropDownAlmacen?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownAlmacen?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacen.setText("",false)
                         DropDownAlmacen?.showDropDown()
                     }
@@ -390,13 +405,13 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                     val itemSelected = parent.getItemAtPosition(position)
                 }
                 DropDownCliente?.setOnClickListener {
-                    if(DropDownCliente?.text.toString() == "Eliga una opción"){
+                    if(DropDownCliente?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableCliente.setText("",false)
                         DropDownCliente?.showDropDown()
                     }
                 }
                 DropDownCliente?.setOnFocusChangeListener { _, hasFocus ->
-                   if(hasFocus && DropDownCliente?.text.toString() == "Eliga una opción"){
+                   if(hasFocus && DropDownCliente?.text.toString() == "Elija una opción"){
                        binding.tvListaDesplegableCliente.setText("",false)
                        DropDownCliente?.showDropDown()
                    }
@@ -432,8 +447,8 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                             Toast.makeText(requireContext(),"Productos removidos exitosamente", Toast.LENGTH_SHORT).show()
                             TextNombre?.setText("")
                             TextFecha?.setText("")
-                            binding.tvListaDesplegableCliente.setText("Eliga una opción",false)
-                            binding.tvListaDesplegableAlmacen.setText("Eliga una opción",false)
+                            binding.tvListaDesplegableCliente.setText("Elija una opción",false)
+                            binding.tvListaDesplegableAlmacen.setText("Elija una opción",false)
                             TextComentarios?.setText("")
                             sharedViewModel.listaDeCantidadesRemover.clear()
                             sharedViewModel.listaDeProductosRemover.clear()
@@ -449,8 +464,8 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                         { error ->
                            /* TextNombre?.setText("")
                             TextFecha?.setText("")
-                            binding.tvListaDesplegableCliente.setText("Eliga una opción",false)
-                            binding.tvListaDesplegableAlmacen.setText("Eliga una opción",false)
+                            binding.tvListaDesplegableCliente.setText("Elija una opción",false)
+                            binding.tvListaDesplegableAlmacen.setText("Elija una opción",false)
                             TextComentarios?.setText("")*/
                             Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosRemover} y ${sharedViewModel.listaDeCantidadesRemover}", Toast.LENGTH_SHORT).show()
                         }
@@ -504,8 +519,8 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
             { error ->
                 /*  TextNombre?.setText("")
                   TextFecha?.setText("")
-                  DropDownOrigen?.setText("Eliga una opción",false)
-                  DropDownDestino?.setText("Eliga una opción",false)
+                  DropDownOrigen?.setText("Elija una opción",false)
+                  DropDownDestino?.setText("Elija una opción",false)
                   TextComentarios?.setText("")
                   TextCodigoDeBarra?.setText("")*/
                 Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosRemover} y ${sharedViewModel.listaDeCantidadesRemover}", Toast.LENGTH_SHORT).show()

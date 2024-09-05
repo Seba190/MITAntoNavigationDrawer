@@ -32,6 +32,8 @@ import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirPro
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaFragment
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaUpdater
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.ElegirProductoFragment
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.AlmacenesFragment
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaEntrada.FacturaEntradaFragment
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.añadirDatos.AnadirDatosFragment
 import com.seba.mitantonavigationdrawer.ui.inicio.InicioFragment
@@ -90,8 +92,8 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
                 R.id.nav_añadir_cliente,R.id.nav_añadir_tipo_de_producto,R.id.nav_añadir_inventario,R.id.nav_remover_inventario,
                 R.id.nav_añadir_transferencia,R.id.nav_elegir_producto, R.id.nav_mis_datos, R.id.nav_almacenes,R.id.nav_productos,R.id.nav_proveedores,
                 R.id.nav_editar_almacen,R.id.nav_editar_cliente,R.id.nav_editar_proveedor,R.id.nav_editar_tipos_de_productos,
-                R.id.tipos_de_productos, R.id.productos,R.id.nav_tipos_de_productos, R.id.nav_clientes,R.id.proveedores,
-                R.id.clientes, R.id.nav_editar_almacen,R.id.nav_editar_producto, R.id.nav_alertas_almacenes,R.id.nav_cliente_precio_venta,
+                R.id.nav_tipos_de_productos, R.id.nav_productos,R.id.nav_tipos_de_productos, R.id.nav_clientes,R.id.nav_proveedores,
+                R.id.nav_clientes, R.id.nav_editar_almacen,R.id.nav_editar_producto, R.id.nav_alertas_almacenes,R.id.nav_cliente_precio_venta,
                 R.id.nav_proveedor_precio_compra, R.id.nav_transferencias, R.id.nav_editar_transferencias,R.id.nav_transacciones,
                 R.id.nav_sin_factura,R.id.nav_editar_sin_factura,R.id.nav_factura_entrada,R.id.nav_editar_factura_entrada,
                 R.id.nav_factura_salida,R.id.nav_editar_factura_salida,R.id.nav_inventory
@@ -117,7 +119,10 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
                 R.id.nav_remover_inventario -> navController.navigate(R.id.nav_remover_inventario)
                 R.id.nav_añadir_transferencia -> navController.navigate(R.id.nav_añadir_transferencia)
                 R.id.nav_elegir_producto -> navController.navigate(R.id.nav_elegir_producto)
-                R.id.nav_mis_datos -> navController.navigate(R.id.nav_mis_datos)
+                R.id.nav_mis_datos -> {
+                    navController.navigate(R.id.nav_mis_datos)
+                    //replaceFragment(AlmacenesFragment())
+                }
                 R.id.nav_almacenes -> navController.navigate(R.id.nav_almacenes)
                 R.id.nav_tipos_de_productos -> navController.navigate(R.id.nav_tipos_de_productos)
                 R.id.nav_productos -> navController.navigate(R.id.nav_productos)
@@ -131,7 +136,10 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
                 R.id.nav_editar_tipos_de_productos ->navController.navigate(R.id.nav_editar_tipos_de_productos)
                 R.id.nav_transferencias ->navController.navigate(R.id.nav_transferencias)
                 R.id.nav_editar_transferencias ->navController.navigate(R.id.nav_editar_transferencias)
-                R.id.nav_transacciones ->navController.navigate(R.id.nav_transacciones)
+                R.id.nav_transacciones ->{
+                    navController.navigate(R.id.nav_transacciones)
+                    replaceFragment(FacturaEntradaFragment())
+                }
                 R.id.nav_sin_factura -> navController.navigate(R.id.nav_sin_factura)
                 R.id.nav_editar_sin_factura -> navController.navigate(R.id.nav_editar_sin_factura)
                 R.id.nav_factura_entrada -> navController.navigate(R.id.nav_factura_entrada)
@@ -148,6 +156,15 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
             true
 
         }
+
+    }
+
+    private fun replaceFragment(fragment : Fragment){
+        val fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frame_layout,fragment)
+        //fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
 
     }
 
@@ -174,19 +191,11 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
                 Log.i("Drawer", "Drawer sliding: $slideOffset")
                 CoroutineScope(Dispatchers.IO).launch {
                     borrarListas()
-                    borrarOpcionesList1()
+                /*    borrarOpcionesList1()
                     borrarOpcionesList2()
                     borrarOpcionesList3()
-                    borrarOpcionesList4()
+                    borrarOpcionesList4()*/
                 }
-
-
-
-
-
-
-
-
             }
 
             override fun onDrawerOpened(drawerView: View) {

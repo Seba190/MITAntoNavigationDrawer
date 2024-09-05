@@ -5,30 +5,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/almacenes"
-        android:id="@+id/almacenes"
+        android:id="@+id/nav_almacenes"
         android:icon="@drawable/ic_add_warehouse"/>
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/tipos_de_producto"
-        android:id="@+id/tipos_de_productos"
+        android:id="@+id/nav_tipos_de_productos"
         android:icon="@drawable/add_type_of_products"/>
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/productos"
-        android:id="@+id/productos"
+        android:id="@+id/nav_productos"
         android:icon="@drawable/add_product"/>
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/proveedores"
-        android:id="@+id/proveedores"
+        android:id="@+id/nav_proveedores"
         android:icon="@drawable/add_supplier"/>
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/clientes"
-        android:id="@+id/clientes"
+        android:id="@+id/nav_clientes"
         android:icon="@drawable/add_client"/>
 </menu>

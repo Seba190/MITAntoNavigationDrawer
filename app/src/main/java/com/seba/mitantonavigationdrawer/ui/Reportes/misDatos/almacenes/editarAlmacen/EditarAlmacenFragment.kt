@@ -21,6 +21,7 @@ import android.widget.RadioGroup
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -36,6 +37,7 @@ import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentEditarAlmacenBinding
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.editarCliente.EditarClienteFragmentDirections
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.editarProducto.EditarCantidadProductosFragment
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONObject
@@ -91,14 +93,14 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
          ListaDesplegable()
         binding.buttonEditable.setOnClickListener {
             if(sharedViewModel.opcionesListEditarAlmacenUsuario.contains(TextDropdown?.text.toString()) &&
-                TextDropdown?.text.toString() != "Eliga una opción"){
+                TextDropdown?.text.toString() != "Elija una opción"){
                 actualizarAlmacen()
             }else if(!sharedViewModel.opcionesListEditarAlmacenUsuario.contains(TextDropdown?.text.toString()) &&
-                TextDropdown?.text.toString() == "Eliga una opción"){
+                TextDropdown?.text.toString() == "Elija una opción"){
                 Toast.makeText(requireContext(),"Debe elegir nombre de usuario", Toast.LENGTH_SHORT).show()
             }
             else if(!sharedViewModel.opcionesListEditarAlmacenUsuario.contains(TextDropdown?.text.toString()) &&
-                TextDropdown?.text.toString() != "Eliga una opción"){
+                TextDropdown?.text.toString() != "Elija una opción"){
                 Toast.makeText(requireContext(),"El usuario no es válido", Toast.LENGTH_SHORT).show()
             }
         }
@@ -141,13 +143,13 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                 }
 
                 TextDropdown?.setOnClickListener {
-                    if(TextDropdown?.text.toString() == "Eliga una opción"){
+                    if(TextDropdown?.text.toString() == "Elija una opción"){
                         binding.tvAutoCompleteEditable.setText("",false)
                         TextDropdown?.showDropDown()
                     }
                 }
                 TextDropdown?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && TextDropdown?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && TextDropdown?.text.toString() == "Elija una opción"){
                         binding.tvAutoCompleteEditable.setText("",false)
                         TextDropdown?.showDropDown()
                     }
@@ -191,6 +193,15 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
             }
         )
         queue1.add(jsonObjectRequest1)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
+                // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
+                val action = EditarAlmacenFragmentDirections.actionNavEditarAlmacenToNavMisDatos(destino = "almacenes")
+                findNavController().navigate(action)
+            }
+        })
     }
 
     private fun actualizarAlmacen() {
@@ -209,7 +220,7 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                     ).show()
                     //   TextNombre?.setText("")
                     //   TextDireccion?.setText("")
-                    //   TextDropdown?.setText("Eliga una opción",false)
+                    //   TextDropdown?.setText("Elija una opción",false)
                 },
                 { error ->
                     Log.i("Sebastian", "Error: $error")
@@ -266,7 +277,7 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                 Toast.makeText(requireContext(), "Almacén actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_SHORT).show()
              //   TextNombre?.setText("")
              //   TextDireccion?.setText("")
-             //   TextDropdown?.setText("Eliga una opción",false)
+             //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
                 Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_SHORT).show()

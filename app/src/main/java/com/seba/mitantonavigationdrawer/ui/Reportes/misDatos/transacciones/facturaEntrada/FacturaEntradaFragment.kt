@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -15,6 +16,7 @@ import com.seba.mitantonavigationdrawer.databinding.FragmentClientesBinding
 import com.seba.mitantonavigationdrawer.databinding.FragmentFacturaEntradaBinding
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentDirections
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.AlmacenesAdapter
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.AlmacenesItemResponse
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ApiServiceClientes
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesAdapter
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesDataResponse
@@ -37,6 +39,7 @@ class FacturaEntradaFragment : Fragment(R.layout.fragment_factura_entrada) {
     private val binding get() = _binding!!
     private lateinit var retrofit: Retrofit
     private lateinit var adapter: FacturaEntradaAdapter
+    private var listaDeFacturasEntradaMutableList : MutableList<FacturaEntradaItemResponse> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,7 +66,7 @@ class FacturaEntradaFragment : Fragment(R.layout.fragment_factura_entrada) {
 
         //override fun onQueryTextChange(newText: String?): Boolean { return false }
         // })
-        adapter = FacturaEntradaAdapter{navigateToEditarFacturaEntrada(it)}
+        adapter = FacturaEntradaAdapter(listaDeFacturasEntradaMutableList){navigateToEditarFacturaEntrada(it)}
         // adapter2 = CaracteristicasAdapter()
         binding.rvFacturaEntrada.setHasFixedSize(true)
         binding.rvFacturaEntrada.layoutManager = LinearLayoutManager(requireContext())
@@ -83,8 +86,28 @@ class FacturaEntradaFragment : Fragment(R.layout.fragment_factura_entrada) {
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapter.updateList(response.FacturaEntrada)
+                        adapter.updateList(response.FacturaEntrada.sortedBy { it.FacturaEntrada })
                         binding.progressBarFacturaEntrada.isVisible = false
+                        listaDeFacturasEntradaMutableList.clear()
+                        listaDeFacturasEntradaMutableList.addAll(response.FacturaEntrada)
+                        binding.etFiltradoFacturaEntrada.addTextChangedListener { filtro ->
+                            // Convierte 'filtro' a String de manera segura manejando el caso null
+                            val filtroTexto = filtro.toString()
+                            // Filtra la lista con el texto del filtro
+                            val almacenesFiltrados =
+                                listaDeFacturasEntradaMutableList.filter { bodega ->
+                                    bodega.FacturaEntrada.lowercase().contains(filtroTexto.lowercase())
+                                }.sortedBy { it.FacturaEntrada }
+                            Log.i(
+                                "SebaAntes",
+                                "$almacenesFiltrados , $filtroTexto , $listaDeFacturasEntradaMutableList "
+                            )
+                            adapter.updateList(almacenesFiltrados)
+                            Log.i(
+                                "SebaDespues",
+                                "$almacenesFiltrados , $filtroTexto , $listaDeFacturasEntradaMutableList "
+                            )
+                        }
                         binding.tvTextoNoFacturasDeEntrada.isVisible = response.FacturaEntrada.isEmpty()
                     }
                 }

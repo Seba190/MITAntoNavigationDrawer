@@ -66,6 +66,7 @@ class SharedViewModel : ViewModel() {
     val opcionesListTransferenciaDestino : MutableList<String> = mutableListOf()
     val opcionesListTransferenciaElegirProducto : MutableList<String> = mutableListOf()
 
+
     //Mini formulario añadir inventario y añadir inventario
     val listaDeCantidadesAnadir : MutableList<String> = mutableListOf()
     val listaDeProductosAnadir  : MutableList<String> = mutableListOf()

@@ -155,14 +155,14 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
 
         binding.buttonProducto.setOnClickListener {
             if(sharedViewModel.opcionesListProductoTipoDeProducto.contains(TvAutoCompleteTipoDeProducto?.text.toString()) &&
-                TvAutoCompleteTipoDeProducto?.text.toString() != "Eliga una opción") {
+                TvAutoCompleteTipoDeProducto?.text.toString() != "Elija una opción") {
                 ValidacionesIdInsertarDatos()
             }else if (!sharedViewModel.opcionesListProductoTipoDeProducto.contains(TvAutoCompleteTipoDeProducto?.text.toString()) &&
-                TvAutoCompleteTipoDeProducto?.text.toString() == "Eliga una opción"){
+                TvAutoCompleteTipoDeProducto?.text.toString() == "Elija una opción"){
                 Toast.makeText(requireContext(),"Debe elegir el tipo de producto", Toast.LENGTH_SHORT).show()
 
             }else if (!sharedViewModel.opcionesListProductoTipoDeProducto.contains(TvAutoCompleteTipoDeProducto?.text.toString()) &&
-                TvAutoCompleteTipoDeProducto?.text.toString() != "Eliga una opción") {
+                TvAutoCompleteTipoDeProducto?.text.toString() != "Elija una opción") {
                 Toast.makeText(requireContext(), "El tipo de producto no es válido", Toast.LENGTH_SHORT
                 ).show()
             }
@@ -458,7 +458,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                                 TextUnidadesEmbalaje?.setText("")
                                 //Imagen?.setImageDrawable(null)
                                 Imagen?.setImageResource(R.drawable.android_logo)
-                                TvAutoCompleteTipoDeProducto?.setText("Eliga una opción", false)
+                                TvAutoCompleteTipoDeProducto?.setText("Elija una opción", false)
                             },
                             { error ->
                                 //Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
@@ -711,13 +711,13 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                         val itemSelected = parent.getItemAtPosition(position)
                     }
                 TvAutoCompleteTipoDeProducto?.setOnClickListener {
-                    if(TvAutoCompleteTipoDeProducto?.text.toString() == "Eliga una opción"){
+                    if(TvAutoCompleteTipoDeProducto?.text.toString() == "Elija una opción"){
                         binding.tvAutoCompleteTipoDeProducto.setText("",false)
                         TvAutoCompleteTipoDeProducto?.showDropDown()
                     }
                 }
                 TvAutoCompleteTipoDeProducto?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && TvAutoCompleteTipoDeProducto?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && TvAutoCompleteTipoDeProducto?.text.toString() == "Elija una opción"){
                         binding.tvAutoCompleteTipoDeProducto.setText("",false)
                         TvAutoCompleteTipoDeProducto?.showDropDown()
                     }

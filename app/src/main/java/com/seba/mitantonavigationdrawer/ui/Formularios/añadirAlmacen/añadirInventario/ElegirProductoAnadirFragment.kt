@@ -132,7 +132,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                         sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
                         eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
                         //  refreshAdapterAnadirTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoAnadir.setText("Eliga una opción",false)
+                        binding.tvListaDesplegableElegirProductoAnadir.setText("Elija una opción",false)
                         binding.etCantidadAnadir.setText("")
                         binding.etPrecioAnadir.setText("")
                                 // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
@@ -154,7 +154,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                         sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
                         eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
                         // refreshAdapterAnadirTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoAnadir.setText("Eliga una opción",false)
+                        binding.tvListaDesplegableElegirProductoAnadir.setText("Elija una opción",false)
                         binding.etArticulosPorCajaAnadir.setText("")
                         binding.etNumeroDeCajasAnadir.setText("")
                         binding.etPrecioAnadir.setText("")
@@ -169,9 +169,9 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                 } else {
                     Toast.makeText(requireContext(), "No se ha podido ingresar la factura", Toast.LENGTH_SHORT).show()
                 }
-            }else if(!encontrarProducto && DropDownProducto?.text.toString() != "Eliga una opción") {
+            }else if(!encontrarProducto && DropDownProducto?.text.toString() != "Elija una opción") {
                 Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
-            }else if(DropDownProducto?.text.toString() == "Eliga una opción"){
+            }else if(DropDownProducto?.text.toString() == "Elija una opción"){
                 Toast.makeText(requireContext(), "Debe elegir producto", Toast.LENGTH_SHORT).show()
             }else if(encontrarProducto && !DropDownProducto?.text.toString().contains("(") &&
                 !DropDownProducto?.text.toString().contains(")")) {
@@ -182,7 +182,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                         sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
                         eliminarElementoDeListaDesplegableSinParentesis(DropDownProducto?.text.toString().uppercase())
                         //  refreshAdapterAnadirTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoAnadir.setText("Eliga una opción",false)
+                        binding.tvListaDesplegableElegirProductoAnadir.setText("Elija una opción",false)
                         binding.etCantidadAnadir.setText("")
                         binding.etPrecioAnadir.setText("")
                         // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
@@ -204,7 +204,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                         sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
                         eliminarElementoDeListaDesplegableSinParentesis(DropDownProducto?.text.toString().uppercase())
                         // refreshAdapterAnadirTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoAnadir.setText("Eliga una opción",false)
+                        binding.tvListaDesplegableElegirProductoAnadir.setText("Elija una opción",false)
                         binding.etArticulosPorCajaAnadir.setText("")
                         binding.etNumeroDeCajasAnadir.setText("")
                         binding.etPrecioAnadir.setText("")
@@ -289,13 +289,13 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
 
                 })
                 DropDownProducto?.setOnClickListener {
-                    if(DropDownProducto?.text.toString() == "Eliga una opción"){
+                    if(DropDownProducto?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableElegirProductoAnadir.setText("",false)
                         DropDownProducto?.showDropDown()
                     }
                 }
                 DropDownProducto?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownProducto?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownProducto?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableElegirProductoAnadir.setText("",false)
                         DropDownProducto?.showDropDown()
                     }
@@ -373,12 +373,12 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                     binding.etArticulosPorCajaAnadir.setText(unidades)
                 }
                 binding.etPrecioAnadir.setText(precio)
-                //binding.tvListaDesplegableElegirProveedor.setText("Eliga una opción",false)
-                // binding.tvListaDesplegableElegirProducto.setText("Eliga una opción",false)
+                //binding.tvListaDesplegableElegirProveedor.setText("Elija una opción",false)
+                // binding.tvListaDesplegableElegirProducto.setText("Elija una opción",false)
 
             }, { error ->
-                /*if(binding.tvListaDesplegableElegirProveedor.text.toString() != "Eliga una opción" &&
-            binding.tvListaDesplegableElegirProducto.text.toString() != "Eliga una opción") {*/
+                /*if(binding.tvListaDesplegableElegirProveedor.text.toString() != "Elija una opción" &&
+            binding.tvListaDesplegableElegirProducto.text.toString() != "Elija una opción") {*/
                 cantidad(producto)
             }
 
@@ -469,12 +469,12 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                     binding.etArticulosPorCajaAnadir.setText(unidades)
                     //binding.etPrecioPorUnidadCajasDeProductos.setText("200")
                 }
-                //binding.tvListaDesplegableElegirProveedor.setText("Eliga una opción",false)
-                // binding.tvListaDesplegableElegirProducto.setText("Eliga una opción",false)
+                //binding.tvListaDesplegableElegirProveedor.setText("Elija una opción",false)
+                // binding.tvListaDesplegableElegirProducto.setText("Elija una opción",false)
 
             }, { error ->
-                /*if(binding.tvListaDesplegableElegirProveedor.text.toString() != "Eliga una opción" &&
-            binding.tvListaDesplegableElegirProducto.text.toString() != "Eliga una opción") {*/
+                /*if(binding.tvListaDesplegableElegirProveedor.text.toString() != "Elija una opción" &&
+            binding.tvListaDesplegableElegirProducto.text.toString() != "Elija una opción") {*/
                 Toast.makeText(requireContext(), "No se ha podido cargar los parametros $error", Toast.LENGTH_SHORT).show()
                 // binding.etCantidad.setText(unidadesEmbalaje)
                 Log.i("Runtime","$error")

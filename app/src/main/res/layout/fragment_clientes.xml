@@ -8,6 +8,56 @@
     android:id="@+id/clclientes"
     tools:context=".ui.Reportes.misDatos.clientes.ClientesFragment">
 
+    <LinearLayout
+        android:id="@+id/llfiltradoClientes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/rvClientes"
+        android:layout_marginTop="10dp"
+        android:focusableInTouchMode="true">
+
+        <EditText
+            android:id="@+id/etFiltradoClientes"
+            android:layout_width="170dp"
+            android:layout_height="54dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="22dp"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:hint="Elija el cliente"
+            android:imeOptions="actionDone"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/black"
+            android:textColorHint="@color/color_list"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ListaDesplegableFiltradoClientes"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:textColorHint="@color/color_list"
+            android:layout_gravity="end"
+            android:gravity="end"
+            style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/tvAutoCompleteFiltradoClientes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/color_list"
+                android:textColor="@color/black"
+                android:hint="Opciones"
+                android:text="ACTIVOS"
+                android:inputType="none"/>
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
@@ -38,7 +88,7 @@
             android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llfiltradoClientes"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
 

@@ -88,7 +88,7 @@ class EditarCantidadProductosFragment : Fragment(R.layout.fragment_editar_cantid
                 Toast.makeText(requireContext(), "Cantidad actualizada exitosamente", Toast.LENGTH_SHORT).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
+                //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
                 Toast.makeText(requireContext(), "Cantidad actualizada exitosamente", Toast.LENGTH_SHORT).show()
@@ -119,7 +119,7 @@ class EditarCantidadProductosFragment : Fragment(R.layout.fragment_editar_cantid
 
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
+                //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
                // Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()

@@ -18,6 +18,7 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -31,6 +32,7 @@ import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentEditarSinFacturaBinding
 import com.seba.mitantonavigationdrawer.databinding.FragmentEstadisticaBinding
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.editarCliente.EditarClienteFragmentDirections
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.TransaccionesFragmentArgs
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.estadística.EstadisticaViewModel
@@ -102,8 +104,8 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                 !sharedViewModel.opcionesListSinFacturaAlmacen.contains(DropDownAlmacen?.text.toString()))){
                 Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido",
                     Toast.LENGTH_SHORT).show()
-            }else if(DropDownProducto?.text.toString() == "Eliga una opción" ||
-                DropDownAlmacen?.text.toString() == "Eliga una opción"){
+            }else if(DropDownProducto?.text.toString() == "Elija una opción" ||
+                DropDownAlmacen?.text.toString() == "Elija una opción"){
                 Toast.makeText(requireContext(),"Debe elegir el almacén y el producto", Toast.LENGTH_SHORT).show()
             }
 
@@ -137,13 +139,13 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                     val itemSelected = parent.getItemAtPosition(position)
                 }
                 DropDownAlmacen?.setOnClickListener {
-                    if(DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                    if(DropDownAlmacen?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacen.setText("",false)
                         DropDownAlmacen?.showDropDown()
                     }
                 }
                 DropDownAlmacen?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownAlmacen?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacen.setText("",false)
                         DropDownAlmacen?.showDropDown()
                     }
@@ -183,13 +185,13 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                     val itemSelected = parent.getItemAtPosition(position)
                 }
                 DropDownProducto?.setOnClickListener {
-                    if(DropDownProducto?.text.toString() == "Eliga una opción"){
+                    if(DropDownProducto?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableProducto.setText("",false)
                         DropDownProducto?.showDropDown()
                     }
                 }
                 DropDownProducto?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownProducto?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownProducto?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableProducto.setText("",false)
                         DropDownProducto?.showDropDown()
                     }
@@ -232,6 +234,15 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
             }
         )
         queue1.add(jsonObjectRequest1)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
+                // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
+                val action = EditarSinFacturaFragmentDirections.actionNavEditarSinFacturaToNavTransacciones(destino = "sin factura")
+                findNavController().navigate(action)
+            }
+        })
     }
 
     private fun actualizarRegistros() {
@@ -278,8 +289,8 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
             Request.Method.POST,
             url1,
             { response ->
-                DropDownAlmacen?.setText("Eliga una opción", false)
-                DropDownProducto?.setText("Eliga una opción", false)
+                DropDownAlmacen?.setText("Elija una opción", false)
+                DropDownProducto?.setText("Elija una opción", false)
                 TextCantidad?.setText("")
                 TextFecha?.setText("")
             },

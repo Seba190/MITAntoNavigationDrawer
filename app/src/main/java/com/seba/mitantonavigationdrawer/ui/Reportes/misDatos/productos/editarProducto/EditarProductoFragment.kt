@@ -64,6 +64,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Shader
+import androidx.activity.OnBackPressedCallback
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.editarAlmacen.EditarAlmacenFragmentDirections
 import java.net.MalformedURLException
 import java.net.URL
 
@@ -187,14 +189,14 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
 
         ButtonProducto?.setOnClickListener {
             if(sharedViewModel.opcionesListEditarProductoTipoDeProducto.contains(DropwDownTipoDeProducto?.text.toString()) &&
-                DropwDownTipoDeProducto?.text.toString() != "Eliga una opción") {
+                DropwDownTipoDeProducto?.text.toString() != "Elija una opción") {
                 actualizarProducto()
             }else if (!sharedViewModel.opcionesListEditarProductoTipoDeProducto.contains(DropwDownTipoDeProducto?.text.toString()) &&
-                DropwDownTipoDeProducto?.text.toString() == "Eliga una opción"){
+                DropwDownTipoDeProducto?.text.toString() == "Elija una opción"){
                 Toast.makeText(requireContext(),"Debe elegir el tipo de producto", Toast.LENGTH_SHORT).show()
 
             }else if (!sharedViewModel.opcionesListEditarProductoTipoDeProducto.contains(DropwDownTipoDeProducto?.text.toString()) &&
-                DropwDownTipoDeProducto?.text.toString() != "Eliga una opción") {
+                DropwDownTipoDeProducto?.text.toString() != "Elija una opción") {
                 Toast.makeText(requireContext(), "El tipo de producto no es válido", Toast.LENGTH_SHORT
                 ).show()
               }
@@ -307,8 +309,14 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
         )
         queue1.add(jsonObjectRequest1)
 
-         //   segundaVez = true
-       // }
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
+                // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
+                val action = EditarProductoFragmentDirections.actionNavEditarProductoToNavMisDatos(destino = "productos")
+                findNavController().navigate(action)
+            }
+        })
     }
 
     private fun actualizarRegistros() {
@@ -321,7 +329,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                 Toast.makeText(requireContext(), "Producto actualizado exitosamente. El id de ingreso es el número ${args.id} ", Toast.LENGTH_SHORT).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
+                //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
                 Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
@@ -370,13 +378,13 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                     val itemSelected = parent.getItemAtPosition(position)
                 }
                 DropwDownTipoDeProducto?.setOnClickListener {
-                    if(DropwDownTipoDeProducto?.text.toString() == "Eliga una opción"){
+                    if(DropwDownTipoDeProducto?.text.toString() == "Elija una opción"){
                         binding.tvAutoCompleteTipoDeProducto.setText("",false)
                         DropwDownTipoDeProducto?.showDropDown()
                     }
                 }
                 DropwDownTipoDeProducto?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropwDownTipoDeProducto?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropwDownTipoDeProducto?.text.toString() == "Elija una opción"){
                         binding.tvAutoCompleteTipoDeProducto.setText("",false)
                         DropwDownTipoDeProducto?.showDropDown()
                     }
@@ -561,7 +569,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                                 TextUnidadesEmbalaje?.setText("")
                                 //Imagen?.setImageDrawable(null)
                                 Imagen?.setImageResource(R.drawable.android_logo)
-                                DropwDownTipoDeProducto?.setText("Eliga una opción",false)*/
+                                DropwDownTipoDeProducto?.setText("Elija una opción",false)*/
                             },
                             { error ->
                                 //Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
@@ -848,7 +856,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                 TextUnidadesEmbalaje?.setText("")
                 //Imagen?.setImageDrawable(null)
                 Imagen?.setImageResource(R.drawable.android_logo)
-                DropwDownTipoDeProducto?.setText("Eliga una opción",false)*/
+                DropwDownTipoDeProducto?.setText("Elija una opción",false)*/
                 },
                 { error ->
                     //Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
@@ -930,7 +938,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                 Log.i("Sebastian3", "${sharedViewModel.numeroAlertas}, ${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDeBodegas}")
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
+                //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
                 Log.i("Sebastian3", "${sharedViewModel.numeroAlertas}, ${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDeBodegas}")
@@ -991,7 +999,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                 Log.i("Sebastian3", "${sharedViewModel.numeroPreciosCompra}, ${sharedViewModel.listaDePreciosCompra}, ${sharedViewModel.listaDeProveedores}")
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
+                //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
                 Log.i("Sebastian3", "${sharedViewModel.numeroPreciosCompra}, ${sharedViewModel.listaDePreciosCompra}, ${sharedViewModel.listaDeProveedores}")
@@ -1059,7 +1067,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                  TextUnidadesEmbalaje?.setText("")
                  //Imagen?.setImageDrawable(null)
                  ImagenProducto?.setImageResource(R.drawable.android_logo)
-                 DropwDownTipoDeProducto?.setText("Eliga una opción",false)*/
+                 DropwDownTipoDeProducto?.setText("Elija una opción",false)*/
             },
             { error ->
                 Log.i("Sebastian3", "${sharedViewModel.numeroPreciosVenta}, ${sharedViewModel.listaDePreciosVenta}, ${sharedViewModel.listaDeClientes}")

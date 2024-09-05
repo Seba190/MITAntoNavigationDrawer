@@ -70,7 +70,8 @@
                         android:layout_height="match_parent"
                         android:layout_marginHorizontal="40dp"
                         android:layout_marginTop="15dp"
-                        android:textColorHint="@color/color_list">
+                        android:textColorHint="@color/color_list"
+                        app:boxStrokeColor="@color/color_list">
 
                         <AutoCompleteTextView
                             android:id="@+id/tvListaDesplegableElegirProductoFacturaEntrada"
@@ -78,7 +79,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/placeholder_dropdown"
                             android:inputType="text"
-                            android:text="Eliga una opción"
+                            android:text="Elija una opción"
                             android:textColor="@color/black"
                             android:textColorHint="@color/color_list" />
 
@@ -250,6 +251,7 @@
                     android:gravity="center"
                     android:inputType="number"
                     android:hint="Escriba el precio de compra"
+                    android:textColor="@color/black"
                     android:textColorHint="@color/color_list"
                     android:layout_marginTop="5dp"/>
 

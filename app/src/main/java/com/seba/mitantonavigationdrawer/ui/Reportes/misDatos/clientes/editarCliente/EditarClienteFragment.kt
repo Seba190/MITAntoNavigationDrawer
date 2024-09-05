@@ -14,6 +14,8 @@ import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -26,6 +28,7 @@ import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentEditarClienteBinding
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesFragment
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONObject
 
@@ -86,6 +89,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
             PorterDuff.Mode.SRC_ATOP)
         binding.etTelefonoCliente.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
             PorterDuff.Mode.SRC_ATOP)
+
         //   Mostrar los usuarios responsables en la lista desplegable
 
       //  EliminarCliente?.setOnClickListener {
@@ -123,7 +127,8 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
         //  val id2 = this.arguments
         // val id3 = id2?.get(EXTRA_ID)
         //val id4 = almacenesItemResponse.Id
-        val url1 = "http://186.64.123.248/Reportes/Clientes/registroInsertar.php?ID_CLIENTE=${sharedViewModel.id.last()}"
+        val url1 =
+            "http://186.64.123.248/Reportes/Clientes/registroInsertar.php?ID_CLIENTE=${sharedViewModel.id.last()}"
         val jsonObjectRequest1 = JsonObjectRequest(
             Request.Method.GET, url1, null,
             { response ->
@@ -139,11 +144,26 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
                     radio2?.isChecked = true
                 }
             }, { error ->
-                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "El id es ${sharedViewModel.id.last()}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         )
         queue1.add(jsonObjectRequest1)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
+               // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
+                val action = EditarClienteFragmentDirections.actionNavEditarClienteToNavMisDatos(destino = "clientes")
+                findNavController().navigate(action)
+            }
+        })
+
     }
+
     private fun actualizarCliente() {
         val url1 = "http://186.64.123.248/Reportes/Clientes/actualizarCliente.php"
         val queue1 =Volley.newRequestQueue(requireContext())
@@ -154,7 +174,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
                 Toast.makeText(requireContext(), "Cliente actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_SHORT).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
+                //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
                 Log.i("Sebastian","Error: $error")
@@ -208,7 +228,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
                 Toast.makeText(requireContext(), "Cliente actualizado exitosamente. El id de ingreso es el número ${args.id} ", Toast.LENGTH_SHORT).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
+                //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
                 Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_SHORT).show()

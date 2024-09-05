@@ -280,7 +280,7 @@
             app:destination="@id/nav_proveedores" />
         <action
             android:id="@+id/action_nav_mis_datos_to_nav_editar_cliente"
-            app:destination="@id/nav_editar_cliente" >
+            app:destination="@id/nav_editar_cliente">
             <argument
                 android:name="id"
                 app:argType="string"
@@ -314,6 +314,9 @@
                 app:argType="string"
                 android:defaultValue="id" />
         </action>
+        <action
+            android:id="@+id/action_nav_mis_datos_to_nav_inicio"
+            app:destination="@id/nav_inicio" />
     </fragment>
     <fragment
         android:id="@+id/nav_almacenes"
@@ -379,7 +382,11 @@
             app:destination="@id/nav_camara_actualizada" />
         <action
             android:id="@+id/action_nav_editar_producto_to_nav_mis_datos"
-            app:destination="@id/nav_mis_datos" />
+            app:destination="@id/nav_mis_datos">
+            <argument
+                android:name="destino"
+                app:argType="string"/>
+        </action>
     </fragment>
     <fragment
         android:id="@+id/nav_barcode_scan_editar_producto"
@@ -481,7 +488,11 @@
             app:destination="@id/nav_editar_cantidad_tipos_de_productos" />
         <action
             android:id="@+id/action_nav_editar_tipos_de_productos_to_nav_mis_datos"
-            app:destination="@id/nav_mis_datos" />
+            app:destination="@id/nav_mis_datos">
+            <argument
+                android:name="destino"
+                app:argType="string"/>
+        </action>
     </fragment>
     <fragment
         android:id="@+id/nav_editar_cantidad_tipos_de_productos"
@@ -499,7 +510,12 @@
         tools:layout="@layout/fragment_editar_almacen" >
         <action
             android:id="@+id/action_nav_editar_almacen_to_nav_mis_datos"
-            app:destination="@id/nav_mis_datos" />
+            app:destination="@id/nav_mis_datos">
+            <argument
+                android:name="destino"
+                app:argType="string"/>
+        </action>
+
     </fragment>
     <fragment
         android:id="@+id/nav_editar_cliente"
@@ -508,7 +524,11 @@
         tools:layout="@layout/fragment_editar_cliente" >
         <action
             android:id="@+id/action_nav_editar_cliente_to_nav_mis_datos"
-            app:destination="@id/nav_mis_datos" />
+            app:destination="@id/nav_mis_datos">
+            <argument
+                android:name="destino"
+                app:argType="string"/>
+        </action>
     </fragment>
     <fragment
         android:id="@+id/nav_editar_proveedor"
@@ -517,7 +537,11 @@
         tools:layout="@layout/fragment_editar_proveedor" >
         <action
             android:id="@+id/action_nav_editar_proveedor_to_nav_mis_datos"
-            app:destination="@id/nav_mis_datos" />
+            app:destination="@id/nav_mis_datos">
+            <argument
+                android:name="destino"
+                app:argType="string"/>
+        </action>
     </fragment>
 
     <fragment
@@ -581,6 +605,9 @@
             android:name="id"
             app:argType="string"
             android:defaultValue="id" />
+        <action
+            android:id="@+id/action_nav_transacciones_to_nav_inicio"
+            app:destination="@id/nav_inicio" />
     </fragment>
     <fragment
         android:id="@+id/nav_sin_factura"
@@ -595,7 +622,11 @@
         tools:layout="@layout/fragment_editar_sin_factura">
         <action
             android:id="@+id/action_nav_editar_sin_factura_to_nav_transacciones"
-            app:destination="@id/nav_transacciones" />
+            app:destination="@id/nav_transacciones">
+            <argument
+                android:name="destino"
+                app:argType="string" />
+        </action>
         <action
             android:id="@+id/action_nav_editar_sin_factura_to_nav_transacciones2"
             app:destination="@id/nav_transacciones" />
@@ -619,7 +650,11 @@
             app:destination="@id/nav_elegir_producto_factura_entrada" />
         <action
             android:id="@+id/action_nav_editar_factura_entrada_to_nav_transacciones"
-            app:destination="@id/nav_transacciones" />
+            app:destination="@id/nav_transacciones">
+            <argument
+                android:name="destino"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/nav_barcode_scan_factura_entrada"
@@ -655,7 +690,11 @@
             app:destination="@id/nav_barcode_scan_factura_salida" />
         <action
             android:id="@+id/action_nav_editar_factura_salida_to_nav_transacciones"
-            app:destination="@id/nav_transacciones" />
+            app:destination="@id/nav_transacciones">
+            <argument
+                android:name="destino"
+                app:argType="string" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/nav_barcode_scan_factura_salida"

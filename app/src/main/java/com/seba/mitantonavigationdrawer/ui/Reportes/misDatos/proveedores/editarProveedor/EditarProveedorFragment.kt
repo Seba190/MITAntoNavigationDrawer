@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -26,6 +27,7 @@ import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentEditarProveedorBinding
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.editarAlmacen.EditarAlmacenFragmentDirections
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import org.json.JSONObject
 
@@ -127,7 +129,7 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
                 Toast.makeText(requireContext(), "Proveedor actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_SHORT).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
+                //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
                 Log.i("Sebastian","Error: $error")
@@ -183,6 +185,15 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
             }
         )
         queue1.add(jsonObjectRequest1)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
+                // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
+                val action = EditarProveedorFragmentDirections.actionNavEditarProveedorToNavMisDatos(destino = "proveedores")
+                findNavController().navigate(action)
+            }
+        })
     }
 
     private fun borrarRegistros(){
@@ -214,7 +225,7 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
                 Toast.makeText(requireContext(), "Proveedor actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()} ", Toast.LENGTH_SHORT).show()
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
-                //   TextDropdown?.setText("Eliga una opción",false)
+                //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
                 Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()

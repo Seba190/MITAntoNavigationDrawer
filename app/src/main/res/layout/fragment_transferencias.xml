@@ -8,6 +8,42 @@
     android:id="@+id/clclientes"
     tools:context=".ui.Reportes.misDatos.transferencias.TransferenciasFragment">
 
+    <LinearLayout
+        android:id="@+id/llfiltradoTransferencias"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/rvTransferencias"
+        android:layout_marginTop="10dp"
+        android:focusableInTouchMode="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_search"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"/>
+
+        <EditText
+            android:id="@+id/etFiltradoTransferencias"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:maxLines="1"
+            android:hint="Elija la transferencia"
+            android:imeOptions="actionDone"
+            android:backgroundTint="@color/black"
+            android:textColorHint="@color/color_list"/>
+
+    </LinearLayout>
+
     <ProgressBar
         android:id="@+id/progressBarTransferencias"
         android:layout_width="wrap_content"
@@ -38,7 +74,7 @@
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llfiltradoTransferencias"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 

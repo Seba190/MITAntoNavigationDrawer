@@ -31,7 +31,7 @@
                 android:id="@+id/tvNombreTransferencia"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="90dp"
+                android:gravity="center"
                 android:layout_marginVertical="30dp"
                 android:text="@string/textView_nombre_transferencia"
                 android:textColor="@color/black"
@@ -56,7 +56,7 @@
                 android:id="@+id/tvFechaTransferencia"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="90dp"
+                android:gravity="center"
                 android:layout_marginVertical="30dp"
                 android:text="@string/textView_fecha_transferencia"
                 android:textColor="@color/black"
@@ -82,7 +82,7 @@
                 android:id="@+id/tvAlmacenOrigen"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginHorizontal="110dp"
+                android:gravity="center"
                 android:layout_marginVertical="30dp"
                 android:text="@string/textView_almacen_origen"
                 android:textColor="@color/black"
@@ -102,7 +102,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="70dp"
-                    android:textColorHint="@color/color_list">
+                    android:textColorHint="@color/color_list"
+                    app:boxStrokeColor="@color/color_list">
 
                     <AutoCompleteTextView
                         android:id="@+id/tvListaDesplegableAlmacenOrigen"
@@ -110,6 +111,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/placeholder_dropdown"
                         android:inputType="text"
+                        android:backgroundTint="@color/color_list"
                         android:text="@string/item_label"
                         android:textColor="@color/black"
                         android:textColorHint="@color/color_list" />
@@ -150,6 +152,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/placeholder_dropdown"
+                        android:backgroundTint="@color/color_list"
                         android:inputType="text"
                         android:text="@string/item_label"
                         android:textColor="@color/black"

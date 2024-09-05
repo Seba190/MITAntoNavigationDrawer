@@ -175,7 +175,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                                             sharedViewModel.listaDeCantidades,
                                             sharedViewModel.listaDeProductos)
                                         //  refreshAdapterAnadirTransferenciaFragment()
-                                        binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
+                                        binding.tvListaDesplegableElegirProducto.setText("Elija una opción", false)
                                         binding.etCodigoDeBarra.setText("")
                                         binding.etCantidad.setText("")
                                         adapter.notifyDataSetChanged()
@@ -222,7 +222,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                                         someFunctionToUpdateAnadirTransferenciaFragment()
                                         sendDataToAnadirTransferenciaFragment(sharedViewModel.listaDeCantidades, sharedViewModel.listaDeProductos)
                                         // refreshAdapterAnadirTransferenciaFragment()
-                                        binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
+                                        binding.tvListaDesplegableElegirProducto.setText("Elija una opción", false)
                                         binding.etArticulosPorCaja.setText("")
                                         binding.etNumeroDeCajas.setText("")
                                         binding.etCodigoDeBarra.setText("")
@@ -264,7 +264,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                             "No hay producto para transferir en el almacén de origen",
                             Toast.LENGTH_SHORT
                         ).show()
-                        binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
+                        binding.tvListaDesplegableElegirProducto.setText("Elija una opción", false)
                         binding.etArticulosPorCaja.setText("")
                         binding.etNumeroDeCajas.setText("")
                         binding.etCodigoDeBarra.setText("")
@@ -280,9 +280,9 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                     }
                 }
                 queue.add(jsonObjectRequest)
-            } else if(!encontrarProducto && DropDownProducto?.text.toString() != "Eliga una opción") {
+            } else if(!encontrarProducto && DropDownProducto?.text.toString() != "Elija una opción") {
                 Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
-            } else if(DropDownProducto?.text.toString() == "Eliga una opción"){
+            } else if(DropDownProducto?.text.toString() == "Elija una opción"){
                 Toast.makeText(requireContext(), "Debe elegir producto", Toast.LENGTH_SHORT).show()
             }else if(encontrarProducto && !DropDownProducto?.text.toString().contains("(") &&
                 !DropDownProducto?.text.toString().contains(")")){
@@ -317,7 +317,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                                             sharedViewModel.listaDeCantidades,
                                             sharedViewModel.listaDeProductos)
                                         //  refreshAdapterAnadirTransferenciaFragment()
-                                        binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
+                                        binding.tvListaDesplegableElegirProducto.setText("Elija una opción", false)
                                         binding.etCodigoDeBarra.setText("")
                                         binding.etCantidad.setText("")
                                         adapter.notifyDataSetChanged()
@@ -368,7 +368,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                                         )
                                         // refreshAdapterAnadirTransferenciaFragment()
                                         binding.tvListaDesplegableElegirProducto.setText(
-                                            "Eliga una opción",
+                                            "Elija una opción",
                                             false
                                         )
                                         binding.etArticulosPorCaja.setText("")
@@ -412,7 +412,7 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                             "No hay producto para transferir en el almacén de origen",
                             Toast.LENGTH_SHORT
                         ).show()
-                        binding.tvListaDesplegableElegirProducto.setText("Eliga una opción", false)
+                        binding.tvListaDesplegableElegirProducto.setText("Elija una opción", false)
                         binding.etArticulosPorCaja.setText("")
                         binding.etNumeroDeCajas.setText("")
                         binding.etCodigoDeBarra.setText("")
@@ -511,12 +511,13 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                 val jsonArray = JSONObject(response).getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
                 for (i in 0..<jsonArray.length()) {
-                    if (!sharedViewModel.opcionesListTransferencia.contains(jsonArray.getString(i).replace("'", ""))) {
+                    if (!sharedViewModel.opcionesListTransferencia.contains(jsonArray.getString(i).replace("'", "")) &&
+                        !sharedViewModel.listaDeProductos.contains("${jsonArray.getString(i).replace("'", "").substringBefore('(')}( 0 unid. )")) {
                         sharedViewModel.opcionesListTransferencia.add(jsonArray.getString(i).replace("'", ""))
                     }
                 }
                 sharedViewModel.opcionesListTransferencia.removeAll { elemento ->
-                    Log.i("ListaRemoverInventario5", "${sharedViewModel.opcionesListTransferencia}, $elemento, ${sharedViewModel.listaDeProductos}")
+                    Log.i("ListaTransferenciaInventario5", "${sharedViewModel.opcionesListTransferencia}, $elemento, ${sharedViewModel.listaDeProductos}")
                     sharedViewModel.listaDeProductos.any{it == elemento}
                 }
                 sharedViewModel.opcionesListTransferencia.sort()
@@ -552,13 +553,13 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
 
                 })
                 DropDownProducto?.setOnClickListener {
-                    if(DropDownProducto?.text.toString() == "Eliga una opción"){
+                    if(DropDownProducto?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableElegirProducto.setText("",false)
                         DropDownProducto?.showDropDown()
                     }
                 }
                 DropDownProducto?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownProducto?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownProducto?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableElegirProducto.setText("",false)
                         DropDownProducto?.showDropDown()
                     }
@@ -686,12 +687,12 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                     binding.etArticulosPorCaja.setText(unidades)
                     //binding.etPrecioPorUnidadCajasDeProductos.setText("200")
                 }
-                //binding.tvListaDesplegableElegirProveedor.setText("Eliga una opción",false)
-                // binding.tvListaDesplegableElegirProducto.setText("Eliga una opción",false)
+                //binding.tvListaDesplegableElegirProveedor.setText("Elija una opción",false)
+                // binding.tvListaDesplegableElegirProducto.setText("Elija una opción",false)
 
             }, { error ->
-                /*if(binding.tvListaDesplegableElegirProveedor.text.toString() != "Eliga una opción" &&
-            binding.tvListaDesplegableElegirProducto.text.toString() != "Eliga una opción") {*/
+                /*if(binding.tvListaDesplegableElegirProveedor.text.toString() != "Elija una opción" &&
+            binding.tvListaDesplegableElegirProducto.text.toString() != "Elija una opción") {*/
                 Toast.makeText(requireContext(), "No se ha podido cargar los parametros $error", Toast.LENGTH_SHORT).show()
                 // binding.etCantidad.setText(unidadesEmbalaje)
                 Log.i("Runtime","$error")

@@ -4,19 +4,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/factura_entrada"
-        android:id="@+id/factura_entrada"
+        android:id="@+id/nav_factura_entrada"
         android:icon="@drawable/ic_add_inventory"/>
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/factura_salida"
-        android:id="@+id/factura_salida"
+        android:id="@+id/nav_factura_salida"
         android:icon="@drawable/ic_remove_inventory"/>
     <item
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:title="@string/sin_factura"
-        android:id="@+id/sin_factura"
+        android:id="@+id/nav_sin_factura"
         android:icon="@drawable/ic_without_invoice"/>
 
 </menu>

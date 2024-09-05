@@ -6,13 +6,11 @@ import java.util.Objects
 
 data class AlmacenesDataResponse (
     @SerializedName("Respuesta")  val Respuesta: String,
-    @SerializedName("Almacenes")  val Almacenes: List<AlmacenesItemResponse>,
+    @SerializedName("Almacenes")  val Almacenes: List<AlmacenesItemResponse>
 )
 data class AlmacenesItemResponse(
     @SerializedName("Id")  val Id: String ,
-    @SerializedName("Nombre")  val Nombre: String ,
-    @SerializedName("Imagen")  val Imagen: String,
-    @SerializedName("Descripcion")  val Descripcion: String
+    @SerializedName("Nombre")  val Nombre: String
 )
 
 

@@ -1,11 +1,17 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.proveedores
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -13,9 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentProveedoresBinding
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentDirections
-import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ApiServiceClientes
-import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesAdapter
-import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.ClientesDataResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,6 +37,9 @@ class ProveedoresFragment : Fragment(R.layout.fragment_proveedores) {
 
     private lateinit var retrofit: Retrofit
     private lateinit var adapter: ProveedoresAdapter
+    private var listaDeProveedoresMutableList : MutableList<ProveedoresItemResponse> = mutableListOf()
+    private val listaDeActividad: List<String> = listOf("TODOS", "ACTIVOS", "INACTIVOS")
+    var DropdownActividad:  AutoCompleteTextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,7 +53,9 @@ class ProveedoresFragment : Fragment(R.layout.fragment_proveedores) {
         val root: View = binding.root
         binding.tvTextoNoProveedores.isVisible = false
         //Aquí se programa
+        DropdownActividad = binding.tvAutoCompleteFiltradoProveedores.findViewById(R.id.tvAutoCompleteFiltradoProveedores)
         retrofit = getRetrofit()
+        listaDesplegableActividad()
         initUI()
         return root
     }
@@ -71,7 +79,7 @@ class ProveedoresFragment : Fragment(R.layout.fragment_proveedores) {
     private fun searchByName() {
         binding.progressBar.isVisible = true
         CoroutineScope(Dispatchers.IO).launch{
-            val myResponse : Response<ProveedoresDataResponse> = retrofit.create(ApiServiceProveedores::class.java).getProveedores()
+            val myResponse : Response<ProveedoresDataResponse> = retrofit.create(ApiServiceProveedores::class.java).postProveedores(DropdownActividad?.text.toString())
             if(myResponse.isSuccessful){
                 Log.i("Sebastian", "Funciona!!")
                 val response: ProveedoresDataResponse? = myResponse.body()
@@ -80,8 +88,28 @@ class ProveedoresFragment : Fragment(R.layout.fragment_proveedores) {
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapter.updateList(response.Proveedores)
+                        adapter.updateList(response.Proveedores.sortedBy { it.Nombre })
                         binding.progressBar.isVisible = false
+                        listaDeProveedoresMutableList.clear()
+                        listaDeProveedoresMutableList.addAll(response.Proveedores)
+                        binding.etFiltradoProveedores.addTextChangedListener { filtro ->
+                            // Convierte 'filtro' a String de manera segura manejando el caso null
+                            val filtroTexto = filtro.toString()
+                            // Filtra la lista con el texto del filtro
+                            val almacenesFiltrados =
+                                listaDeProveedoresMutableList.filter { bodega ->
+                                    bodega.Nombre.lowercase().contains(filtroTexto.lowercase())
+                                }.sortedBy { it.Nombre }
+                            Log.i(
+                                "SebaAntes",
+                                "$almacenesFiltrados , $filtroTexto , $listaDeProveedoresMutableList "
+                            )
+                            adapter.updateList(almacenesFiltrados)
+                            Log.i(
+                                "SebaDespues",
+                                "$almacenesFiltrados , $filtroTexto , $listaDeProveedoresMutableList "
+                            )
+                        }
                         binding.tvTextoNoProveedores.isVisible = response.Proveedores.isEmpty()
                     }
                 }
@@ -99,10 +127,29 @@ class ProveedoresFragment : Fragment(R.layout.fragment_proveedores) {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    private fun listaDesplegableActividad() {
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, listaDeActividad)
+        //binding.tvholaMundo?.setText(response.getString("Lista"))
+        DropdownActividad?.setAdapter(adapter)
+        DropdownActividad?.onItemClickListener =
+            AdapterView.OnItemClickListener { parent, view, position, id ->
+                // val itemSelected = parent.getItemAtPosition(position).toString()
+                searchByName()
+                val valorEditText: String = binding.etFiltradoProveedores.text.toString()
+                binding.etFiltradoProveedores.setText("")
+                Handler(Looper.getMainLooper()).postDelayed({
+                    binding.etFiltradoProveedores.setText(valorEditText)
+                }, 100)
+                //bodegasPorActividad(itemSelected)
+            }
+        }
+
     private fun navigateToEditarProveedor(id:String){
         val action = MisDatosFragmentDirections.actionNavMisDatosToNavEditarProveedor(id = id)
         findNavController().navigate(action)
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

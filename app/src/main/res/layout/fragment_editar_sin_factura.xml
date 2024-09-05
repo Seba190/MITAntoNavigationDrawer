@@ -91,6 +91,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColorHint="@color/color_list"
+                    app:boxStrokeColor="@color/color_list"
                     android:layout_marginHorizontal="70dp"
                     style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
@@ -131,6 +132,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textColorHint="@color/color_list"
+                    app:boxStrokeColor="@color/color_list"
                     android:layout_marginHorizontal="70dp"
                     style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 

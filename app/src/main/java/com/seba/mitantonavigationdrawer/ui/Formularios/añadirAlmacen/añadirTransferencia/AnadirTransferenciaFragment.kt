@@ -15,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import android.widget.Filter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -177,13 +178,13 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 // binding.tvProductosAnadidos.isVisible = !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
             } else if((!sharedViewModel.opcionesListTransferenciaOrigen.contains(DropDownOrigen?.text.toString()) &&
                         !sharedViewModel.opcionesListTransferenciaDestino.contains(DropDownDestino?.text.toString())) &&
-                       (DropDownOrigen?.text.toString() == "Eliga una opción" &&
-                        DropDownDestino?.text.toString() == "Eliga una opción")) {
-                Toast.makeText(requireContext(), "Eliga el almacén de origen y de destino", Toast.LENGTH_SHORT).show()
+                       (DropDownOrigen?.text.toString() == "Elija una opción" &&
+                        DropDownDestino?.text.toString() == "Elija una opción")) {
+                Toast.makeText(requireContext(), "Elija el almacén de origen y de destino", Toast.LENGTH_SHORT).show()
             } else if((!sharedViewModel.opcionesListTransferenciaOrigen.contains(DropDownOrigen?.text.toString()) &&
                         !sharedViewModel.opcionesListTransferenciaDestino.contains(DropDownDestino?.text.toString())) &&
-                (DropDownOrigen?.text.toString() != "Eliga una opción" &&
-                        DropDownDestino?.text.toString() != "Eliga una opción")){
+                (DropDownOrigen?.text.toString() != "Elija una opción" &&
+                        DropDownDestino?.text.toString() != "Elija una opción")){
                 Toast.makeText(requireContext(),"El nombre del almacén de origen o destino no es válido", Toast.LENGTH_SHORT).show()
             }
 
@@ -200,8 +201,8 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 } else if(!sharedViewModel.opcionesListTransferenciaOrigen.contains(DropDownOrigen?.text.toString()) ||
                 !sharedViewModel.opcionesListTransferenciaDestino.contains(DropDownDestino?.text.toString())) {
             Toast.makeText(requireContext(), "El almacén de origen o de destino no es válido", Toast.LENGTH_SHORT).show()
-                } else if(DropDownOrigen?.text.toString() == "Eliga una opción" ||
-                    DropDownDestino?.text.toString() == "Eliga una opción"){
+                } else if(DropDownOrigen?.text.toString() == "Elija una opción" ||
+                    DropDownDestino?.text.toString() == "Elija una opción"){
                     Toast.makeText(requireContext(),"Debe elegir el almacén de origen y de destino", Toast.LENGTH_SHORT).show()
                 }
         }
@@ -232,9 +233,18 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
             }
            }*/
         binding.tvProductosAnadidos.isVisible = false
-        recyclerViewElegirProducto()
+        val productosOrdenados = sharedViewModel.listaDeProductos.sorted().toMutableList()
+        val listaCombinada = sharedViewModel.listaDeProductos.zip(sharedViewModel.listaDeCantidades)
+        val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
+        val cantidadesOrdenadas = listaOrdenadaCombinada.map { it.second }.toMutableList()
+        recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados)
         //var segundaVez = false
         binding.bActualizarRecyclerView.setOnClickListener {
+            val productosOrdenadosActualizados = sharedViewModel.listaDeProductos.sorted().toMutableList()
+            val listaCombinadaActualizada = sharedViewModel.listaDeProductos.zip(sharedViewModel.listaDeCantidades)
+            val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
+            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second}.toMutableList()
+            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizados)
             binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
              binding.nsvElegirProducto.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
             adapter.notifyDataSetChanged()
@@ -262,9 +272,9 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
         binding.rvElegirProducto.requestLayout()
     }*/
 
-    fun recyclerViewElegirProducto() {
-        adapter = AnadirTransferenciaAdapter(sharedViewModel.listaDeCantidades,
-            sharedViewModel.listaDeProductos,sharedViewModel) { position -> onDeletedItem(position)}
+    fun recyclerViewElegirProducto(listaDeCantidades: MutableList<String>, listaDeProductos: MutableList<String>) {
+        adapter = AnadirTransferenciaAdapter(listaDeCantidades,
+            listaDeProductos,sharedViewModel) { position -> onDeletedItem(position)}
         binding.rvElegirProducto.setHasFixedSize(true)
         binding.rvElegirProducto.adapter = adapter
         binding.rvElegirProducto.layoutManager = LinearLayoutManager(requireContext())
@@ -296,6 +306,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                        sharedViewModel.opcionesListTransferenciaDestino.add(jsonArray.getString(i).removeSurrounding("'", "'"))
                    }
                }
+                //val itemsTransformados = sharedViewModel.opcionesListTransferenciaDestino.map { it.replace("_"," ") }
                 sharedViewModel.opcionesListTransferenciaDestino.sort()
                 //Crea un adpatador para el dropdown
                 val adapter = ArrayAdapter(requireContext(),android.R.layout.simple_dropdown_item_1line, sharedViewModel.opcionesListTransferenciaDestino)
@@ -306,14 +317,15 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                     AdapterView.OnItemClickListener { parent, view, position, id ->
                         val itemSelected = parent.getItemAtPosition(position)
                     }
+
                 DropDownDestino?.setOnClickListener {
-                    if(DropDownDestino?.text.toString() == "Eliga una opción"){
+                    if(DropDownDestino?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacenDestino.setText("",false)
                         DropDownDestino?.showDropDown()
                     }
                 }
                 DropDownDestino?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownDestino?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownDestino?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacenDestino.setText("",false)
                         DropDownDestino?.showDropDown()
                     }
@@ -362,13 +374,13 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                         val itemSelected = parent.getItemAtPosition(position)
                     }
                 DropDownOrigen?.setOnClickListener {
-                    if(DropDownOrigen?.text.toString() == "Eliga una opción"){
+                    if(DropDownOrigen?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacenOrigen.setText("",false)
                         DropDownOrigen?.showDropDown()
                     }
                 }
                 DropDownOrigen?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownOrigen?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownOrigen?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacenOrigen.setText("",false)
                         DropDownOrigen?.showDropDown()
                     }
@@ -404,13 +416,20 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                             Request.Method.POST,
                             url1,
                             { response ->
-                                if (binding.etNombreTransferencia.text.isNotBlank() && binding.tvListaDesplegableAlmacenDestino.text.toString() != "Eliga una opción" && binding.tvListaDesplegableAlmacenOrigen.text.toString() != "Eliga una opción") {
+                                if (binding.etNombreTransferencia.text.isNotBlank() && binding.tvListaDesplegableAlmacenDestino.text.toString() != "Elija una opción" && binding.tvListaDesplegableAlmacenOrigen.text.toString() != "Elija una opción") {
                                       //  Handler(Looper.getMainLooper()).postDelayed({
                                     modificarInventario()
                                       //  }, 2500)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosYCantidades()
-                                        }, 5000)
+                                    }, 200)
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Productos agregados exitosamente",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        }, 4000)
                                         binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
                                     }
 
@@ -505,8 +524,8 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                         { response ->
                             TextNombre?.setText("")
                             TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
-                            DropDownOrigen?.setText("Eliga una opción", false)
-                            DropDownDestino?.setText("Eliga una opción", false)
+                            DropDownOrigen?.setText("Elija una opción", false)
+                            DropDownDestino?.setText("Elija una opción", false)
                             TextComentarios?.setText("")
                             sharedViewModel.listaDeCantidades.removeAll(sharedViewModel.listaDeCantidades)
                             sharedViewModel.listaDeProductos.removeAll(sharedViewModel.listaDeProductos)
@@ -516,11 +535,6 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                             binding.tvProductosAnadidos.isVisible = false
                             binding.nsvElegirProducto.isVisible = false
                             sharedViewModel.opcionesListTransferencia.clear()
-                            Toast.makeText(
-                                requireContext(),
-                                "Productos agregados exitosamente",
-                                Toast.LENGTH_SHORT
-                            ).show()
                         },
                         { error ->
                             Toast.makeText(
@@ -585,8 +599,8 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
             { error ->
                 /*  TextNombre?.setText("")
                           TextFecha?.setText("")
-                          DropDownOrigen?.setText("Eliga una opción",false)
-                          DropDownDestino?.setText("Eliga una opción",false)
+                          DropDownOrigen?.setText("Elija una opción",false)
+                          DropDownDestino?.setText("Elija una opción",false)
                           TextComentarios?.setText("")
                           TextCodigoDeBarra?.setText("")*/
                 Toast.makeText(

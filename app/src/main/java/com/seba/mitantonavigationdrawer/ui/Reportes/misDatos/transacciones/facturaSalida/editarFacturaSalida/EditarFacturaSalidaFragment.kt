@@ -16,6 +16,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
@@ -36,6 +37,7 @@ import com.seba.mitantonavigationdrawer.databinding.FragmentEditarTransferenciaB
 import com.seba.mitantonavigationdrawer.databinding.FragmentEstadisticaBinding
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirInventario.AnadirInventarioAdapter
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirInventario.ElegirProductoAnadirFragment
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.clientes.editarCliente.EditarClienteFragmentDirections
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.TransaccionesFragmentArgs
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaEntrada.editarFacturaEntrada.EditarFacturaEntradaViewModel
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transacciones.facturaEntrada.editarFacturaEntrada.ElegirProductoFacturaEntradaFragment
@@ -99,7 +101,7 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
 
         /*binding.nsvElegirProductoEditar.isVisible = true
         binding.bAnadirNuevoProductoEditar.setOnClickListener {
-            if (DropDownProveedor?.text.toString() != "Eliga una opción" && DropDownAlmacen?.text.toString() != "Eliga una opción") {
+            if (DropDownProveedor?.text.toString() != "Elija una opción" && DropDownAlmacen?.text.toString() != "Elija una opción") {
                 val elegirProductoEditarTransferenciaFragment = ElegirProductoEditarTransferenciaFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.clEditarTransferencia, elegirProductoEditarTransferenciaFragment)
@@ -121,8 +123,24 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
         binding.bEscanearCodigoDeBarraFacturaSalidaEditar.setOnClickListener {
             requestCamara?.launch(android.Manifest.permission.CAMERA)
         }
-        recyclerViewElegirProducto()
+
+        val productosOrdenados = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
+        val listaCombinada = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDeCantidadesRemover)
+        val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
+        val cantidadesOrdenadas = listaOrdenadaCombinada.map { it.second }.toMutableList()
+        val listaCombinada2 = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDePreciosRemover)
+        val listaOrdenadaCombinada2 = listaCombinada2.sortedBy { it.first }
+        val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()
+        recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados,preciosOrdenados)
         binding.bActualizarRecyclerViewFacturaSalidaEditar.setOnClickListener {
+            val productosOrdenadosActualizado = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
+            val listaCombinadaActualizada = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDeCantidadesRemover)
+            val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
+            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
+            val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDePreciosRemover)
+            val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
+            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()
+            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizado,preciosOrdenadosActualizado)
             binding.tvProductosAnadidosFacturaSalidaEditar.isVisible =
                 !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
             binding.llMontoFacturaSalidaEditar.isVisible =
@@ -156,12 +174,12 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                 // binding.tvProductosAnadidosAnadir.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 && adapter.listaDeProductosAnadir.size == 0 && adapter.listaDePreciosAnadir.size == 0)
             } else if ((!sharedViewModel.opcionesListSalidaCliente.contains(DropDownCliente?.text.toString()) &&
                         !sharedViewModel.opcionesListSalidaAlmacen.contains(DropDownAlmacen?.text.toString())) &&
-                (DropDownCliente?.text.toString() == "Eliga una opción" ||
-                        DropDownAlmacen?.text.toString() == "Eliga una opción")){
+                (DropDownCliente?.text.toString() == "Elija una opción" ||
+                        DropDownAlmacen?.text.toString() == "Elija una opción")){
                 Toast.makeText(requireContext(),"Debe elegir cliente y almacén", Toast.LENGTH_SHORT).show()
 
-             }else if((DropDownCliente?.text.toString() != "Eliga una opción" ||
-                        DropDownAlmacen?.text.toString() != "Eliga una opción") &&
+             }else if((DropDownCliente?.text.toString() != "Elija una opción" ||
+                        DropDownAlmacen?.text.toString() != "Elija una opción") &&
                 (!sharedViewModel.opcionesListSalidaCliente.contains(DropDownCliente?.text.toString()) ||
                         !sharedViewModel.opcionesListSalidaAlmacen.contains(DropDownAlmacen?.text.toString()))){
                 Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido", Toast.LENGTH_SHORT).show()
@@ -189,8 +207,8 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                     !sharedViewModel.opcionesListSalidaAlmacen.contains(DropDownAlmacen?.text.toString())){
                     Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido",
                         Toast.LENGTH_SHORT).show()
-                }else if(DropDownCliente?.text.toString() == "Eliga una opción" ||
-                    DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                }else if(DropDownCliente?.text.toString() == "Elija una opción" ||
+                    DropDownAlmacen?.text.toString() == "Elija una opción"){
                     Toast.makeText(requireContext(),"Debe elegir el cliente y el almacén", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -263,13 +281,22 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
             }
         )
         queue1.add(jsonObjectRequest1)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
+                // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
+                val action = EditarFacturaSalidaFragmentDirections.actionNavEditarFacturaSalidaToNavTransacciones(destino = "factura salida")
+                findNavController().navigate(action)
+            }
+        })
     }
 
-    fun recyclerViewElegirProducto() {
+    fun recyclerViewElegirProducto(listaDeCantidades: MutableList<String>, listaDeProductos: MutableList<String>, listaDePrecios: MutableList<String>) {
         adapter = RemoverInventarioAdapter(
-            sharedViewModel.listaDeCantidadesRemover,
-            sharedViewModel.listaDeProductosRemover,
-            sharedViewModel.listaDePreciosRemover,
+            listaDeCantidades,
+            listaDeProductos,
+            listaDePrecios,
             sharedViewModel
         ) { position ->
             onDeletedItem(position)
@@ -312,7 +339,7 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                 Request.Method.POST,
                 url1,
                 { response ->
-                    if (binding.etNombreFacturaSalidaEditar.text.isNotBlank() && binding.tvListaDesplegableAlmacenEditar.text.toString() != "Eliga una opción" && binding.tvListaDesplegableClienteEditar.text.toString() != "Eliga una opción") {
+                    if (binding.etNombreFacturaSalidaEditar.text.isNotBlank() && binding.tvListaDesplegableAlmacenEditar.text.toString() != "Elija una opción" && binding.tvListaDesplegableClienteEditar.text.toString() != "Elija una opción") {
                         //   Handler(Looper.getMainLooper()).postDelayed({
                         eliminarProductos()
                         removerInventario()
@@ -383,8 +410,8 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                         Calendar.getInstance().time
                     )
                 )
-                DropDownCliente?.setText("Eliga una opción", false)
-                DropDownAlmacen?.setText("Eliga una opción", false)
+                DropDownCliente?.setText("Elija una opción", false)
+                DropDownAlmacen?.setText("Elija una opción", false)
                 TextComentarios?.setText("")
                 sharedViewModel.listaDeCantidadesRemover.clear()
                 sharedViewModel.listaDeProductosRemover.clear()
@@ -412,8 +439,8 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                         Calendar.getInstance().time
                     )
                 )
-                DropDownCliente?.setText("Eliga una opción", false)
-                DropDownAlmacen?.setText("Eliga una opción", false)
+                DropDownCliente?.setText("Elija una opción", false)
+                DropDownAlmacen?.setText("Elija una opción", false)
                 TextComentarios?.setText("")
                 sharedViewModel.listaDeCantidadesRemover.removeAll(sharedViewModel.listaDeCantidadesRemover)
                 sharedViewModel.listaDeProductosRemover.removeAll(sharedViewModel.listaDeProductosRemover)
@@ -463,8 +490,8 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                         Calendar.getInstance().time
                     )
                 )
-                DropDownCliente?.setText("Eliga una opción", false)
-                DropDownAlmacen?.setText("Eliga una opción", false)
+                DropDownCliente?.setText("Elija una opción", false)
+                DropDownAlmacen?.setText("Elija una opción", false)
                 TextComentarios?.setText("")
                 sharedViewModel.listaDeCantidadesRemover.clear()
                 sharedViewModel.listaDeProductosRemover.clear()
@@ -483,8 +510,8 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
             { error ->
                 /*  TextNombre?.setText("")
                           TextFecha?.setText("")
-                          DropDownOrigen?.setText("Eliga una opción",false)
-                          DropDownDestino?.setText("Eliga una opción",false)
+                          DropDownOrigen?.setText("Elija una opción",false)
+                          DropDownDestino?.setText("Elija una opción",false)
                           TextComentarios?.setText("")
                           TextCodigoDeBarra?.setText("")*/
                 Toast.makeText(
@@ -623,13 +650,13 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                         val itemSelected = parent.getItemAtPosition(position)
                     }
                 DropDownAlmacen?.setOnClickListener {
-                    if(DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                    if(DropDownAlmacen?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacenEditar.setText("",false)
                         DropDownAlmacen?.showDropDown()
                     }
                 }
                 DropDownAlmacen?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownAlmacen?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacenEditar.setText("",false)
                         DropDownAlmacen?.showDropDown()
                     }
@@ -674,13 +701,13 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                         val itemSelected = parent.getItemAtPosition(position)
                     }
                 DropDownCliente?.setOnClickListener {
-                    if(DropDownCliente?.text.toString() == "Eliga una opción"){
+                    if(DropDownCliente?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableClienteEditar.setText("",false)
                         DropDownCliente?.showDropDown()
                     }
                 }
                 DropDownCliente?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownCliente?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownCliente?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableClienteEditar.setText("",false)
                         DropDownCliente?.showDropDown()
                     }

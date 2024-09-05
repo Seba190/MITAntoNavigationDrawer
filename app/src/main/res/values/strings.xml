@@ -190,7 +190,7 @@
     <string name="textView_usuario_responsable">USUARIO RESPONSABLE</string>
     <string name = "textView_id_almacen">Id en la base de datos</string>
     <string name = "CheckBox">Actividad</string>
-    <string name="item_label">Eliga una opción</string>
+    <string name="item_label">Elija una opción</string>
 
     <!-- fragment añadir Producto -->
     <string name="placeholder_nombre_producto">Escriba el nombre del producto</string>

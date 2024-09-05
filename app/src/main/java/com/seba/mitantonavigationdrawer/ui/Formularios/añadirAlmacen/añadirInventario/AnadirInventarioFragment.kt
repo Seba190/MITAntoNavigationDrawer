@@ -125,8 +125,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                 } else if (!sharedViewModel.opcionesListAnadirProveedor.contains(DropDownProveedor?.text.toString()) ||
                 !sharedViewModel.opcionesListAnadirAlmacen.contains(DropDownAlmacen?.text.toString())){
                 Toast.makeText(requireContext(),"El nombre del proveedor o del almacén no es válido", Toast.LENGTH_SHORT).show()
-                } else if(DropDownProveedor?.text.toString() == "Eliga una opción" ||
-                    DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                } else if(DropDownProveedor?.text.toString() == "Elija una opción" ||
+                    DropDownAlmacen?.text.toString() == "Elija una opción"){
                     Toast.makeText(requireContext(),"Debe elegir el proveedor y el almacén", Toast.LENGTH_SHORT).show()
                 }
         }
@@ -161,8 +161,23 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
 
         })*/
         binding.tvProductosAnadidosAnadir.isVisible = false
-        recyclerViewElegirProducto()
+        val productosOrdenados = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
+        val listaCombinada = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDeCantidadesAnadir)
+        val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
+        val cantidadesOrdenadas = listaOrdenadaCombinada.map { it.second }.toMutableList()
+        val listaCombinada2 = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDePreciosAnadir)
+        val listaOrdenadaCombinada2 = listaCombinada2.sortedBy { it.first }
+        val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()
+        recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados,preciosOrdenados)
         binding.bActualizarRecyclerViewAnadir.setOnClickListener {
+            val productosOrdenadosActualizado = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
+            val listaCombinadaActualizada = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDeCantidadesAnadir)
+            val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
+            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
+            val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDePreciosAnadir)
+            val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
+            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()
+            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizado,preciosOrdenadosActualizado)
             binding.tvProductosAnadidosAnadir.isVisible = !(sharedViewModel.listaDeCantidadesAnadir.size == 0 || sharedViewModel.listaDeProductosAnadir.size == 0 || sharedViewModel.listaDePreciosAnadir.size == 0)
             binding.llMonto.isVisible = !(sharedViewModel.listaDeCantidadesAnadir.size == 0 || sharedViewModel.listaDeProductosAnadir.size == 0 || sharedViewModel.listaDePreciosAnadir.size == 0)
             adapter.notifyDataSetChanged()
@@ -194,13 +209,13 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                     // binding.tvProductosAnadidosAnadir.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 && adapter.listaDeProductosAnadir.size == 0 && adapter.listaDePreciosAnadir.size == 0)
             } else if((!sharedViewModel.opcionesListAnadirProveedor.contains(DropDownProveedor?.text.toString()) &&
                 !sharedViewModel.opcionesListAnadirAlmacen.contains(DropDownAlmacen?.text.toString()))
-                && (DropDownProveedor?.text.toString() == "Eliga una opción" ||
-                DropDownAlmacen?.text.toString() == "Eliga una opción")) {
+                && (DropDownProveedor?.text.toString() == "Elija una opción" ||
+                DropDownAlmacen?.text.toString() == "Elija una opción")) {
 
-                Toast.makeText(requireContext(), "Debe elegir proveedor y cliente", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Debe elegir proveedor y almacén", Toast.LENGTH_SHORT).show()
 
-            }else if((DropDownProveedor?.text.toString() != "Eliga una opción" ||
-                        DropDownAlmacen?.text.toString() != "Eliga una opción")
+            }else if((DropDownProveedor?.text.toString() != "Elija una opción" ||
+                        DropDownAlmacen?.text.toString() != "Elija una opción")
                     && (!sharedViewModel.opcionesListAnadirProveedor.contains(DropDownProveedor?.text.toString()) ||
                 !sharedViewModel.opcionesListAnadirAlmacen.contains(DropDownAlmacen?.text.toString()))){
 
@@ -229,8 +244,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         binding.rvElegirProductoAnadir.requestLayout()
     }
 
-    fun recyclerViewElegirProducto(){
-        adapter = AnadirInventarioAdapter(sharedViewModel.listaDeCantidadesAnadir,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosAnadir,sharedViewModel) { position ->
+    fun recyclerViewElegirProducto(listaDeCantidades: MutableList<String>, listaDeProductos: MutableList<String>, listaDePrecios: MutableList<String>){
+        adapter = AnadirInventarioAdapter(listaDeCantidades,listaDeProductos,listaDePrecios,sharedViewModel) { position ->
             onDeletedItem(position)}
         binding.rvElegirProductoAnadir.setHasFixedSize(true)
         binding.rvElegirProductoAnadir.adapter = adapter
@@ -294,7 +309,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                             Request.Method.POST,
                             url1,
                             { response ->
-                                if(binding.etNombreFacturaEntrada.text.isNotBlank() && binding.tvListaDesplegableProveedor.text.toString() != "Eliga una opción" && binding.tvListaDesplegableAlmacen.text.toString() != "Eliga una opción") {
+                                if(binding.etNombreFacturaEntrada.text.isNotBlank() && binding.tvListaDesplegableProveedor.text.toString() != "Elija una opción" && binding.tvListaDesplegableAlmacen.text.toString() != "Elija una opción") {
                                //     Handler(Looper.getMainLooper()).postDelayed({
                                     anadirInventario()
                                //     }, 2500)
@@ -306,8 +321,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                                 Toast.makeText(requireContext(), "Factura agregada exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
                                 /*TextNombre?.setText("")
                                 TextFecha?.setText("")
-                                DropDownProveedor?.setText("Eliga una opción",false)
-                                DropDownAlmacen?.setText("Eliga una opción",false)
+                                DropDownProveedor?.setText("Elija una opción",false)
+                                DropDownAlmacen?.setText("Elija una opción",false)
                                 TextComentarios?.setText("")*/
                             },
                             { error ->
@@ -392,13 +407,13 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                     val itemSelected = parent.getItemAtPosition(position)
                 }
                 DropDownAlmacen?.setOnClickListener {
-                    if(DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                    if(DropDownAlmacen?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacen.setText("",false)
                         DropDownAlmacen?.showDropDown()
                     }
                 }
                 DropDownAlmacen?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownAlmacen?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownAlmacen?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableAlmacen.setText("",false)
                         DropDownAlmacen?.showDropDown()
                     }
@@ -438,13 +453,13 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                     val itemSelected = parent.getItemAtPosition(position)
                 }
                 DropDownProveedor?.setOnClickListener {
-                    if(DropDownProveedor?.text.toString() == "Eliga una opción"){
+                    if(DropDownProveedor?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableProveedor.setText("",false)
                         DropDownProveedor?.showDropDown()
                     }
                 }
                 DropDownProveedor?.setOnFocusChangeListener { _, hasFocus ->
-                    if(hasFocus && DropDownProveedor?.text.toString() == "Eliga una opción"){
+                    if(hasFocus && DropDownProveedor?.text.toString() == "Elija una opción"){
                         binding.tvListaDesplegableProveedor.setText("",false)
                         DropDownProveedor?.showDropDown()
                     }
@@ -479,8 +494,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                            Toast.makeText(requireContext(),"Productos agregados exitosamente", Toast.LENGTH_SHORT).show()
                             TextNombre?.setText("")
                             TextFecha?.setText("")
-                            DropDownProveedor?.setText("Eliga una opción",false)
-                            DropDownAlmacen?.setText("Eliga una opción",false)
+                            DropDownProveedor?.setText("Elija una opción",false)
+                            DropDownAlmacen?.setText("Elija una opción",false)
                             TextComentarios?.setText("")
                             sharedViewModel.listaDeCantidadesAnadir.clear()
                             sharedViewModel.listaDeProductosAnadir.clear()
@@ -496,8 +511,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                         { error ->
                           /*  TextNombre?.setText("")
                             TextFecha?.setText("")
-                            binding.tvListaDesplegableProveedor.setText("Eliga una opción",false)
-                            binding.tvListaDesplegableAlmacen.setText("Eliga una opción",false)
+                            binding.tvListaDesplegableProveedor.setText("Elija una opción",false)
+                            binding.tvListaDesplegableAlmacen.setText("Elija una opción",false)
                             TextComentarios?.setText("")*/
                             Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosAnadir} y ${sharedViewModel.listaDeCantidadesAnadir}", Toast.LENGTH_SHORT).show()
                         }
@@ -550,8 +565,8 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
             { error ->
                 /*  TextNombre?.setText("")
                   TextFecha?.setText("")
-                  DropDownOrigen?.setText("Eliga una opción",false)
-                  DropDownDestino?.setText("Eliga una opción",false)
+                  DropDownOrigen?.setText("Elija una opción",false)
+                  DropDownDestino?.setText("Elija una opción",false)
                   TextComentarios?.setText("")
                   TextCodigoDeBarra?.setText("")*/
                 Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosAnadir} y ${sharedViewModel.listaDeCantidadesAnadir}", Toast.LENGTH_SHORT).show()

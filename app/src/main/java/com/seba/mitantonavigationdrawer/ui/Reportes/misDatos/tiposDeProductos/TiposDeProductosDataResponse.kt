@@ -9,6 +9,4 @@ data class TiposDeProductosDataResponse (
 data class TiposDeProductosItemResponse(
     @SerializedName("Id")  val Id: String,
     @SerializedName("Nombre")  val Nombre: String,
-    @SerializedName("Imagen")  val Imagen: String,
-    @SerializedName("Descripcion")  val Descripcion: String
 )

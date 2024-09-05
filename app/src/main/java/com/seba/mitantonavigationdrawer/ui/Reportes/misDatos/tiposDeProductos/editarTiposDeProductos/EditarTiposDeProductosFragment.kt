@@ -19,6 +19,7 @@ import android.widget.RadioGroup
 import android.widget.TableRow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -35,6 +36,7 @@ import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentEditarTiposDeProductosBinding
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentDirections
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.editarAlmacen.EditarAlmacenFragmentDirections
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.ApiServiceProductos
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.ProductosAdapter
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.ProductosDataResponse
@@ -198,6 +200,15 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
             }
         )
         queue1.add(jsonObjectRequest1)
+
+      requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+          override fun handleOnBackPressed() {
+              // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
+              // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
+              val action = EditarTiposDeProductosFragmentDirections.actionNavEditarTiposDeProductosToNavMisDatos(destino = "tipos de producto")
+              findNavController().navigate(action)
+          }
+      })
     }
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
         when(checkedId){

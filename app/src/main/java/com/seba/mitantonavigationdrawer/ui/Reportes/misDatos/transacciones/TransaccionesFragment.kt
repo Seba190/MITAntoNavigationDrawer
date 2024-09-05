@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavArgs
@@ -46,15 +47,24 @@ class TransaccionesFragment : Fragment(R.layout.fragment_transacciones) {
         //findNavController().navigate(R.id.action_nav_mis_datos_to_nav_almacenes)
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
-                R.id.factura_entrada ->replaceFragment(FacturaEntradaFragment())
-                R.id.factura_salida-> replaceFragment(FacturaSalidaFragment())
-                R.id.sin_factura -> replaceFragment(SinFacturaFragment())
+                R.id.nav_factura_entrada ->replaceFragment(FacturaEntradaFragment())
+                R.id.nav_factura_salida-> replaceFragment(FacturaSalidaFragment())
+                R.id.nav_sin_factura -> replaceFragment(SinFacturaFragment())
                 else ->{
 
                 }
             }
             true
         }
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
+                // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
+                val action = R.id.action_nav_transacciones_to_nav_inicio
+                findNavController().navigate(action)
+            }
+        })
 
         return root
     }
