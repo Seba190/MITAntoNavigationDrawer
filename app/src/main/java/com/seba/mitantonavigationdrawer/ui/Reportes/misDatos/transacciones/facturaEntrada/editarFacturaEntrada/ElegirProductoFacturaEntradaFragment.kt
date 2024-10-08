@@ -43,6 +43,9 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
     private val sharedViewModel by activityViewModels<SharedViewModel>()
     private var encontrarProducto: Boolean = false
     private var adapter : ArrayAdapter<String>? = null
+    private var parEncontrado: Pair<String, Int>? = null
+    private var cantidadAgregada: Int? = 0
+    private val opcionesListEntradaActualizada: MutableList<String> = mutableListOf()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -81,7 +84,7 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
         }else{
             ListaDesplegableElegirProducto()
         }
-        // ListaDesplegableElegirProveedor()
+        //ListaDesplegableElegirProducto()
 
         binding.llCajasDeProductoElegirProductoFacturaEntrada.isVisible = false
         binding.bUnidadesFacturaEntrada.setOnClickListener {
@@ -114,107 +117,200 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
         }
 
         binding.bAnadirFacturaEntrada.setOnClickListener {
+
             encontrarProducto = sharedViewModel.opcionesListEntrada.any { item ->
                 val trimmedItem = item.substringBefore(" (")
                 //Log.i("Sebastian2", "${sharedViewModel.opcionesListTransferencia}, $trimmedItem, ${DropDownProducto?.text.toString()}")
                 trimmedItem == DropDownProducto?.text.toString().substringBefore(" (").uppercase()
             }
-            if(encontrarProducto && DropDownProducto?.text.toString().contains("(") &&
-                DropDownProducto?.text.toString().contains(")")) {
-                if (binding.llUnidadesElegirProductoFacturaEntrada.isVisible) {
-                    if(binding.etCantidadFacturaEntrada.text.isNotBlank()){
-                        sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString().substringBefore('(')}( 0 unid. )")
-                        sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadFacturaEntrada.text.toString())
-                        sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioFacturaEntrada.text.toString())
-                        eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
-                        //  refreshAdapterFacturaEntradaTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoFacturaEntrada.setText("Elija una opción",false)
-                        binding.etCantidadFacturaEntrada.setText("")
-                        binding.etPrecioFacturaEntrada.setText("")
-                        //sharedViewModel.opcionesListEntrada.removeAll(sharedViewModel.listaDeProductosAnadir)
+
+            if(binding.llUnidadesElegirProductoFacturaEntrada.isVisible){
+                if(binding.etCantidadFacturaEntrada.text.isNotEmpty() && binding.etPrecioFacturaEntrada.text.isNotEmpty()) {
+                    sharedViewModel.facturaTotalEntrada.add(
+                        binding.etCantidadFacturaEntrada.text.toString().toInt()
+                            .times(binding.etPrecioFacturaEntrada.text.toString().toInt()))
+                }
+            }else {
+                if (binding.etNumeroDeCajasFacturaEntrada.text.isNotEmpty() &&
+                    binding.etArticulosPorCajaFacturaEntrada.text.isNotEmpty() &&
+                    binding.etPrecioFacturaEntrada.text.isNotEmpty()) {
+                    val cantidad = binding.etNumeroDeCajasFacturaEntrada.text.toString().toInt()
+                        .times(binding.etArticulosPorCajaFacturaEntrada.text.toString().toInt())
+                    sharedViewModel.facturaTotalEntrada.add(
+                        cantidad.times(binding.etPrecioFacturaEntrada.text.toString().toInt()))
+                }
+            }
+
+            if(sharedViewModel.facturaTotalEntrada.sum() <= 100000000) {
+                if (encontrarProducto && DropDownProducto?.text.toString().contains("(") &&
+                    DropDownProducto?.text.toString().contains(")")
+                ) {
+                    if (binding.llUnidadesElegirProductoFacturaEntrada.isVisible) {
+                        if (binding.etCantidadFacturaEntrada.text.isNotBlank()) {
+                            sharedViewModel.listaDeProductosAnadir.add(
+                                "${
+                                    DropDownProducto?.text.toString().substringBefore('(')
+                                }( 0 unid. )"
+                            )
+                            sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadFacturaEntrada.text.toString())
+                            sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioFacturaEntrada.text.toString())
+                            eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
+                            //  refreshAdapterFacturaEntradaTransferenciaFragment()
+                            binding.tvListaDesplegableElegirProductoFacturaEntrada.setText(
+                                "Elija una opción",
+                                false
+                            )
+                            binding.etCantidadFacturaEntrada.setText("")
+                            binding.etPrecioFacturaEntrada.setText("")
+                            ListaDesplegableElegirProducto()
+                            //sharedViewModel.opcionesListEntrada.removeAll(sharedViewModel.listaDeProductosAnadir)
+                            Toast.makeText(
+                                requireContext(),
+                                "Se ha agregado el producto a la factura",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Falta ingresar la cantidad",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else if (binding.llCajasDeProductoElegirProductoFacturaEntrada.isVisible) {
+                        if (binding.etNumeroDeCajasFacturaEntrada.text.isNotBlank() && binding.etArticulosPorCajaFacturaEntrada.text.isNotBlank()) {
+                            val cantidad = binding.etNumeroDeCajasFacturaEntrada.text.toString().toInt()
+                                    .times(binding.etArticulosPorCajaFacturaEntrada.text.toString().toInt())
+                            sharedViewModel.listaDeProductosAnadir.add(
+                                "${
+                                    DropDownProducto?.text.toString().substringBefore('(')
+                                }( 0 unid. )"
+                            )
+                            sharedViewModel.listaDeCantidadesAnadir.add(cantidad.toString())
+                            sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioFacturaEntrada.text.toString())
+                            eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
+                            // refreshAdapterFacturaEntradaTransferenciaFragment()
+                            binding.tvListaDesplegableElegirProductoFacturaEntrada.setText(
+                                "Elija una opción",
+                                false
+                            )
+                            binding.etArticulosPorCajaFacturaEntrada.setText("")
+                            binding.etNumeroDeCajasFacturaEntrada.setText("")
+                            binding.etPrecioFacturaEntrada.setText("")
+                            ListaDesplegableElegirProducto()
+                            //  sharedViewModel.opcionesListEntrada.removeAll(sharedViewModel.listaDeProductosAnadir)
+                            Toast.makeText(
+                                requireContext(), "Se ha agregado el producto a la factura",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Falta ingresar al menos los articulos por caja o el número de cajas",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else {
                         Toast.makeText(
                             requireContext(),
-                            "Se ha agregado el producto a la factura",
+                            "No se ha podido ingresar la factura",
                             Toast.LENGTH_SHORT
                         ).show()
-
-                    }else{
-                        Toast.makeText(requireContext(),"Falta ingresar la cantidad", Toast.LENGTH_SHORT).show()
                     }
-                } else if (binding.llCajasDeProductoElegirProductoFacturaEntrada.isVisible) {
-                    if (binding.etNumeroDeCajasFacturaEntrada.text.isNotBlank() && binding.etArticulosPorCajaFacturaEntrada.text.isNotBlank()) {
-                        val cantidad = binding.etNumeroDeCajasFacturaEntrada.text.toString().toInt()
-                            .times(binding.etArticulosPorCajaFacturaEntrada.text.toString().toInt())
-                        sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString().substringBefore('(')}( 0 unid. )")
-                        sharedViewModel.listaDeCantidadesAnadir.add(cantidad.toString())
-                        sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioFacturaEntrada.text.toString())
-                        eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
-                        // refreshAdapterFacturaEntradaTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoFacturaEntrada.setText("Elija una opción",false)
-                        binding.etArticulosPorCajaFacturaEntrada.setText("")
-                        binding.etNumeroDeCajasFacturaEntrada.setText("")
-                        binding.etPrecioFacturaEntrada.setText("")
-                      //  sharedViewModel.opcionesListEntrada.removeAll(sharedViewModel.listaDeProductosAnadir)
-                        Toast.makeText(
-                            requireContext(), "Se ha agregado el producto a la factura",
-                            Toast.LENGTH_SHORT).show()
+                } else if (!encontrarProducto && DropDownProducto?.text.toString() != "Elija una opción") {
+                    Toast.makeText(
+                        requireContext(),
+                        "El nombre del producto no es válido",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else if (DropDownProducto?.text.toString() == "Elija una opción") {
+                    Toast.makeText(requireContext(), "Debe elegir producto", Toast.LENGTH_SHORT)
+                        .show()
+                } else if (encontrarProducto && !DropDownProducto?.text.toString().contains("(") &&
+                    !DropDownProducto?.text.toString().contains(")")
+                ) {
+                    if (binding.llUnidadesElegirProductoFacturaEntrada.isVisible) {
+                        if (binding.etCantidadFacturaEntrada.text.isNotBlank()) {
+                            sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString()}( 0 unid. )")
+                            sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadFacturaEntrada.text.toString())
+                            sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioFacturaEntrada.text.toString())
+                            eliminarElementoDeListaDesplegableSinParentesis(
+                                DropDownProducto?.text.toString().uppercase()
+                            )
+                            //  refreshAdapterFacturaEntradaTransferenciaFragment()
+                            binding.tvListaDesplegableElegirProductoFacturaEntrada.setText(
+                                "Elija una opción",
+                                false
+                            )
+                            binding.etCantidadFacturaEntrada.setText("")
+                            binding.etPrecioFacturaEntrada.setText("")
+                            ListaDesplegableElegirProducto()
+                            //sharedViewModel.opcionesListEntrada.removeAll(sharedViewModel.listaDeProductosAnadir)
+                            Toast.makeText(
+                                requireContext(),
+                                "Se ha agregado el producto a la factura",
+                                Toast.LENGTH_SHORT
+                            ).show()
 
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Falta ingresar la cantidad",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else if (binding.llCajasDeProductoElegirProductoFacturaEntrada.isVisible) {
+                        if (binding.etNumeroDeCajasFacturaEntrada.text.isNotBlank() && binding.etArticulosPorCajaFacturaEntrada.text.isNotBlank()) {
+                            val cantidad =
+                                binding.etNumeroDeCajasFacturaEntrada.text.toString().toInt()
+                                    .times(
+                                        binding.etArticulosPorCajaFacturaEntrada.text.toString()
+                                            .toInt()
+                                    )
+                            sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString()}( 0 unid. )")
+                            sharedViewModel.listaDeCantidadesAnadir.add(cantidad.toString())
+                            sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioFacturaEntrada.text.toString())
+                            eliminarElementoDeListaDesplegableSinParentesis(
+                                DropDownProducto?.text.toString().uppercase()
+                            )
+                            // refreshAdapterFacturaEntradaTransferenciaFragment()
+                            binding.tvListaDesplegableElegirProductoFacturaEntrada.setText(
+                                "Elija una opción",
+                                false
+                            )
+                            binding.etArticulosPorCajaFacturaEntrada.setText("")
+                            binding.etNumeroDeCajasFacturaEntrada.setText("")
+                            binding.etPrecioFacturaEntrada.setText("")
+                            ListaDesplegableElegirProducto()
+                            //  sharedViewModel.opcionesListEntrada.removeAll(sharedViewModel.listaDeProductosAnadir)
+                            Toast.makeText(
+                                requireContext(), "Se ha agregado el producto a la factura",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Falta ingresar al menos los articulos por caja o el número de cajas",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     } else {
-                        Toast.makeText(requireContext(), "Falta ingresar al menos los articulos por caja o el número de cajas", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "No se ha podido ingresar la factura", Toast.LENGTH_SHORT).show()
-                }
-            }else if(!encontrarProducto && DropDownProducto?.text.toString() != "Elija una opción") {
-                Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
-            }else if(DropDownProducto?.text.toString() == "Elija una opción"){
-                Toast.makeText(requireContext(), "Debe elegir producto", Toast.LENGTH_SHORT).show()
-            }else if(encontrarProducto && !DropDownProducto?.text.toString().contains("(") &&
-                !DropDownProducto?.text.toString().contains(")")) {
-                if (binding.llUnidadesElegirProductoFacturaEntrada.isVisible) {
-                    if(binding.etCantidadFacturaEntrada.text.isNotBlank()){
-                        sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString()}( 0 unid. )")
-                        sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadFacturaEntrada.text.toString())
-                        sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioFacturaEntrada.text.toString())
-                        eliminarElementoDeListaDesplegableSinParentesis(DropDownProducto?.text.toString().uppercase())
-                        //  refreshAdapterFacturaEntradaTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoFacturaEntrada.setText("Elija una opción",false)
-                        binding.etCantidadFacturaEntrada.setText("")
-                        binding.etPrecioFacturaEntrada.setText("")
-                        //sharedViewModel.opcionesListEntrada.removeAll(sharedViewModel.listaDeProductosAnadir)
                         Toast.makeText(
                             requireContext(),
-                            "Se ha agregado el producto a la factura",
+                            "No se ha podido ingresar la factura",
                             Toast.LENGTH_SHORT
                         ).show()
-
-                    }else{
-                        Toast.makeText(requireContext(),"Falta ingresar la cantidad", Toast.LENGTH_SHORT).show()
                     }
-                } else if (binding.llCajasDeProductoElegirProductoFacturaEntrada.isVisible) {
-                    if (binding.etNumeroDeCajasFacturaEntrada.text.isNotBlank() && binding.etArticulosPorCajaFacturaEntrada.text.isNotBlank()) {
-                        val cantidad = binding.etNumeroDeCajasFacturaEntrada.text.toString().toInt()
-                            .times(binding.etArticulosPorCajaFacturaEntrada.text.toString().toInt())
-                        sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString()}( 0 unid. )")
-                        sharedViewModel.listaDeCantidadesAnadir.add(cantidad.toString())
-                        sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioFacturaEntrada.text.toString())
-                        eliminarElementoDeListaDesplegableSinParentesis(DropDownProducto?.text.toString().uppercase())
-                        // refreshAdapterFacturaEntradaTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoFacturaEntrada.setText("Elija una opción",false)
-                        binding.etArticulosPorCajaFacturaEntrada.setText("")
-                        binding.etNumeroDeCajasFacturaEntrada.setText("")
-                        binding.etPrecioFacturaEntrada.setText("")
-                        //  sharedViewModel.opcionesListEntrada.removeAll(sharedViewModel.listaDeProductosAnadir)
-                        Toast.makeText(
-                            requireContext(), "Se ha agregado el producto a la factura",
-                            Toast.LENGTH_SHORT).show()
-
-                    } else {
-                        Toast.makeText(requireContext(), "Falta ingresar al menos los articulos por caja o el número de cajas", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "No se ha podido ingresar la factura", Toast.LENGTH_SHORT).show()
                 }
+            }else{
+                Toast.makeText(
+                    requireContext(),
+                    "La factura total no puede superar los cien millones de pesos",
+                    Toast.LENGTH_SHORT
+                ).show()
+                sharedViewModel.facturaTotalEntrada.removeLast()
             }
         }
 
@@ -249,13 +345,17 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
                     sharedViewModel.listaDeProductosAnadir.contains(elementoABuscar)
                 }
                 sharedViewModel.opcionesListEntrada.sort()
+
+               ajustarInventarioListaDesplegable()
                 //Crea un adpatador para el dropdown
-                adapter = ArrayAdapter(requireContext(),R.layout.list_item,sharedViewModel.opcionesListEntrada)
+                adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesListEntradaActualizada)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownProducto?.threshold = 1
                 DropDownProducto?.setAdapter(adapter)
                 DropDownProducto?.onItemClickListener = AdapterView.OnItemClickListener {
                        parent, view, position, id ->
+                        binding.etPrecioFacturaEntrada.setText("")
+                        binding.etArticulosPorCajaFacturaEntrada.setText("")
                         precioYCantidad(parent?.getItemAtPosition(position).toString())
                 }
                 binding.etCodigoDeBarraFacturaEntrada.addTextChangedListener(object: TextWatcher {
@@ -267,10 +367,14 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
                             Handler(Looper.getMainLooper()).postDelayed({
                                 if(DropDownProducto?.text.toString().contains("(") &&
                                     DropDownProducto?.text.toString().contains(")")){
+                                    binding.etPrecioFacturaEntrada.setText("")
+                                    binding.etArticulosPorCajaFacturaEntrada.setText("")
                                     precioYCantidad(DropDownProducto?.text.toString())
                                 }else if(!DropDownProducto?.text.toString().contains("(") &&
                                     !DropDownProducto?.text.toString().contains(")")){
                                     Log.i("PrecioyCantidad2","${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                                    binding.etPrecioFacturaEntrada.setText("")
+                                    binding.etArticulosPorCajaFacturaEntrada.setText("")
                                     precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                                 }
                             }, 300)
@@ -289,15 +393,14 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
                         binding.tvListaDesplegableElegirProductoFacturaEntrada.setText("",false)
                         DropDownProducto?.showDropDown()
                     }
-                    encontrarProducto = sharedViewModel.opcionesListEntrada.any { item ->
+                    encontrarProducto = opcionesListEntradaActualizada.any { item ->
                         val trimmedItem = item.substringBefore(" (")
                         // Log.i("ListaDesplegableAnadir", "${sharedViewModel.opcionesListAnadir}, $trimmedItem , ${DropDownProducto?.text.toString().uppercase()}")
                         trimmedItem == DropDownProducto?.text.toString().substringBefore(" (").uppercase()
                     }
                     //Si es un valor no válido con los parentesis
-                    if((binding.tvListaDesplegableElegirProductoFacturaEntrada.text.toString().contains("(") &&
-                                binding.tvListaDesplegableElegirProductoFacturaEntrada.text.toString().contains(")"))) {
-                        if (!hasFocus && !sharedViewModel.opcionesListEntrada.contains(
+                    if((binding.tvListaDesplegableElegirProductoFacturaEntrada.text.toString().contains("("))) {
+                        if (!hasFocus && !opcionesListEntradaActualizada.contains(
                                 DropDownProducto?.text.toString())) {
                             Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
                         }
@@ -309,6 +412,8 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
                             Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
                         }
                         if(!hasFocus){
+                            binding.etPrecioFacturaEntrada.setText("")
+                            binding.etArticulosPorCajaFacturaEntrada.setText("")
                             precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                         }
                     }
@@ -335,10 +440,14 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
             Handler(Looper.getMainLooper()).postDelayed({
                 if(DropDownProducto?.text.toString().contains("(") &&
                     DropDownProducto?.text.toString().contains(")")){
+                    binding.etPrecioFacturaEntrada.setText("")
+                    binding.etArticulosPorCajaFacturaEntrada.setText("")
                     precioYCantidad(DropDownProducto?.text.toString())
                 }else if(!DropDownProducto?.text.toString().contains("(") &&
                     !DropDownProducto?.text.toString().contains(")")){
                     Log.i("PrecioyCantidad","${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                    binding.etPrecioFacturaEntrada.setText("")
+                    binding.etArticulosPorCajaFacturaEntrada.setText("")
                     precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                 }
             }, 300)
@@ -363,8 +472,10 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
                 //binding.etCantidad.setText("12")
                 if (binding.llCajasDeProductoElegirProductoFacturaEntrada.isVisible) {
                     binding.etArticulosPorCajaFacturaEntrada.setText(unidades)
+
                 }
-                binding.etPrecioFacturaEntrada.setText(precio)
+                    binding.etPrecioFacturaEntrada.setText(precio)
+
                 //binding.tvListaDesplegableElegirProveedor.setText("Elija una opción",false)
                 // binding.tvListaDesplegableElegirProducto.setText("Elija una opción",false)
 
@@ -461,7 +572,8 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
                 // binding.etPrecioPorUnidadUnidades.setText("200")
                 //binding.etCantidad.setText("12")
                 if (binding.llCajasDeProductoElegirProductoFacturaEntrada.isVisible) {
-                    binding.etArticulosPorCajaFacturaEntrada.setText(unidades)
+                        binding.etArticulosPorCajaFacturaEntrada.setText(unidades)
+
                     //binding.etPrecioPorUnidadCajasDeProductos.setText("200")
                 }
                 //binding.tvListaDesplegableElegirProveedor.setText("Elija una opción",false)
@@ -517,6 +629,30 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
         DropDownProducto?.setAdapter(adapter)
         adapter!!.notifyDataSetChanged()
 
+    }
+
+    private fun ajustarInventarioListaDesplegable(){
+        val regex = "\\d+".toRegex()
+        for (cadena in sharedViewModel.opcionesListEntrada){
+            val match = regex.find(cadena)
+            if (match != null) {
+                val numeroOriginal = match.value.toInt()
+                parEncontrado = sharedViewModel.listaCombinadaEntrada.find { cadena.contains(it.first.substringBefore('(')) }
+                Log.i("parEncontrado", "$parEncontrado , $numeroOriginal, $cadena, ${sharedViewModel.listaCombinadaEntrada}")
+                if (parEncontrado != null) {
+                    cantidadAgregada = parEncontrado!!.second
+                    val nuevoNumero = numeroOriginal - cantidadAgregada!!
+                    val nuevaCadena = cadena.replaceFirst(
+                        numeroOriginal.toString(),
+                        nuevoNumero.toString())
+                    opcionesListEntradaActualizada.add(nuevaCadena)
+                } else{
+                    opcionesListEntradaActualizada.add(cadena)
+                }
+            } else{
+                opcionesListEntradaActualizada.add(cadena)
+            }
+        }
     }
 
     override fun onDestroyView() {

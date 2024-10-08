@@ -131,11 +131,19 @@
 
             <!-- RecyclerView Productos por tipo de producto -->
 
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nsvProductosPorTipoDeProducto"
+                android:layout_width="match_parent"
+                android:layout_height="260dp"
+                android:fillViewport="true">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvProductos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"/>
+
+            </androidx.core.widget.NestedScrollView>
 
             <LinearLayout
                 android:id="@+id/llInventariosDeProducto"

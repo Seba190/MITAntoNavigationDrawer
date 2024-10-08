@@ -99,6 +99,7 @@
                                 android:cursorVisible="true"
                                 android:focusable="true"
                                 android:hint="Unidades"
+                                android:maxLength="8"
                                 android:textColorHint="@color/color_list"
                                 android:inputType="number"
                                 android:textColor="@color/black"

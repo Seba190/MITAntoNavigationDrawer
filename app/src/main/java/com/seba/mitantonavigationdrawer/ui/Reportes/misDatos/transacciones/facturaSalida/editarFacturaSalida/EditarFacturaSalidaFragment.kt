@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -133,14 +134,16 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
         val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()
         recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados,preciosOrdenados)
         binding.bActualizarRecyclerViewFacturaSalidaEditar.setOnClickListener {
-            val productosOrdenadosActualizado = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
+           /* val productosOrdenadosActualizado = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
             val listaCombinadaActualizada = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDeCantidadesRemover)
             val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
             val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
             val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDePreciosRemover)
             val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
             val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()
-            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizado,preciosOrdenadosActualizado)
+            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizado,preciosOrdenadosActualizado)*/
+            ordenarListas()
+            adapter.updateList(sharedViewModel.listaDeCantidadesRemover,sharedViewModel.listaDeProductosRemover,sharedViewModel.listaDePreciosRemover)
             binding.tvProductosAnadidosFacturaSalidaEditar.isVisible =
                 !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
             binding.llMontoFacturaSalidaEditar.isVisible =
@@ -149,6 +152,7 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.tvMontoFacturaSalidaEditar.text =
                     sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
+                sharedViewModel.facturaTotalSalida = sharedViewModel.listaDePreciosDeProductosRemover
             }, 300)
             sharedViewModel.listaDePreciosDeProductosRemover.clear()
             binding.nsvElegirProductoFacturaSalidaEditar.isVisible = !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
@@ -183,7 +187,7 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                 (!sharedViewModel.opcionesListSalidaCliente.contains(DropDownCliente?.text.toString()) ||
                         !sharedViewModel.opcionesListSalidaAlmacen.contains(DropDownAlmacen?.text.toString()))){
                 Toast.makeText(requireContext(),"El nombre del cliente o del almacén no es válido", Toast.LENGTH_SHORT).show()
-            }
+              }
             }
 
 
@@ -259,16 +263,17 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                 }
 
                 binding.nsvElegirProductoFacturaSalidaEditar.isVisible = true
-                binding.tvProductosAnadidosFacturaSalidaEditar.isVisible =
-                    !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
-                binding.llMontoFacturaSalidaEditar.isVisible =
-                    !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
-                adapter.notifyDataSetChanged()
+                binding.tvProductosAnadidosFacturaSalidaEditar.isVisible = true
+                binding.llMontoFacturaSalidaEditar.isVisible = true
+
                 Handler(Looper.getMainLooper()).postDelayed({
+
                     binding.tvMontoFacturaSalidaEditar.text =
                         sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
+
                 }, 300)
                 sharedViewModel.listaDePreciosDeProductos.clear()
+                adapter.notifyDataSetChanged()
                 binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
 
 
@@ -304,30 +309,56 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
         binding.rvElegirProductoFacturaSalidaEditar.setHasFixedSize(true)
         binding.rvElegirProductoFacturaSalidaEditar.adapter = adapter
         binding.rvElegirProductoFacturaSalidaEditar.layoutManager = LinearLayoutManager(requireContext())
-        adapter.updateList(
-            sharedViewModel.listaDeCantidadesRemover,
-            sharedViewModel.listaDeProductosRemover,
-            sharedViewModel.listaDePreciosRemover)
+        adapter.updateList(sharedViewModel.listaDeCantidadesRemover,sharedViewModel.listaDeProductosRemover,sharedViewModel.listaDePreciosRemover)
         adapter.notifyDataSetChanged()
         binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
     }
 
     private fun onDeletedItem(position: Int) {
         //sharedViewModel.opcionesListSalida.add(position,sharedViewModel.reponedorListSalida[position])
-        sharedViewModel.listaDeCantidadesRemover.removeAt(position)
-        sharedViewModel.listaDeProductosRemover.removeAt(position)
-        sharedViewModel.listaDePreciosRemover.removeAt(position)
-        adapter.notifyItemRemoved(position)
-        adapter.notifyDataSetChanged()
-        binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
-        Handler(Looper.getMainLooper()).postDelayed({
-            binding.tvMontoFacturaSalidaEditar.text = sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
-        }, 300)
-        sharedViewModel.listaDePreciosDeProductosRemover.clear()
-        binding.tvProductosAnadidosFacturaSalidaEditar.isVisible =
-            !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
-        binding.llMontoFacturaSalidaEditar.isVisible =
-            !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
+        //sharedViewModel.listaDeCantidadesRemover.removeAt(position)
+       // sharedViewModel.listaDeProductosRemover.removeAt(position)
+        try {
+            val producto = sharedViewModel.listaDeProductosRemover.removeAt(position)
+            val cantidad = sharedViewModel.listaDeCantidadesRemover.removeAt(position).toInt()
+            sharedViewModel.listaDePreciosRemover.removeAt(position)
+            ordenarListas()
+            sharedViewModel.listaCombinadaSalida.add(Pair(producto, cantidad))
+            adapter.updateList(
+                sharedViewModel.listaDeCantidadesRemover,
+                sharedViewModel.listaDeProductosRemover,
+                sharedViewModel.listaDePreciosRemover
+            )
+            adapter.notifyItemRemoved(position)
+            adapter.notifyDataSetChanged()
+            binding.rvElegirProductoFacturaSalidaEditar.requestLayout()
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.tvMontoFacturaSalidaEditar.text =
+                    sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
+                sharedViewModel.facturaTotalSalida =
+                    sharedViewModel.listaDePreciosDeProductosRemover
+            }, 300)
+            sharedViewModel.listaDePreciosDeProductosRemover.clear()
+            binding.tvProductosAnadidosFacturaSalidaEditar.isVisible =
+                !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
+            binding.llMontoFacturaSalidaEditar.isVisible =
+                !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
+        }catch (e:Exception){
+            val inflaterRemover = requireActivity().layoutInflater
+            val layoutRemover = inflaterRemover.inflate(
+                R.layout.toast_custom_remover,
+                null
+            )
+            val textRemover =
+                layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+            textRemover.text =
+                "Hubo un error al eliminar un producto, debe salir y volver a entrar"
+            val toast = Toast(requireContext())
+            toast.duration = Toast.LENGTH_SHORT
+            toast.view = layoutRemover
+            toast.setGravity(Gravity.BOTTOM, 0, 600)
+            toast.show()
+        }
     }
 
     private fun actualizarFacturaDeEntrada() {
@@ -401,15 +432,15 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
             { response ->
                 Toast.makeText(
                     requireContext(),
-                    "Productos agregados exitosamente a la factura",
+                    "Productos editados exitosamente en la factura",
                     Toast.LENGTH_SHORT
                 ).show()
-                TextNombre?.setText("")
                 TextFecha?.setText(
                     SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(
                         Calendar.getInstance().time
                     )
                 )
+                /*TextNombre?.setText("")
                 DropDownCliente?.setText("Elija una opción", false)
                 DropDownAlmacen?.setText("Elija una opción", false)
                 TextComentarios?.setText("")
@@ -425,20 +456,20 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                     sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
                 binding.llMontoFacturaSalidaEditar.isVisible =
                     !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
-                sharedViewModel.opcionesListSalida.clear()
+                sharedViewModel.opcionesListSalida.clear()*/
             },
             { error ->
                 Toast.makeText(
                     requireContext(),
-                    "Productos agregados exitosamente a la factura",
+                    "Productos editados exitosamente a la factura",
                     Toast.LENGTH_SHORT
                 ).show()
-                TextNombre?.setText("")
                 TextFecha?.setText(
                     SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(
                         Calendar.getInstance().time
                     )
                 )
+               /* TextNombre?.setText("")
                 DropDownCliente?.setText("Elija una opción", false)
                 DropDownAlmacen?.setText("Elija una opción", false)
                 TextComentarios?.setText("")
@@ -454,7 +485,7 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
                     sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
                 binding.llMontoFacturaSalidaEditar.isVisible =
                     !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
-                sharedViewModel.opcionesListSalida.clear()
+                sharedViewModel.opcionesListSalida.clear()*/
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -761,6 +792,19 @@ class EditarFacturaSalidaFragment : Fragment(R.layout.fragment_editar_factura_sa
             }
         }
         queue.add(jsonObjectRequest)
+    }
+
+    private fun ordenarListas(){
+        val listaCombinada = sharedViewModel.listaDeProductosRemover.indices.map{ i ->
+            Triple(sharedViewModel.listaDeProductosRemover[i], sharedViewModel.listaDeCantidadesRemover[i], sharedViewModel.listaDePreciosRemover[i])
+        }
+        val listaOrdenada = listaCombinada.sortedBy { it.first }
+
+        sharedViewModel.listaDeProductosRemover = listaOrdenada.map { it.first }.toMutableList()
+        sharedViewModel.listaDeCantidadesRemover = listaOrdenada.map { it.second }.toMutableList()
+        sharedViewModel.listaDePreciosRemover = listaOrdenada.map { it.third }.toMutableList()
+
+        adapter.notifyDataSetChanged()
     }
 
 

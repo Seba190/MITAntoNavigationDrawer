@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -125,19 +126,21 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
         val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()
         recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados,preciosOrdenados)
         binding.bActualizarRecyclerViewEditar.setOnClickListener {
-            val productosOrdenadosActualizado = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
+           /* val productosOrdenadosActualizado = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
             val listaCombinadaActualizada = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDeCantidadesAnadir)
             val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
             val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
             val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDePreciosAnadir)
             val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
-            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()
-            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizado,preciosOrdenadosActualizado)
+            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()*/
+            ordenarListas()
+            adapter.updateList(sharedViewModel.listaDeCantidadesAnadir, sharedViewModel.listaDeProductosAnadir, sharedViewModel.listaDePreciosAnadir)
             binding.tvProductosAnadidosEditar.isVisible = !(sharedViewModel.listaDeCantidadesAnadir.size == 0 || sharedViewModel.listaDeProductosAnadir.size == 0 || sharedViewModel.listaDePreciosAnadir.size == 0)
             binding.llMontoEditar.isVisible = !(sharedViewModel.listaDeCantidadesAnadir.size == 0 || sharedViewModel.listaDeProductosAnadir.size == 0 || sharedViewModel.listaDePreciosAnadir.size == 0)
             adapter.notifyDataSetChanged()
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.tvMontoEditar.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
+                sharedViewModel.facturaTotalEntrada = sharedViewModel.listaDePreciosDeProductos
             }, 300)
             sharedViewModel.listaDePreciosDeProductos.clear()
             binding.nsvElegirProductoEditar.isVisible = !(sharedViewModel.listaDeCantidadesAnadir.size == 0 || sharedViewModel.listaDeProductosAnadir.size == 0 || sharedViewModel.listaDePreciosAnadir.size == 0)
@@ -207,11 +210,6 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
                 Toast.makeText(requireContext(),"Debe elegir el proveedor y el almacén", Toast.LENGTH_SHORT).show()
             }
         }
-
-
-
-
-
         return root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -253,11 +251,13 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
                             sharedViewModel.listaDePreciosAnadir.add(precioCompra)
                         }
                     }
+
                 }
 
                     binding.nsvElegirProductoEditar.isVisible = true
                     binding.tvProductosAnadidosEditar.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
                     binding.llMontoEditar.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+                    ordenarListas()
                     adapter.notifyDataSetChanged()
                     Handler(Looper.getMainLooper()).postDelayed({
                         binding.tvMontoEditar.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
@@ -296,18 +296,46 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
 
     private fun onDeletedItem(position: Int){
        // sharedViewModel.opcionesListEntrada.add(position,sharedViewModel.listaDeProductosAnadir[position])
-        sharedViewModel.listaDeCantidadesAnadir.removeAt(position)
-        sharedViewModel.listaDeProductosAnadir.removeAt(position)
-        sharedViewModel.listaDePreciosAnadir.removeAt(position)
-        adapter.notifyItemRemoved(position)
-        adapter.notifyDataSetChanged()
-        binding.rvElegirProductoEditar.requestLayout()
-        Handler(Looper.getMainLooper()).postDelayed({
-            binding.tvMontoEditar.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
-        }, 300)
-        sharedViewModel.listaDePreciosDeProductos.clear()
-        binding.tvProductosAnadidosEditar.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
-        binding.llMontoEditar.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+        try {
+            val cantidad = sharedViewModel.listaDeCantidadesAnadir.removeAt(position).toInt()
+            val producto = sharedViewModel.listaDeProductosAnadir.removeAt(position)
+            sharedViewModel.listaDePreciosAnadir.removeAt(position)
+            ordenarListas()
+            sharedViewModel.listaCombinadaEntrada.add(Pair(producto, cantidad))
+            adapter.updateList(
+                sharedViewModel.listaDeCantidadesAnadir,
+                sharedViewModel.listaDeProductosAnadir,
+                sharedViewModel.listaDePreciosAnadir
+            )
+            adapter.notifyItemRemoved(position)
+            adapter.notifyDataSetChanged()
+            binding.rvElegirProductoEditar.requestLayout()
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.tvMontoEditar.text =
+                    sharedViewModel.listaDePreciosDeProductos.sum().toString()
+                sharedViewModel.facturaTotalEntrada = sharedViewModel.listaDePreciosDeProductos
+            }, 300)
+            sharedViewModel.listaDePreciosDeProductos.clear()
+            binding.tvProductosAnadidosEditar.isVisible =
+                !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+            binding.llMontoEditar.isVisible =
+                !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+        }catch(e:Exception){
+            val inflaterRemover = requireActivity().layoutInflater
+            val layoutRemover = inflaterRemover.inflate(
+                R.layout.toast_custom_remover,
+                null
+            )
+            val textRemover =
+                layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+            textRemover.text =
+                "Hubo un error al eliminar un producto, debe salir y volver a entrar"
+            val toast = Toast(requireContext())
+            toast.duration = Toast.LENGTH_SHORT
+            toast.view = layoutRemover
+            toast.setGravity(Gravity.BOTTOM, 0, 600)
+            toast.show()
+        }
     }
 
     private fun actualizarFacturaDeEntrada(){
@@ -418,11 +446,33 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
             { response ->
                 Toast.makeText(
                     requireContext(),
-                    "Productos agregados exitosamente a la factura",
+                    "Productos editados exitosamente en la factura",
                     Toast.LENGTH_SHORT
                 ).show()
-                TextNombre?.setText("")
                 TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
+                /*TextNombre?.setText("")
+                DropDownProveedor?.setText("Elija una opción", false)
+                DropDownAlmacen?.setText("Elija una opción", false)
+                TextComentarios?.setText("")
+                sharedViewModel.listaDeCantidadesAnadir.clear()
+                sharedViewModel.listaDeProductosAnadir.clear()
+                sharedViewModel.listaDePreciosAnadir.clear()
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProductoEditar.requestLayout()
+                binding.tvProductosAnadidosEditar.isVisible = false
+                binding.nsvElegirProductoEditar.isVisible = false
+                binding.tvMontoEditar.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
+                binding.llMontoEditar.isVisible = false
+                sharedViewModel.opcionesListEntrada.clear()*/
+            },
+            { error ->
+                Toast.makeText(
+                    requireContext(),
+                    "Productos editados exitosamente en la factura",
+                    Toast.LENGTH_SHORT
+                ).show()
+                TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
+               /* TextNombre?.setText("")
                 DropDownProveedor?.setText("Elija una opción", false)
                 DropDownAlmacen?.setText("Elija una opción", false)
                 TextComentarios?.setText("")
@@ -435,29 +485,7 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
                 binding.nsvElegirProductoEditar.isVisible = false
                 binding.tvMontoEditar.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
                 binding.llMontoEditar.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
-                sharedViewModel.opcionesListEntrada.clear()
-            },
-            { error ->
-                Toast.makeText(
-                    requireContext(),
-                    "Productos agregados exitosamente a la factura",
-                    Toast.LENGTH_SHORT
-                ).show()
-                TextNombre?.setText("")
-                TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
-                DropDownProveedor?.setText("Elija una opción", false)
-                DropDownAlmacen?.setText("Elija una opción", false)
-                TextComentarios?.setText("")
-                sharedViewModel.listaDeCantidadesAnadir.removeAll(sharedViewModel.listaDeCantidadesAnadir)
-                sharedViewModel.listaDeProductosAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
-                sharedViewModel.listaDePreciosAnadir.removeAll(sharedViewModel.listaDePreciosAnadir)
-                adapter.notifyDataSetChanged()
-                binding.rvElegirProductoEditar.requestLayout()
-                binding.tvProductosAnadidosEditar.isVisible = false
-                binding.nsvElegirProductoEditar.isVisible = false
-                binding.tvMontoEditar.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
-                binding.llMontoEditar.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
-                sharedViewModel.opcionesListEntrada.clear()
+                sharedViewModel.opcionesListEntrada.clear()*/
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -707,6 +735,19 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
             }
         }
         queue.add(jsonObjectRequest)
+    }
+
+    private fun ordenarListas(){
+        val listaCombinada = sharedViewModel.listaDeProductosAnadir.indices.map{ i ->
+            Triple(sharedViewModel.listaDeProductosAnadir[i], sharedViewModel.listaDeCantidadesAnadir[i], sharedViewModel.listaDePreciosAnadir[i])
+        }
+        val listaOrdenada = listaCombinada.sortedBy { it.first }
+
+        sharedViewModel.listaDeProductosAnadir = listaOrdenada.map { it.first }.toMutableList()
+        sharedViewModel.listaDeCantidadesAnadir = listaOrdenada.map { it.second }.toMutableList()
+        sharedViewModel.listaDePreciosAnadir = listaOrdenada.map { it.third }.toMutableList()
+
+        adapter.notifyDataSetChanged()
     }
 
 

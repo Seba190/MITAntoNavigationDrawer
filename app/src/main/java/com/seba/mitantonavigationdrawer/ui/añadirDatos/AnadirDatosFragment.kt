@@ -7,19 +7,23 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentAnadirDatosBinding
 import com.seba.mitantonavigationdrawer.databinding.FragmentEstadisticaBinding
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.estadística.EstadisticaViewModel
 import com.seba.mitantonavigationdrawer.ui.inicio.InicioFragment
 
 class AnadirDatosFragment : Fragment(R.layout.fragment_anadir_datos) {
 
     private var _binding: FragmentAnadirDatosBinding? = null
+    private val sharedViewModel: SharedViewModel by viewModels()
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -62,8 +66,7 @@ class AnadirDatosFragment : Fragment(R.layout.fragment_anadir_datos) {
         añadirTipoDeProducto.setOnClickListener {
             findNavController().navigate(R.id.action_nav_añadir_datos_to_nav_añadir_tipo_de_producto)
         }
-
-
+        borrarListas()
         return root
     }
    /* private fun hideFragment() {
@@ -98,6 +101,63 @@ class AnadirDatosFragment : Fragment(R.layout.fragment_anadir_datos) {
 
         // Commit la transacción
         fragmentTransaction.commit()
+    }
+
+    fun borrarListas(){
+        sharedViewModel.listaDeProductos.clear()
+        sharedViewModel.listaDeCantidades.clear()
+        sharedViewModel.listaDeProductosAnadir.clear()
+        sharedViewModel.listaDeCantidadesAnadir.clear()
+        sharedViewModel.listaDePreciosAnadir.clear()
+        sharedViewModel.listaDePreciosDeProductos.clear()
+        sharedViewModel.listaDeProductosRemover.clear()
+        sharedViewModel.listaDeCantidadesRemover.clear()
+        sharedViewModel.listaDePreciosRemover.clear()
+        sharedViewModel.listaDePreciosDeProductosRemover.clear()
+        sharedViewModel.listaDeBodegasAnadir.clear()
+        sharedViewModel.listaDeAlertasAnadir.clear()
+        sharedViewModel.ListasDeAlertas.clear()
+        sharedViewModel.ListasDeAlmacenes.clear()
+        sharedViewModel.ListasDeProductosAlertas.clear()
+        sharedViewModel.listaDeClientesAnadir.clear()
+        sharedViewModel.listaDePreciosVentaAnadir.clear()
+        sharedViewModel.ListasDeClientes.clear()
+        sharedViewModel.ListasDePreciosDeVenta.clear()
+        sharedViewModel.ListasDeProductosPrecioVenta.clear()
+        sharedViewModel.listaDePreciosCompraAnadir.clear()
+        sharedViewModel.listaDeProveedoresAnadir.clear()
+        sharedViewModel.ListasDeProveedores.clear()
+        sharedViewModel.ListasDePreciosDeCompra.clear()
+        sharedViewModel.ListasDeProductosPrecioCompra.clear()
+        sharedViewModel.id.clear()
+        sharedViewModel.listaDeAlertas.clear()
+        sharedViewModel.listaDePreciosVenta.clear()
+        sharedViewModel.listaDePreciosCompra.clear()
+        sharedViewModel.listaDeBodegas.clear()
+        sharedViewModel.listaDeClientes.clear()
+        sharedViewModel.listaDeProveedores.clear()
+        sharedViewModel.numeroAlertas.clear()
+        sharedViewModel.numeroPreciosCompra.clear()
+        sharedViewModel.numeroPreciosVenta.clear()
+        sharedViewModel.listaDeAlmacenesAnadir.clear()
+        sharedViewModel.listaDeAlmacenesRemover.clear()
+        sharedViewModel.listaDeAlmacenesEntrada.clear()
+        sharedViewModel.listaDeAlmacenesSalida.clear()
+        sharedViewModel.listaDeAlmacenesTransferencia.clear()
+        sharedViewModel.listaDeAlmacenesEditarTransferencia.clear()
+        sharedViewModel.productos.clear()
+        sharedViewModel.inventario.clear()
+
+        sharedViewModel.facturaTotalAnadir.clear()
+        sharedViewModel.facturaTotalRemover.clear()
+        sharedViewModel.facturaTotalEntrada.clear()
+        sharedViewModel.facturaTotalSalida.clear()
+        sharedViewModel.cantidadTotalTransferencia.clear()
+        sharedViewModel.cantidadTotalEditarTransferencia.clear()
+
+        sharedViewModel.listaCombinadaEntrada.clear()
+        sharedViewModel.listaCombinadaSalida.clear()
+        sharedViewModel.listaCombinadaTransferencia.clear()
     }
 
     override fun onDestroyView() {

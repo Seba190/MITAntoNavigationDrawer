@@ -14,6 +14,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
@@ -24,6 +25,7 @@ import com.seba.mitantonavigationdrawer.databinding.FragmentAlmacenesBinding
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentDirections
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.editarAlmacen.EditarAlmacenFragment
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.editarAlmacen.EditarAlmacenFragment.Companion.EXTRA_ID
+import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,6 +45,8 @@ class AlmacenesFragment : Fragment(R.layout.fragment_almacenes) {
     private var listaDeAlmacenesMutableList : MutableList<AlmacenesItemResponse> = mutableListOf()
     private val listaDeActividad: List<String> = listOf("TODOS", "ACTIVOS", "INACTIVOS")
     var DropdownActividad:  AutoCompleteTextView? = null
+    private val sharedViewModel : SharedViewModel by activityViewModels()
+
    // private lateinit var adapter2: CaracteristicasAdapter
 
     override fun onCreateView(
@@ -61,6 +65,7 @@ class AlmacenesFragment : Fragment(R.layout.fragment_almacenes) {
         retrofit = getRetrofit()
         listaDesplegableActividad()
         initUI()
+        borrarListas()
 
         return root
     }
@@ -171,6 +176,63 @@ class AlmacenesFragment : Fragment(R.layout.fragment_almacenes) {
 
     }
 
+    fun borrarListas(){
+        sharedViewModel.listaDeProductos.clear()
+        sharedViewModel.listaDeCantidades.clear()
+        sharedViewModel.listaDeProductosAnadir.clear()
+        sharedViewModel.listaDeCantidadesAnadir.clear()
+        sharedViewModel.listaDePreciosAnadir.clear()
+        sharedViewModel.listaDePreciosDeProductos.clear()
+        sharedViewModel.listaDeProductosRemover.clear()
+        sharedViewModel.listaDeCantidadesRemover.clear()
+        sharedViewModel.listaDePreciosRemover.clear()
+        sharedViewModel.listaDePreciosDeProductosRemover.clear()
+        sharedViewModel.listaDeBodegasAnadir.clear()
+        sharedViewModel.listaDeAlertasAnadir.clear()
+        sharedViewModel.ListasDeAlertas.clear()
+        sharedViewModel.ListasDeAlmacenes.clear()
+        sharedViewModel.ListasDeProductosAlertas.clear()
+        sharedViewModel.listaDeClientesAnadir.clear()
+        sharedViewModel.listaDePreciosVentaAnadir.clear()
+        sharedViewModel.ListasDeClientes.clear()
+        sharedViewModel.ListasDePreciosDeVenta.clear()
+        sharedViewModel.ListasDeProductosPrecioVenta.clear()
+        sharedViewModel.listaDePreciosCompraAnadir.clear()
+        sharedViewModel.listaDeProveedoresAnadir.clear()
+        sharedViewModel.ListasDeProveedores.clear()
+        sharedViewModel.ListasDePreciosDeCompra.clear()
+        sharedViewModel.ListasDeProductosPrecioCompra.clear()
+        sharedViewModel.id.clear()
+        sharedViewModel.listaDeAlertas.clear()
+        sharedViewModel.listaDePreciosVenta.clear()
+        sharedViewModel.listaDePreciosCompra.clear()
+        sharedViewModel.listaDeBodegas.clear()
+        sharedViewModel.listaDeClientes.clear()
+        sharedViewModel.listaDeProveedores.clear()
+        sharedViewModel.numeroAlertas.clear()
+        sharedViewModel.numeroPreciosCompra.clear()
+        sharedViewModel.numeroPreciosVenta.clear()
+        sharedViewModel.listaDeAlmacenesAnadir.clear()
+        sharedViewModel.listaDeAlmacenesRemover.clear()
+        sharedViewModel.listaDeAlmacenesEntrada.clear()
+        sharedViewModel.listaDeAlmacenesSalida.clear()
+        sharedViewModel.listaDeAlmacenesTransferencia.clear()
+        sharedViewModel.listaDeAlmacenesEditarTransferencia.clear()
+        sharedViewModel.productos.clear()
+        sharedViewModel.inventario.clear()
+
+        sharedViewModel.facturaTotalAnadir.clear()
+        sharedViewModel.facturaTotalRemover.clear()
+        sharedViewModel.facturaTotalEntrada.clear()
+        sharedViewModel.facturaTotalSalida.clear()
+        sharedViewModel.cantidadTotalTransferencia.clear()
+        sharedViewModel.cantidadTotalEditarTransferencia.clear()
+
+        sharedViewModel.listaCombinadaEntrada.clear()
+        sharedViewModel.listaCombinadaSalida.clear()
+        sharedViewModel.listaCombinadaTransferencia.clear()
+    }
+
     //Esta función te muestra las listas dependiendo de la actividad
    /* private fun bodegasPorActividad(actividad : String) {
         val url1 ="http://186.64.123.248/Reportes/Almacenes/almacenesActivosInactivos.php"
@@ -210,21 +272,8 @@ class AlmacenesFragment : Fragment(R.layout.fragment_almacenes) {
     }*/
 
     private fun navigateToEditarAlmacen(id:String){
-        val fragmentoDestino = EditarAlmacenFragment()
-        val bundle = bundleOf(EXTRA_ID to id)
-         //bundle.getString(EXTRA_ID,id)
-        // bundle.putString(EXTRA_ID,id)
-        //fragmentoDestino.arguments = bundle
         Log.i("Sebastian", "Valor de Id: $id")
-        //val action = AlmacenesFragmentDirections.actionNavAlmacenesToNavEditarAlmacen(argumentoId = id)
         val action = MisDatosFragmentDirections.actionNavMisDatosToNavEditarAlmacen(id = id)
-        /*val fragmentManager = parentFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frame_layout,fragmentoDestino)
-        fragmentTransaction.commit()*/
-        //findNavController().safeNavigateWithArgs(Fragment)
-        //findNavController().navigate(R.id.action_nav_mis_datos_to_nav_editar_almacen)
-        //findNavController().navigate(R.id.action_nav_mis_datos_to_nav_editar_almacen)
         findNavController().navigate(action)
     }
 }

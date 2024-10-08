@@ -42,8 +42,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
+            android:textSize="11sp"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            tools:text="prueba"/>
 
     </LinearLayout>
 
@@ -72,7 +74,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="35dp"
             android:layout_marginStart="55dp"
             android:text="@string/Total_Parcial"
             android:textColor="@color/color_list"/>
@@ -81,7 +83,7 @@
             android:id="@+id/tvPrecio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="35dp"
             android:layout_marginStart="5dp"
             tools:text="Prueba"
             android:textColor="@color/color_list"/>

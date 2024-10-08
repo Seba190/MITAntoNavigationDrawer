@@ -149,7 +149,7 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapter.updateList(response.Productos)
+                        adapter.updateList(response.Productos.sortedBy { it.Nombre })
                     }
                 }
 
@@ -268,14 +268,19 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
                     // val matriz = response.getJSONArray("Lista")
                     val productos = response.getJSONArray("Productos")
                     val inventario = response.getJSONArray("Inventario")
-                    val listaProductos = mutableListOf<String>()
-                    val listaInventario = mutableListOf<String>()
+                    var listaProductos = mutableListOf<String>()
+                    var listaInventario = mutableListOf<String>()
                     for (i in (0 until productos.length())) {
                         listaProductos.add(productos.getString(i))
                     }
                     for (i in (0 until inventario.length())) {
                         listaInventario.add(inventario.getString(i))
                     }
+                    val listaCombinada = listaProductos.zip(listaInventario)
+                    val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
+                    val (productosOrdenados, inventarioOrdenado) = listaOrdenadaCombinada.unzip()
+                    listaProductos = productosOrdenados.toMutableList()
+                    listaInventario = inventarioOrdenado.toMutableList()
                     for (i in (0 until listaProductos.count())) {
                         val registro = LayoutInflater.from(requireContext())
                             .inflate(R.layout.filas_inventario, null, false)
@@ -322,14 +327,19 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
                     // val matriz = response.getJSONArray("Lista")
                     val almacenes = response.getJSONArray("Almacenes")
                     val inventario = response.getJSONArray("Inventario")
-                    val listaAlmacenes = mutableListOf<String>()
-                    val listaInventario = mutableListOf<String>()
+                    var listaAlmacenes = mutableListOf<String>()
+                    var listaInventario = mutableListOf<String>()
                     for (i in (0 until almacenes.length())) {
                         listaAlmacenes.add(almacenes.getString(i))
                     }
                     for (i in (0 until inventario.length())) {
                         listaInventario.add(inventario.getString(i))
                     }
+                    val listaCombinada = listaAlmacenes.zip(listaInventario)
+                    val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
+                    val (almacenesOrdenados, inventarioOrdenado) = listaOrdenadaCombinada.unzip()
+                    listaAlmacenes = almacenesOrdenados.toMutableList()
+                    listaInventario = inventarioOrdenado.toMutableList()
                     for (i in (0 until listaAlmacenes.count())) {
                         val registro = LayoutInflater.from(requireContext())
                             .inflate(R.layout.filas_inventario, null, false)
@@ -354,12 +364,13 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
                             for (i in (0 until almacenes2.length())) {
                                 listaAlmacenes2.add(almacenes2.getString(i))
                             }
+                            val almacenesOrdenados2 = listaAlmacenes2.sorted().toMutableList()
                             for (i in (0 until listaAlmacenes2.count())) {
                                 val registro = LayoutInflater.from(requireContext())
                                     .inflate(R.layout.filas_inventario, null, false)
                                 val tv0 = registro.findViewById<View>(R.id.tv0) as TextView
                                 val tv1 = registro.findViewById<View>(R.id.tv1) as TextView
-                                tv0.text = listaAlmacenes2[i]
+                                tv0.text = almacenesOrdenados2[i]
                                 tv1.text = "0"
                                 tv0.setTextColor(Color.DKGRAY)
                                 tv1.setTextColor(Color.DKGRAY)
@@ -385,12 +396,13 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
                         for (i in (0 until almacenes3.length())) {
                             listaAlmacenes3.add(almacenes3.getString(i))
                         }
+                        val almacenesOrdenados3 = listaAlmacenes3.sorted().toMutableList()
                         for (i in (0 until listaAlmacenes3.count())) {
                             val registro = LayoutInflater.from(requireContext())
                                 .inflate(R.layout.filas_inventario, null, false)
                             val tv0 = registro.findViewById<View>(R.id.tv0) as TextView
                             val tv1 = registro.findViewById<View>(R.id.tv1) as TextView
-                            tv0.text = listaAlmacenes3[i]
+                            tv0.text = almacenesOrdenados3[i]
                             tv1.text = "0"
                             tv0.setTextColor(Color.DKGRAY)
                             tv1.setTextColor(Color.DKGRAY)

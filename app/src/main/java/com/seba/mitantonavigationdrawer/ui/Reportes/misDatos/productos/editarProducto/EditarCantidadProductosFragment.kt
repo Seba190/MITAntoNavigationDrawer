@@ -1,5 +1,6 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.productos.editarProducto
 
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -40,6 +41,9 @@ class EditarCantidadProductosFragment : Fragment(R.layout.fragment_editar_cantid
 
         _binding = FragmentEditarCantidadProductosBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        binding.etEditarCantidadProducto.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
+            PorterDuff.Mode.SRC_ATOP)
         //Aquí se programa
         binding.etEditarCantidadProducto.setText(sharedViewModel.inventario.last())
         binding.bmasEditarProducto.setOnClickListener {
@@ -63,13 +67,14 @@ class EditarCantidadProductosFragment : Fragment(R.layout.fragment_editar_cantid
 
         binding.bCambiarProducto.setOnClickListener {
             if(binding.etEditarCantidadProducto.text.isNotBlank()) {
+                Handler(Looper.getMainLooper()).postDelayed({
+                registrarFactura(binding.etEditarCantidadProducto.text.toString())
                 binding.rlEditarCantidadProductos.isVisible = false
                 val editarProductoFragment = EditarProductoFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlEditarCantidadProductos, editarProductoFragment)
                     .commit()
-                registrarFactura(binding.etEditarCantidadProducto.text.toString().toInt())
-                editarCantidad(binding.etEditarCantidadProducto.text.toString().toInt())
+                }, 100)
               //  Handler(Looper.getMainLooper()).postDelayed({
 
               //  }, 3000)
@@ -78,7 +83,7 @@ class EditarCantidadProductosFragment : Fragment(R.layout.fragment_editar_cantid
         return root
     }
 
-    private fun editarCantidad(cantidad: Int){
+    private fun editarCantidad(cantidad: String){
         val url1 = "http://186.64.123.248/Reportes/Productos/editarCantidad.php"
         val queue1 = Volley.newRequestQueue(requireContext())
         val stringRequest = object: StringRequest(
@@ -92,7 +97,7 @@ class EditarCantidadProductosFragment : Fragment(R.layout.fragment_editar_cantid
             },
             { error ->
                 Toast.makeText(requireContext(), "Cantidad actualizada exitosamente", Toast.LENGTH_SHORT).show()
-                //Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(),"$error", Toast.LENGTH_LONG).show()
                 // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
@@ -102,21 +107,21 @@ class EditarCantidadProductosFragment : Fragment(R.layout.fragment_editar_cantid
                 val parametros = HashMap<String, String>()
                 parametros.put("ID_PRODUCTO", sharedViewModel.id.last())
                 parametros.put("ALMACEN", sharedViewModel.almacenes.last())
-                parametros.put("CANTIDAD", cantidad.toString())
+                parametros.put("CANTIDAD", cantidad)
                 return parametros
             }
         }
         queue1.add(stringRequest)
     }
 
-    private fun registrarFactura(cantidad: Int){
+    private fun registrarFactura(cantidad: String){
         val url1 = "http://186.64.123.248/Reportes/Productos/transferencia.php"
         val queue1 = Volley.newRequestQueue(requireContext())
         val stringRequest = object: StringRequest(
             Request.Method.POST,
             url1,
             { response ->
-
+                editarCantidad(binding.etEditarCantidadProducto.text.toString())
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")
                 //   TextDropdown?.setText("Elija una opción",false)

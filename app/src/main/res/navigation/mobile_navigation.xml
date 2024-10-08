@@ -164,6 +164,9 @@
         <action
             android:id="@+id/action_nav_añadir_inventario_to_nav_barcode_scan_anadir"
             app:destination="@id/nav_barcode_scan_anadir" />
+        <action
+            android:id="@+id/action_nav_añadir_inventario_to_nav_inicio"
+            app:destination="@id/nav_inicio" />
     </fragment>
     <fragment
         android:id="@+id/nav_elegir_producto_anadir"
@@ -203,6 +206,9 @@
         <action
             android:id="@+id/action_nav_remover_inventario_to_nav_barcode_scan_remover"
             app:destination="@id/nav_barcode_scan_remover" />
+        <action
+            android:id="@+id/action_nav_remover_inventario_to_nav_inicio"
+            app:destination="@id/nav_inicio" />
     </fragment>
     <fragment
         android:id="@+id/nav_barcode_scan_remover"
@@ -223,6 +229,9 @@
             app:destination="@id/nav_barcode_scan">
 
         </action>
+        <action
+            android:id="@+id/action_nav_añadir_transferencia_to_nav_inicio"
+            app:destination="@id/nav_inicio" />
     </fragment>
     <fragment
         android:id="@+id/nav_barcode_scan"

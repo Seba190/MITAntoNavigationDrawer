@@ -54,6 +54,7 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
     var DropDownAlmacen: AutoCompleteTextView? = null
     var DropDownProducto: AutoCompleteTextView? = null
     var EliminarSinFactura: ImageView? = null
+    var cantidadAnterior: String? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -222,6 +223,7 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                 DropDownAlmacen?.setText(response.getString("ALMACEN"),false)
                 DropDownProducto?.setText(response.getString("PRODUCTO"),false)
                 TextCantidad?.setText(response.getString("UNIDADES"))
+                cantidadAnterior = response.getString("UNIDADES")
                 TextFecha?.setText(response.getString("FECHA_FACTURA"))
                 TextEstado = response.getString("TIPO_FACTURA")
                 if (TextEstado == "FACTURA_ENTRADA") {
@@ -252,10 +254,8 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
             Request.Method.POST,
             url1,
             { response ->
-                Toast.makeText(requireContext(), "Registro sin factura actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()}", Toast.LENGTH_SHORT).show()
-                Handler(Looper.getMainLooper()).postDelayed({
+                Toast.makeText(requireContext(), "Registro actualizado exitosamente. El id de ingreso es el número ${sharedViewModel.id.last()}", Toast.LENGTH_SHORT).show()
                     modificarInventario()
-                }, 100)
                 Handler(Looper.getMainLooper()).postDelayed({
                     Toast.makeText(requireContext(), "Inventario actualizado exitosamente", Toast.LENGTH_SHORT).show()
                 }, 3000)
@@ -289,10 +289,10 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
             Request.Method.POST,
             url1,
             { response ->
-                DropDownAlmacen?.setText("Elija una opción", false)
+               /* DropDownAlmacen?.setText("Elija una opción", false)
                 DropDownProducto?.setText("Elija una opción", false)
                 TextCantidad?.setText("")
-                TextFecha?.setText("")
+                TextFecha?.setText("")*/
             },
             { error ->
                 Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_SHORT).show()
@@ -306,6 +306,7 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                 parametros.put("ALMACEN", DropDownAlmacen?.text.toString())
                 parametros.put("PRODUCTO", DropDownProducto?.text.toString())
                 parametros.put("UNIDADES", TextCantidad?.text.toString())
+                parametros.put("UNIDADES_ANTERIOR", cantidadAnterior.toString())
                 return parametros
             }
         }

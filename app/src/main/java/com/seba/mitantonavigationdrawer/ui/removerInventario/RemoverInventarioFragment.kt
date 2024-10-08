@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -14,6 +15,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -135,19 +137,21 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()
         recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados,preciosOrdenados)
         binding.bActualizarRecyclerViewRemover.setOnClickListener {
-            val productosOrdenadosActualizado = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
+           /* val productosOrdenadosActualizado = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
             val listaCombinadaActualizada = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDeCantidadesRemover)
             val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
             val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
             val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDePreciosRemover)
             val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
-            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()
-            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizado,preciosOrdenadosActualizado)
+            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()*/
+            ordenarListas()
+            adapter.updateList(sharedViewModel.listaDeCantidadesRemover,sharedViewModel.listaDeProductosRemover,sharedViewModel.listaDePreciosRemover)
             binding.tvProductosAnadidosRemover.isVisible = !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
             binding.llMontoRemover.isVisible = !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
             adapter.notifyDataSetChanged()
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.tvMontoRemover.text = sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
+                sharedViewModel.facturaTotalRemover = sharedViewModel.listaDePreciosDeProductosRemover
             }, 300)
             sharedViewModel.listaDePreciosDeProductosRemover.clear()
             binding.nsvElegirProductoRemover.isVisible = !(sharedViewModel.listaDeCantidadesRemover.size == 0 || sharedViewModel.listaDeProductosRemover.size == 0 || sharedViewModel.listaDePreciosRemover.size == 0)
@@ -215,6 +219,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         binding.rvElegirProductoRemover.setHasFixedSize(true)
         binding.rvElegirProductoRemover.adapter = adapter
         binding.rvElegirProductoRemover.layoutManager = LinearLayoutManager(requireContext())
+       //adapter.updateList(listaDeCantidades,listaDeProductos,listaDePrecios)
         adapter.updateList(sharedViewModel.listaDeCantidadesRemover,sharedViewModel.listaDeProductosRemover,sharedViewModel.listaDePreciosRemover)
         adapter.notifyDataSetChanged()
         binding.rvElegirProductoRemover.requestLayout()
@@ -226,18 +231,46 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
       //      binding.nsvElegirProductoRemover.isVisible = false
       //  }
        // sharedViewModel.opcionesListRemover.add(position,sharedViewModel.listaDeProductosRemover[position])
-        sharedViewModel.listaDeCantidadesRemover.removeAt(position)
-        sharedViewModel.listaDeProductosRemover.removeAt(position)
-        sharedViewModel.listaDePreciosRemover.removeAt(position)
-        adapter.notifyItemRemoved(position)
-        adapter.notifyDataSetChanged()
-        Handler(Looper.getMainLooper()).postDelayed({
-            binding.tvMontoRemover.text = sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
-        }, 300)
-        sharedViewModel.listaDePreciosDeProductosRemover.clear()
-        binding.tvProductosAnadidosRemover.isVisible = !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
-        binding.llMontoRemover.isVisible = !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
-        binding.rvElegirProductoRemover.requestLayout()
+        try{
+            sharedViewModel.listaDeCantidadesRemover.removeAt(position)
+            sharedViewModel.listaDeProductosRemover.removeAt(position)
+            sharedViewModel.listaDePreciosRemover.removeAt(position)
+            /* sharedViewModel.facturaTotalRemover.removeAt(position)
+            val productosOrdenadosActualizado = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
+            val listaCombinadaActualizada = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDeCantidadesRemover)
+            val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
+            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
+            val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDePreciosRemover)
+            val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
+            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()*/
+            ordenarListas()
+            adapter.updateList(sharedViewModel.listaDeCantidadesRemover,sharedViewModel.listaDeProductosRemover,sharedViewModel.listaDePreciosRemover)
+            adapter.notifyItemRemoved(position)
+            adapter.notifyDataSetChanged()
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.tvMontoRemover.text = sharedViewModel.listaDePreciosDeProductosRemover.sum().toString()
+                sharedViewModel.facturaTotalRemover = sharedViewModel.listaDePreciosDeProductosRemover
+            }, 300)
+            sharedViewModel.listaDePreciosDeProductosRemover.clear()
+            binding.tvProductosAnadidosRemover.isVisible = !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
+            binding.llMontoRemover.isVisible = !(adapter.listaDeCantidadesRemover.size == 0 || adapter.listaDeProductosRemover.size == 0 || adapter.listaDePreciosRemover.size == 0)
+            binding.rvElegirProductoRemover.requestLayout()
+        }catch (e:Exception){
+            val inflaterRemover = requireActivity().layoutInflater
+            val layoutRemover = inflaterRemover.inflate(
+                R.layout.toast_custom_remover,
+                null
+            )
+            val textRemover =
+                layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+            textRemover.text =
+                "Hubo un error al eliminar un producto, debe salir y volver a entrar"
+            val toast = Toast(requireContext())
+            toast.duration = Toast.LENGTH_SHORT
+            toast.view = layoutRemover
+            toast.setGravity(Gravity.BOTTOM, 0, 600)
+            toast.show()
+        }
     }
 
     private fun ValidacionesIdInsertarDatos() {
@@ -278,7 +311,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
 
                             },
                             { error ->
-                                Toast.makeText(requireContext(),"El cliente y el almacén son obligatorios", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(),"El nombre de la factura es demasiado largo", Toast.LENGTH_SHORT).show()
                                 //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
                             }
                         )
@@ -446,19 +479,33 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                         { response ->
                             Toast.makeText(requireContext(),"Productos removidos exitosamente", Toast.LENGTH_SHORT).show()
                             TextNombre?.setText("")
-                            TextFecha?.setText("")
+                            binding.etFacturaSalidaFechaTransaccion.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time))
                             binding.tvListaDesplegableCliente.setText("Elija una opción",false)
                             binding.tvListaDesplegableAlmacen.setText("Elija una opción",false)
                             TextComentarios?.setText("")
                             sharedViewModel.listaDeCantidadesRemover.clear()
                             sharedViewModel.listaDeProductosRemover.clear()
                             sharedViewModel.listaDePreciosRemover.clear()
+                          /*  val productosOrdenadosActualizado = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
+                            val listaCombinadaActualizada = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDeCantidadesRemover)
+                            val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
+                            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
+                            val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDePreciosRemover)
+                            val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
+                            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()
+                            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizado,preciosOrdenadosActualizado)*/
                             adapter.notifyDataSetChanged()
                             binding.rvElegirProductoRemover.requestLayout()
                             binding.tvProductosAnadidosRemover.isVisible = false
-                            binding.nsvElegirProductoRemover.isVisible = true
+                            binding.nsvElegirProductoRemover.isVisible = false
                             binding.llMontoRemover.isVisible = false
                             sharedViewModel.opcionesListRemover.clear()
+                            sharedViewModel.facturaTotalRemover.clear()
+                            sharedViewModel.listaDePreciosDeProductosRemover.clear()
+                            sharedViewModel.opcionesListRemover.clear()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                findNavController().navigate(R.id.action_nav_remover_inventario_to_nav_inicio)
+                            },500)
 
                         },
                         { error ->
@@ -616,6 +663,18 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
           binding.rvProductosSalida.adapter = adapter
       }*/*/
 
+    private fun ordenarListas(){
+        val listaCombinada = sharedViewModel.listaDeProductosRemover.indices.map{ i ->
+            Triple(sharedViewModel.listaDeProductosRemover[i], sharedViewModel.listaDeCantidadesRemover[i], sharedViewModel.listaDePreciosRemover[i])
+        }
+        val listaOrdenada = listaCombinada.sortedBy { it.first }
+
+        sharedViewModel.listaDeProductosRemover = listaOrdenada.map { it.first }.toMutableList()
+        sharedViewModel.listaDeCantidadesRemover = listaOrdenada.map { it.second }.toMutableList()
+        sharedViewModel.listaDePreciosRemover = listaOrdenada.map { it.third }.toMutableList()
+
+        adapter.notifyDataSetChanged()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

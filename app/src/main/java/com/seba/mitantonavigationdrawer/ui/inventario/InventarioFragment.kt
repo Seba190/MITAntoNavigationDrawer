@@ -128,7 +128,7 @@ class InventarioFragment: Fragment(R.layout.fragment_inventario) {
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
                         binding.progressBarInventario.isVisible = false
-                        adapter.updateList(response.ProductosPorAlmacen)
+                        adapter.updateList(response.ProductosPorAlmacen.sortedBy { it.Producto })
                         binding.tvTextoNoProductos.isVisible = response.ProductosPorAlmacen.isEmpty()
                     }
 

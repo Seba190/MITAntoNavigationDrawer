@@ -41,6 +41,7 @@
             android:textColorHint="@color/color_list"
             android:layout_gravity="end"
             android:gravity="end"
+            app:boxStrokeColor="@color/color_list"
             style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
             <AutoCompleteTextView

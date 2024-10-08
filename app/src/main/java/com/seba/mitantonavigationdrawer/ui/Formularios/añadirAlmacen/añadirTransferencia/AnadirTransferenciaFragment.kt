@@ -240,18 +240,22 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
         recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados)
         //var segundaVez = false
         binding.bActualizarRecyclerView.setOnClickListener {
-            val productosOrdenadosActualizados = sharedViewModel.listaDeProductos.sorted().toMutableList()
+           /* val productosOrdenadosActualizados = sharedViewModel.listaDeProductos.sorted().toMutableList()
             val listaCombinadaActualizada = sharedViewModel.listaDeProductos.zip(sharedViewModel.listaDeCantidades)
             val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
-            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second}.toMutableList()
-            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizados)
+            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second}.toMutableList()*/
+            ordenarListas()
+            adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
             binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
              binding.nsvElegirProducto.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
+            Log.i("Sebastian", "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades}")
+            Log.i("cantidadTotalTransferenciaActualizar", "${sharedViewModel.cantidadTotalTransferencia.sum()}")
+            sharedViewModel.cantidadTotalTransferencia = sharedViewModel.cantidadDeProductos
             adapter.notifyDataSetChanged()
             binding.rvElegirProducto.requestLayout()
-            Log.i(
-                "Sebastian",
-                "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}")
+
+
+            sharedViewModel.cantidadDeProductos.clear()
         }
 
         binding.tvProductosAnadidos.isVisible = sharedViewModel.listaDeCantidades.isNotEmpty()
@@ -278,6 +282,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
         binding.rvElegirProducto.setHasFixedSize(true)
         binding.rvElegirProducto.adapter = adapter
         binding.rvElegirProducto.layoutManager = LinearLayoutManager(requireContext())
+        adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
         adapter.notifyDataSetChanged()
         binding.rvElegirProducto.requestLayout()
         binding.tvProductosAnadidos.isVisible =
@@ -285,11 +290,38 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
     }
 
     private fun onDeletedItem(position: Int) {
-        sharedViewModel.listaDeCantidades.removeAt(position)
-        sharedViewModel.listaDeProductos.removeAt(position)
-        adapter.notifyItemRemoved(position)
-        adapter.notifyDataSetChanged()
-        binding.rvElegirProducto.requestLayout()
+        try{
+            sharedViewModel.listaDeCantidades.removeAt(position)
+            sharedViewModel.listaDeProductos.removeAt(position)
+            /*val productosOrdenadosActualizados = sharedViewModel.listaDeProductos.sorted().toMutableList()
+            val listaCombinadaActualizada = sharedViewModel.listaDeProductos.zip(sharedViewModel.listaDeCantidades)
+            val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
+            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second}.toMutableList()*/
+            ordenarListas()
+            adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
+            adapter.notifyItemRemoved(position)
+            adapter.notifyDataSetChanged()
+            binding.rvElegirProducto.requestLayout()
+            Log.i("cantidadTotalTransferenciaEliminar", "${sharedViewModel.cantidadTotalTransferencia.sum()}")
+            sharedViewModel.cantidadTotalTransferencia = sharedViewModel.cantidadDeProductos
+            sharedViewModel.cantidadDeProductos.clear()
+        }catch (e:Exception){
+            val inflaterRemover = requireActivity().layoutInflater
+            val layoutRemover = inflaterRemover.inflate(
+                R.layout.toast_custom_remover,
+                null
+            )
+            val textRemover =
+                layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+            textRemover.text =
+                "Hubo un error al eliminar un producto, debe salir y volver a entrar"
+            val toast = Toast(requireContext())
+            toast.duration = Toast.LENGTH_SHORT
+            toast.view = layoutRemover
+            toast.setGravity(Gravity.BOTTOM, 0, 600)
+            toast.show()
+        }
+
     }
 
     private fun ListaDesplegableDestino() {
@@ -423,13 +455,6 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosYCantidades()
                                     }, 200)
-                                    Handler(Looper.getMainLooper()).postDelayed({
-                                        Toast.makeText(
-                                            requireContext(),
-                                            "Productos agregados exitosamente",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                        }, 4000)
                                         binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
                                     }
 
@@ -522,24 +547,35 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                         Request.Method.POST,
                         url1,
                         { response ->
+                            Toast.makeText(
+                                requireContext(),
+                                "Productos transferidos exitosamente",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             TextNombre?.setText("")
                             TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
                             DropDownOrigen?.setText("Elija una opción", false)
                             DropDownDestino?.setText("Elija una opción", false)
                             TextComentarios?.setText("")
-                            sharedViewModel.listaDeCantidades.removeAll(sharedViewModel.listaDeCantidades)
-                            sharedViewModel.listaDeProductos.removeAll(sharedViewModel.listaDeProductos)
-                            sharedViewModel.listaDeProductosAntigua.removeAll(sharedViewModel.listaDeProductosAntigua)
+                            sharedViewModel.listaDeCantidades.clear()
+                            sharedViewModel.listaDeProductos.clear()
+                            sharedViewModel.listaDeProductosAntigua.clear()
                             adapter.notifyDataSetChanged()
                             binding.rvElegirProducto.requestLayout()
                             binding.tvProductosAnadidos.isVisible = false
                             binding.nsvElegirProducto.isVisible = false
                             sharedViewModel.opcionesListTransferencia.clear()
+                            sharedViewModel.cantidadTotalTransferencia.clear()
+                            sharedViewModel.cantidadDeProductos.clear()
+                            sharedViewModel.opcionesListTransferencia.clear()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                findNavController().navigate(R.id.action_nav_añadir_transferencia_to_nav_inicio)
+                            },500)
                         },
                         { error ->
                             Toast.makeText(
                                 requireContext(),
-                                "Error $error y ${sharedViewModel.listaDeProductos} y ${sharedViewModel.listaDeCantidades}",
+                                "$error",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -864,6 +900,25 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
         }
         queue1.add(stringRequest)
     }
+
+    private fun ordenarListas(){
+
+        val productos = sharedViewModel.listaDeProductos
+        val cantidades = sharedViewModel.listaDeCantidades
+
+        val productosConCantidades = productos.zip(cantidades)
+
+        val productosConCantidadesOrdenados = productosConCantidades.sortedBy { it.first }
+
+        val (productosOrdenados, cantidadesOrdenadas) = productosConCantidadesOrdenados.unzip()
+
+        sharedViewModel.listaDeProductos = productosOrdenados.toMutableList()
+        sharedViewModel.listaDeCantidades = cantidadesOrdenadas.toMutableList()
+
+
+        adapter.notifyDataSetChanged()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
        /* sharedViewModel.listaDeProductos.clear()

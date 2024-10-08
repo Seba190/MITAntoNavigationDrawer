@@ -232,11 +232,14 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
         recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados)
        // var segundaVez = false
         binding.bActualizarRecyclerView.setOnClickListener {
-            val productosOrdenadosActualizados = sharedViewModel.listaDeProductos.sorted().toMutableList()
+            /*val productosOrdenadosActualizados = sharedViewModel.listaDeProductos.sorted().toMutableList()
             val listaCombinadaActualizada = sharedViewModel.listaDeProductos.zip(sharedViewModel.listaDeCantidades)
             val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
             val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second}.toMutableList()
-            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizados)
+            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizados)*/
+            ordenarListas()
+            adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
+            sharedViewModel.cantidadTotalEditarTransferencia = sharedViewModel.cantidadDeProductos
             binding.tvProductosAnadidos.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
             adapter.notifyDataSetChanged()
             binding.nsvElegirProducto.isVisible = !(sharedViewModel.listaDeCantidades.size == 0 && sharedViewModel.listaDeProductos.size == 0)
@@ -360,6 +363,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
         binding.rvElegirProducto.setHasFixedSize(true)
         binding.rvElegirProducto.adapter = adapter
         binding.rvElegirProducto.layoutManager = LinearLayoutManager(requireContext())
+        adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
         activity?.runOnUiThread{
             adapter.notifyDataSetChanged()
             binding.rvElegirProducto.requestLayout()
@@ -369,11 +373,39 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
     }
 
     private fun onDeletedItem(position: Int) {
-        sharedViewModel.listaDeCantidades.removeAt(position)
-        sharedViewModel.listaDeProductos.removeAt(position)
-        adapter.notifyItemRemoved(position)
-        adapter.notifyDataSetChanged()
-        binding.rvElegirProducto.requestLayout()
+        try {
+            val cantidad = sharedViewModel.listaDeCantidades.removeAt(position).toInt()
+            val producto = sharedViewModel.listaDeProductos.removeAt(position)
+
+            /*sharedViewModel.cantidadTotalEditarTransferencia.remove(position)
+            val productosOrdenadosActualizados = sharedViewModel.listaDeProductos.sorted().toMutableList()
+            val listaCombinadaActualizada = sharedViewModel.listaDeProductos.zip(sharedViewModel.listaDeCantidades)
+            val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
+            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second}.toMutableList()
+            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizados)*/
+            ordenarListas()
+            sharedViewModel.listaCombinadaTransferencia.add(Pair(producto, cantidad))
+            adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
+            sharedViewModel.cantidadTotalEditarTransferencia = sharedViewModel.cantidadDeProductos
+            adapter.notifyItemRemoved(position)
+            adapter.notifyDataSetChanged()
+            binding.rvElegirProducto.requestLayout()
+        }catch (e:Exception){
+            val inflaterRemover = requireActivity().layoutInflater
+            val layoutRemover = inflaterRemover.inflate(
+                R.layout.toast_custom_remover,
+                null
+            )
+            val textRemover =
+                layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+            textRemover.text =
+                "Hubo un error al eliminar un producto, debe salir y volver a entrar"
+            val toast = Toast(requireContext())
+            toast.duration = Toast.LENGTH_SHORT
+            toast.view = layoutRemover
+            toast.setGravity(Gravity.BOTTOM, 0, 600)
+            toast.show()
+        }
     }
 
     private fun ListaDesplegableDestino() {
@@ -492,7 +524,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                     //    }, 2500)
                     Handler(Looper.getMainLooper()).postDelayed({
                         InsertarPreciosYCantidades()
-                    }, 500)
+                    }, 200)
                     binding.tvProductosAnadidos.isVisible = !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
                 }
 
@@ -586,7 +618,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                     "Productos agregados exitosamente a la transferencia",
                     Toast.LENGTH_SHORT
                 ).show()
-                TextNombre?.setText("")
+               /* TextNombre?.setText("")
                 TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
                 DropDownOrigen?.setText("Elija una opción", false)
                 DropDownDestino?.setText("Elija una opción", false)
@@ -599,6 +631,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                 binding.tvProductosAnadidos.isVisible = false
                 binding.nsvElegirProducto.isVisible = false
                 sharedViewModel.opcionesListEditarTransferencia.clear()
+                sharedViewModel.cantidadTotalEditarTransferencia.clear()*/
             },
             { error ->
                 Toast.makeText(
@@ -606,7 +639,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                     "Productos agregados exitosamente a la transferencia",
                     Toast.LENGTH_SHORT
                 ).show()
-                TextNombre?.setText("")
+               /* TextNombre?.setText("")
                 TextFecha?.setText(SimpleDateFormat("dd-MM-yyyy",Locale.getDefault()).format(Calendar.getInstance().time))
                 DropDownOrigen?.setText("Elija una opción", false)
                 DropDownDestino?.setText("Elija una opción", false)
@@ -617,7 +650,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                 adapter.notifyDataSetChanged()
                 binding.rvElegirProducto.requestLayout()
                 binding.tvProductosAnadidos.isVisible = false
-                binding.nsvElegirProducto.isVisible = false
+                binding.nsvElegirProducto.isVisible = false*/
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -998,6 +1031,25 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
         }
         queue1.add(stringRequest)
     }*/
+
+    private fun ordenarListas(){
+
+        val productos = sharedViewModel.listaDeProductos
+        val cantidades = sharedViewModel.listaDeCantidades
+
+        val productosConCantidades = productos.zip(cantidades)
+
+        val productosConCantidadesOrdenados = productosConCantidades.sortedBy { it.first }
+
+        val (productosOrdenados, cantidadesOrdenadas) = productosConCantidadesOrdenados.unzip()
+
+        sharedViewModel.listaDeProductos = productosOrdenados.toMutableList()
+        sharedViewModel.listaDeCantidades = cantidadesOrdenadas.toMutableList()
+
+
+        adapter.notifyDataSetChanged()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         adapter.notifyDataSetChanged()

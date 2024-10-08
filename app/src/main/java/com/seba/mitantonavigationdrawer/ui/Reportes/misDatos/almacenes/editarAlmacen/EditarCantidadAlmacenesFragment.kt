@@ -1,5 +1,6 @@
 package com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.almacenes.editarAlmacen
 
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -44,6 +45,8 @@ class EditarCantidadAlmacenesFragment : Fragment(R.layout.fragment_editar_cantid
         _binding = FragmentEditarCantidadAlmacenesBinding.inflate(inflater, container, false)
         val root: View = binding.root
         //Aquí se programa
+        binding.etEditarCantidadAlmacen.getBackground().setColorFilter(getResources().getColor(R.color.color_list),
+            PorterDuff.Mode.SRC_ATOP)
         binding.etEditarCantidadAlmacen.setText(sharedViewModel.inventario.last())
         binding.bmasEditarAlmacen.setOnClickListener {
             val cantidadActual = binding.etEditarCantidadAlmacen.text.toString().toIntOrNull() ?: 0
@@ -66,13 +69,16 @@ class EditarCantidadAlmacenesFragment : Fragment(R.layout.fragment_editar_cantid
 
         binding.bCambiarAlmacen.setOnClickListener {
             if(binding.etEditarCantidadAlmacen.text.isNotBlank()) {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    registrarFactura(binding.etEditarCantidadAlmacen.text.toString())
                 binding.rlEditarCantidadAlmacenes.isVisible = false
                 val editarAlmacenFragment = EditarAlmacenFragment()
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.rlEditarCantidadAlmacenes, editarAlmacenFragment)
                     .commit()
-                registrarFactura(binding.etEditarCantidadAlmacen.text.toString().toInt().toString())
-                editarCantidad(binding.etEditarCantidadAlmacen.text.toString().toInt().toString())
+                }, 100)
+                //sharedViewModel.productos.clear()
+                //sharedViewModel.inventario.clear()
                 //  Handler(Looper.getMainLooper()).postDelayed({
               //  }, 100)
 
@@ -119,6 +125,7 @@ class EditarCantidadAlmacenesFragment : Fragment(R.layout.fragment_editar_cantid
             Request.Method.POST,
             url2,
             { response ->
+                editarCantidad(binding.etEditarCantidadAlmacen.text.toString())
                 Log.i("Sebastian","$response, ${sharedViewModel.id.last()}, ${sharedViewModel.productos.last()}, $cantidad")
                 //   TextNombre?.setText("")
                 //   TextDireccion?.setText("")

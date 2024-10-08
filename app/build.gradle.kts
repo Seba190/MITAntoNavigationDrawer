@@ -1,8 +1,4 @@
-
-
 // Otras importaciones según sea necesario
-
-
 plugins {
     id("kotlin-android")
     id("com.android.application")
@@ -103,5 +99,6 @@ dependencies {
 
     //Picasso Imagenes RecyclerView
     implementation("com.squareup.picasso:picasso:2.8")
+    implementation(kotlin("script-runtime"))
 
 }

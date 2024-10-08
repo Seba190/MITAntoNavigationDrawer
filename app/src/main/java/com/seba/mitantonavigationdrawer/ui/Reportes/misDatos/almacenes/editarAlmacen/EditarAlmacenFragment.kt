@@ -309,14 +309,19 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                    // val matriz = response.getJSONArray("Lista")
                    val productos = response.getJSONArray("Productos")
                    val inventario = response.getJSONArray("Inventario")
-                   val listaProductos = mutableListOf<String>()
-                   val listaInventario = mutableListOf<String>()
+                   var listaProductos = mutableListOf<String>()
+                   var listaInventario = mutableListOf<String>()
                    for (i in (0 until productos.length())) {
                        listaProductos.add(productos.getString(i))
                    }
                    for (i in (0 until inventario.length())) {
                        listaInventario.add(inventario.getString(i))
                    }
+                   val listaCombinada = listaProductos.zip(listaInventario)
+                   val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
+                   val (productosOrdenados, inventarioOrdenado) = listaOrdenadaCombinada.unzip()
+                        listaProductos = productosOrdenados.toMutableList()
+                        listaInventario = inventarioOrdenado.toMutableList()
                    for (i in (0 until listaProductos.count())) {
                        val registro = LayoutInflater.from(requireContext())
                            .inflate(R.layout.filas_inventario, null, false)
@@ -352,12 +357,13 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                            for (i in (0 until productos3.length())) {
                                listaProductos3.add(productos3.getString(i))
                            }
+                           val productosOrdenados3 = listaProductos3.sorted().toMutableList()
                            for (i in (0 until listaProductos3.count())) {
                                val registro = LayoutInflater.from(requireContext())
                                    .inflate(R.layout.filas_inventario, null, false)
                                val tv0 = registro.findViewById<View>(R.id.tv0) as TextView
                                val tv1 = registro.findViewById<View>(R.id.tv1) as TextView
-                               tv0.text = listaProductos3[i]
+                               tv0.text = productosOrdenados3[i]
                                tv1.text = "0"
                                tv0.setTextColor(Color.DKGRAY)
                                tv1.setTextColor(Color.DKGRAY)
@@ -367,7 +373,7 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                                registro.findViewById<TableRow>(R.id.trFilaTabla).setOnClickListener {
                                    //  binding.clEditarTiposDeProductos.isVisible = false
                                    sharedViewModel.inventario.add(0.toString())
-                                   sharedViewModel.productos.add(listaProductos3[i])
+                                   sharedViewModel.productos.add(productosOrdenados3[i])
                                    val editarCantidadAlmacenesFragment = EditarCantidadAlmacenesFragment()
                                    parentFragmentManager.beginTransaction()
                                        .replace(R.id.rlEditarAlmacen, editarCantidadAlmacenesFragment)
@@ -393,12 +399,13 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                         for (i in (0 until productos2.length())) {
                             listaProductos2.add(productos2.getString(i))
                         }
+                        val productosOrdenados2 = listaProductos2.sorted().toMutableList()
                         for (i in (0 until listaProductos2.count())) {
                             val registro = LayoutInflater.from(requireContext())
                                 .inflate(R.layout.filas_inventario, null, false)
                             val tv0 = registro.findViewById<View>(R.id.tv0) as TextView
                             val tv1 = registro.findViewById<View>(R.id.tv1) as TextView
-                            tv0.text = listaProductos2[i]
+                            tv0.text = productosOrdenados2[i]
                             tv1.text = "0"
                             tv0.setTextColor(Color.DKGRAY)
                             tv1.setTextColor(Color.DKGRAY)
@@ -407,8 +414,8 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                             binding.tlInventariosDeProducto.addView(registro)
                             registro.findViewById<TableRow>(R.id.trFilaTabla).setOnClickListener {
                                 //  binding.clEditarTiposDeProductos.isVisible = false
-                                sharedViewModel.inventario.add(0.toString())
-                                sharedViewModel.productos.add(listaProductos2[i])
+                                sharedViewModel.inventario.add(tv1.text.toString())
+                                sharedViewModel.productos.add(productosOrdenados2[i])
                                 val editarCantidadAlmacenesFragment = EditarCantidadAlmacenesFragment()
                                 parentFragmentManager.beginTransaction()
                                     .replace(R.id.rlEditarAlmacen, editarCantidadAlmacenesFragment)

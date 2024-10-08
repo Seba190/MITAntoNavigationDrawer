@@ -33,7 +33,8 @@ import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTra
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.estadística.EstadisticaViewModel
 import org.json.JSONObject
-import java.lang.Exception
+import java.math.BigInteger
+import kotlin.Exception
 
 class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_anadir) {
     private var _binding: FragmentElegirProductoAnadirBinding? = null
@@ -122,104 +123,230 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                 //Log.i("Sebastian2", "${sharedViewModel.opcionesListTransferencia}, $trimmedItem, ${DropDownProducto?.text.toString()}")
                 trimmedItem == DropDownProducto?.text.toString().substringBefore(" (").uppercase()
             }
-            //Es valido y tiene parentesis
-            if(encontrarProducto && DropDownProducto?.text.toString().contains("(") &&
-                DropDownProducto?.text.toString().contains(")")) {
-                if (binding.llUnidadesElegirProductoAnadir.isVisible) {
-                    if(binding.etCantidadAnadir.text.isNotBlank()){
-                        sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString().substringBefore('(').uppercase()}( 0 unid. )")
-                        sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadAnadir.text.toString())
-                        sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
-                        eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
-                        //  refreshAdapterAnadirTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoAnadir.setText("Elija una opción",false)
-                        binding.etCantidadAnadir.setText("")
-                        binding.etPrecioAnadir.setText("")
+
+            if(binding.llUnidadesElegirProductoAnadir.isVisible){
+                if(binding.etCantidadAnadir.text.isNotEmpty() && binding.etPrecioAnadir.text.isNotEmpty()) {
+                    sharedViewModel.facturaTotalAnadir.add(
+                        binding.etCantidadAnadir.text.toString().toInt()
+                            .times(binding.etPrecioAnadir.text.toString().toInt()))
+
+                }
+            }else {
+                if (binding.etNumeroDeCajasAnadir.text.isNotEmpty() &&
+                    binding.etArticulosPorCajaAnadir.text.isNotEmpty() &&
+                    binding.etPrecioAnadir.text.isNotEmpty()) {
+                    val cantidad = binding.etNumeroDeCajasAnadir.text.toString().toInt()
+                        .times(binding.etArticulosPorCajaAnadir.text.toString().toInt())
+                    sharedViewModel.facturaTotalAnadir.add(
+                        cantidad.times(binding.etPrecioAnadir.text.toString().toInt()))
+                }
+            }
+                Log.i("facturaTotalProducto", "${sharedViewModel.facturaTotalAnadir.sum()}")
+            //Log.i("facturaTotalLargoString", "${binding.etCantidadAnadir.text.toString().toInt()
+              //  .times(binding.etPrecioAnadir.text.toString().toInt()).toString().length}")
+                if (sharedViewModel.facturaTotalAnadir.sum()  <= 100000000) {
+                    if (encontrarProducto && DropDownProducto?.text.toString().contains("(") &&
+                        DropDownProducto?.text.toString().contains(")")
+                    ) {
+                        if (binding.llUnidadesElegirProductoAnadir.isVisible) {
+                            if (binding.etCantidadAnadir.text.isNotBlank()) {
+                                try {
+                                    sharedViewModel.listaDeProductosAnadir.add(
+                                        "${
+                                            DropDownProducto?.text.toString().substringBefore('(')
+                                                .uppercase()
+                                        }( 0 unid. )"
+                                    )
+                                    sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadAnadir.text.toString())
+                                    sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
+                                    eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
+                                    //  refreshAdapterAnadirTransferenciaFragment()
+                                    binding.tvListaDesplegableElegirProductoAnadir.setText(
+                                        "Elija una opción",
+                                        false
+                                    )
+                                    binding.etCantidadAnadir.setText("")
+                                    binding.etPrecioAnadir.setText("")
+                                    // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Se ha agregado el producto a la factura",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }catch (e:Exception){
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "El monto es demasiado grande",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Falta ingresar la cantidad",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else if (binding.llCajasDeProductoElegirProductoAnadir.isVisible) {
+                            if (binding.etNumeroDeCajasAnadir.text.isNotBlank() && binding.etArticulosPorCajaAnadir.text.isNotBlank()) {
+                                try{
+                                val cantidad = binding.etNumeroDeCajasAnadir.text.toString().toInt()
+                                    .times(binding.etArticulosPorCajaAnadir.text.toString().toInt())
+                                sharedViewModel.listaDeProductosAnadir.add(
+                                    "${
+                                        DropDownProducto?.text.toString().substringBefore('(')
+                                            .uppercase()
+                                    }( 0 unid. )"
+                                )
+                                sharedViewModel.listaDeCantidadesAnadir.add(cantidad.toString())
+                                sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
+                                eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
+                                // refreshAdapterAnadirTransferenciaFragment()
+                                binding.tvListaDesplegableElegirProductoAnadir.setText(
+                                    "Elija una opción",
+                                    false
+                                )
+                                binding.etArticulosPorCajaAnadir.setText("")
+                                binding.etNumeroDeCajasAnadir.setText("")
+                                binding.etPrecioAnadir.setText("")
                                 // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
+                                Toast.makeText(
+                                    requireContext(), "Se ha agregado el producto a la factura",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }catch (e:Exception){
+                                Toast.makeText(
+                                    requireContext(),
+                                    "El monto es demasiado grande",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Falta ingresar al menos los articulos por caja o el número de cajas",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "No se ha podido ingresar la factura",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } else if (!encontrarProducto && DropDownProducto?.text.toString() != "Elija una opción") {
                         Toast.makeText(
                             requireContext(),
-                            "Se ha agregado el producto a la factura",
+                            "El nombre del producto no es válido",
                             Toast.LENGTH_SHORT
                         ).show()
-
-                    }else{
-                        Toast.makeText(requireContext(),"Falta ingresar la cantidad", Toast.LENGTH_SHORT).show()
-                    }
-                } else if (binding.llCajasDeProductoElegirProductoAnadir.isVisible) {
-                    if (binding.etNumeroDeCajasAnadir.text.isNotBlank() && binding.etArticulosPorCajaAnadir.text.isNotBlank()) {
-                        val cantidad = binding.etNumeroDeCajasAnadir.text.toString().toInt()
-                            .times(binding.etArticulosPorCajaAnadir.text.toString().toInt())
-                        sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString().substringBefore('(').uppercase()}( 0 unid. )")
-                        sharedViewModel.listaDeCantidadesAnadir.add(cantidad.toString())
-                        sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
-                        eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
-                        // refreshAdapterAnadirTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoAnadir.setText("Elija una opción",false)
-                        binding.etArticulosPorCajaAnadir.setText("")
-                        binding.etNumeroDeCajasAnadir.setText("")
-                        binding.etPrecioAnadir.setText("")
-                       // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
-                        Toast.makeText(
-                            requireContext(), "Se ha agregado el producto a la factura",
-                            Toast.LENGTH_SHORT).show()
-
-                    } else {
-                        Toast.makeText(requireContext(), "Falta ingresar al menos los articulos por caja o el número de cajas", Toast.LENGTH_SHORT).show()
+                    } else if (DropDownProducto?.text.toString() == "Elija una opción") {
+                        Toast.makeText(requireContext(), "Debe elegir producto", Toast.LENGTH_SHORT)
+                            .show()
+                    } else if (encontrarProducto && !DropDownProducto?.text.toString()
+                            .contains("(") &&
+                        !DropDownProducto?.text.toString().contains(")")
+                    ) {
+                        if (binding.llUnidadesElegirProductoAnadir.isVisible) {
+                            if (binding.etCantidadAnadir.text.isNotBlank()) {
+                                try{
+                                sharedViewModel.listaDeProductosAnadir.add(
+                                    "${
+                                        DropDownProducto?.text.toString().uppercase()
+                                    }( 0 unid. )"
+                                )
+                                sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadAnadir.text.toString())
+                                sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
+                                eliminarElementoDeListaDesplegableSinParentesis(
+                                    DropDownProducto?.text.toString().uppercase()
+                                )
+                                //  refreshAdapterAnadirTransferenciaFragment()
+                                binding.tvListaDesplegableElegirProductoAnadir.setText(
+                                    "Elija una opción",
+                                    false
+                                )
+                                binding.etCantidadAnadir.setText("")
+                                binding.etPrecioAnadir.setText("")
+                                // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Se ha agregado el producto a la factura",
+                                    Toast.LENGTH_SHORT
+                                    ).show()
+                                }catch (e:Exception){
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "El monto es demasiado grande",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Falta ingresar la cantidad",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else if (binding.llCajasDeProductoElegirProductoAnadir.isVisible) {
+                            if (binding.etNumeroDeCajasAnadir.text.isNotBlank() && binding.etArticulosPorCajaAnadir.text.isNotBlank()) {
+                                try{
+                                val cantidad = binding.etNumeroDeCajasAnadir.text.toString().toInt()
+                                    .times(binding.etArticulosPorCajaAnadir.text.toString().toInt())
+                                sharedViewModel.listaDeProductosAnadir.add(
+                                    "${
+                                        DropDownProducto?.text.toString().uppercase()
+                                    }( 0 unid. )"
+                                )
+                                sharedViewModel.listaDeCantidadesAnadir.add(cantidad.toString())
+                                sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
+                                eliminarElementoDeListaDesplegableSinParentesis(
+                                    DropDownProducto?.text.toString().uppercase()
+                                )
+                                // refreshAdapterAnadirTransferenciaFragment()
+                                binding.tvListaDesplegableElegirProductoAnadir.setText(
+                                    "Elija una opción",
+                                    false
+                                )
+                                binding.etArticulosPorCajaAnadir.setText("")
+                                binding.etNumeroDeCajasAnadir.setText("")
+                                binding.etPrecioAnadir.setText("")
+                                // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
+                                Toast.makeText(
+                                    requireContext(), "Se ha agregado el producto a la factura",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                }catch (e:Exception){
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "El monto es demasiado grande",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Falta ingresar al menos los articulos por caja o el número de cajas",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "No se ha podido ingresar la factura",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 } else {
-                    Toast.makeText(requireContext(), "No se ha podido ingresar la factura", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "La factura total no puede superar los cien millones de pesos",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    sharedViewModel.facturaTotalAnadir.removeLast()
                 }
-            }else if(!encontrarProducto && DropDownProducto?.text.toString() != "Elija una opción") {
-                Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
-            }else if(DropDownProducto?.text.toString() == "Elija una opción"){
-                Toast.makeText(requireContext(), "Debe elegir producto", Toast.LENGTH_SHORT).show()
-            }else if(encontrarProducto && !DropDownProducto?.text.toString().contains("(") &&
-                !DropDownProducto?.text.toString().contains(")")) {
-                if (binding.llUnidadesElegirProductoAnadir.isVisible) {
-                    if(binding.etCantidadAnadir.text.isNotBlank()){
-                        sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
-                        sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadAnadir.text.toString())
-                        sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
-                        eliminarElementoDeListaDesplegableSinParentesis(DropDownProducto?.text.toString().uppercase())
-                        //  refreshAdapterAnadirTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoAnadir.setText("Elija una opción",false)
-                        binding.etCantidadAnadir.setText("")
-                        binding.etPrecioAnadir.setText("")
-                        // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
-                        Toast.makeText(
-                            requireContext(),
-                            "Se ha agregado el producto a la factura",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                    }else{
-                        Toast.makeText(requireContext(),"Falta ingresar la cantidad", Toast.LENGTH_SHORT).show()
-                    }
-                } else if (binding.llCajasDeProductoElegirProductoAnadir.isVisible) {
-                    if (binding.etNumeroDeCajasAnadir.text.isNotBlank() && binding.etArticulosPorCajaAnadir.text.isNotBlank()) {
-                        val cantidad = binding.etNumeroDeCajasAnadir.text.toString().toInt()
-                            .times(binding.etArticulosPorCajaAnadir.text.toString().toInt())
-                        sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
-                        sharedViewModel.listaDeCantidadesAnadir.add(cantidad.toString())
-                        sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
-                        eliminarElementoDeListaDesplegableSinParentesis(DropDownProducto?.text.toString().uppercase())
-                        // refreshAdapterAnadirTransferenciaFragment()
-                        binding.tvListaDesplegableElegirProductoAnadir.setText("Elija una opción",false)
-                        binding.etArticulosPorCajaAnadir.setText("")
-                        binding.etNumeroDeCajasAnadir.setText("")
-                        binding.etPrecioAnadir.setText("")
-                        // sharedViewModel.opcionesListAnadir.removeAll(sharedViewModel.listaDeProductosAnadir)
-                        Toast.makeText(
-                            requireContext(), "Se ha agregado el producto a la factura",
-                            Toast.LENGTH_SHORT).show()
-
-                    } else {
-                        Toast.makeText(requireContext(), "Falta ingresar al menos los articulos por caja o el número de cajas", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    Toast.makeText(requireContext(), "No se ha podido ingresar la factura", Toast.LENGTH_SHORT).show()
-                }
-               }
             }
 
 
@@ -265,6 +392,8 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                 DropDownProducto?.threshold = 1
                 DropDownProducto?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
+                        binding.etPrecioAnadir.setText("")
+                        binding.etArticulosPorCajaAnadir.setText("")
                         precioYCantidad(parent.getItemAtPosition(position).toString())
 
                 }
@@ -277,10 +406,14 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                             Handler(Looper.getMainLooper()).postDelayed({
                                 if(DropDownProducto?.text.toString().contains("(") &&
                                     DropDownProducto?.text.toString().contains(")")){
+                                    binding.etPrecioAnadir.setText("")
+                                    binding.etArticulosPorCajaAnadir.setText("")
                                     precioYCantidad(DropDownProducto?.text.toString())
                                 }else if(!DropDownProducto?.text.toString().contains("(") &&
                                     !DropDownProducto?.text.toString().contains(")")){
                                     Log.i("PrecioyCantidad2","${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                                    binding.etPrecioAnadir.setText("")
+                                    binding.etArticulosPorCajaAnadir.setText("")
                                     precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                                 }
                             }, 300)
@@ -319,6 +452,8 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                             Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
                         }
                         if(!hasFocus){
+                            binding.etPrecioAnadir.setText("")
+                            binding.etArticulosPorCajaAnadir.setText("")
                             precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                         }
                     }
@@ -343,10 +478,14 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
             Handler(Looper.getMainLooper()).postDelayed({
                 if(DropDownProducto?.text.toString().contains("(") &&
                     DropDownProducto?.text.toString().contains(")")){
+                    binding.etPrecioAnadir.setText("")
+                    binding.etArticulosPorCajaAnadir.setText("")
                     precioYCantidad(DropDownProducto?.text.toString())
                 }else if(!DropDownProducto?.text.toString().contains("(") &&
                     !DropDownProducto?.text.toString().contains(")")){
                     Log.i("PrecioyCantidad","${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                    binding.etPrecioAnadir.setText("")
+                    binding.etArticulosPorCajaAnadir.setText("")
                     precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                 }
             }, 300)
@@ -370,9 +509,10 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                 // binding.etPrecioPorUnidadUnidades.setText("200")
                 //binding.etCantidad.setText("12")
                 if (binding.llCajasDeProductoElegirProductoAnadir.isVisible) {
-                    binding.etArticulosPorCajaAnadir.setText(unidades)
+                        binding.etArticulosPorCajaAnadir.setText(unidades)
                 }
-                binding.etPrecioAnadir.setText(precio)
+                    binding.etPrecioAnadir.setText(precio)
+
                 //binding.tvListaDesplegableElegirProveedor.setText("Elija una opción",false)
                 // binding.tvListaDesplegableElegirProducto.setText("Elija una opción",false)
 
@@ -467,8 +607,9 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                 //binding.etCantidad.setText("12")
                 if (binding.llCajasDeProductoElegirProductoAnadir.isVisible) {
                     binding.etArticulosPorCajaAnadir.setText(unidades)
-                    //binding.etPrecioPorUnidadCajasDeProductos.setText("200")
                 }
+                    //binding.etPrecioPorUnidadCajasDeProductos.setText("200")
+
                 //binding.tvListaDesplegableElegirProveedor.setText("Elija una opción",false)
                 // binding.tvListaDesplegableElegirProducto.setText("Elija una opción",false)
 

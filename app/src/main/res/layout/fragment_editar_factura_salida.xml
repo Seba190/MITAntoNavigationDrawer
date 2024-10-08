@@ -242,7 +242,7 @@
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/nsvElegirProductoFacturaSalidaEditar"
                 android:layout_width="match_parent"
-                android:layout_height="180dp"
+                android:layout_height="240dp"
                 android:fillViewport="true">
 
                 <LinearLayout
@@ -289,7 +289,7 @@
 
             <Button
                 android:id="@+id/bActualizarRecyclerViewFacturaSalidaEditar"
-                android:layout_width="130dp"
+                android:layout_width="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"

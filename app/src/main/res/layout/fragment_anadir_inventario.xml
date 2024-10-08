@@ -58,7 +58,7 @@
                     android:id="@+id/tvIdUsuarioResponsable"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginHorizontal="110dp"
+                    android:gravity="center"
                     android:layout_marginVertical="30dp"
                     android:text="@string/textView_nombre_factura_entrada_proveedor"
                     android:textColor="@color/black"
@@ -658,7 +658,7 @@
                 <androidx.core.widget.NestedScrollView
                     android:id="@+id/nsvElegirProductoAnadir"
                     android:layout_width="match_parent"
-                    android:layout_height="180dp"
+                    android:layout_height="240dp"
                     android:fillViewport="true">
 
                     <LinearLayout
@@ -705,7 +705,7 @@
 
                 <Button
                     android:id="@+id/bActualizarRecyclerViewAnadir"
-                    android:layout_width="130dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_marginVertical="5dp"

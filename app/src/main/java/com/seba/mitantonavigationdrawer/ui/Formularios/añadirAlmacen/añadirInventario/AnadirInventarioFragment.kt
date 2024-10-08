@@ -7,6 +7,7 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -168,21 +169,24 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         val listaCombinada2 = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDePreciosAnadir)
         val listaOrdenadaCombinada2 = listaCombinada2.sortedBy { it.first }
         val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()
-        recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados,preciosOrdenados)
+        recyclerViewElegirProducto(sharedViewModel.listaDeCantidadesAnadir,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosAnadir)
         binding.bActualizarRecyclerViewAnadir.setOnClickListener {
-            val productosOrdenadosActualizado = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
+           /* val productosOrdenadosActualizado = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
             val listaCombinadaActualizada = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDeCantidadesAnadir)
             val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
             val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
             val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDePreciosAnadir)
             val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
-            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()
-            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizado,preciosOrdenadosActualizado)
+            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()*/
+            ordenarListas()
+            adapter.updateList(sharedViewModel.listaDeCantidadesAnadir,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosAnadir)
             binding.tvProductosAnadidosAnadir.isVisible = !(sharedViewModel.listaDeCantidadesAnadir.size == 0 || sharedViewModel.listaDeProductosAnadir.size == 0 || sharedViewModel.listaDePreciosAnadir.size == 0)
             binding.llMonto.isVisible = !(sharedViewModel.listaDeCantidadesAnadir.size == 0 || sharedViewModel.listaDeProductosAnadir.size == 0 || sharedViewModel.listaDePreciosAnadir.size == 0)
             adapter.notifyDataSetChanged()
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.tvMonto.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
+                sharedViewModel.facturaTotalAnadir = sharedViewModel.listaDePreciosDeProductos
+                Log.i("facturaTotalAnadirActualizar", "${sharedViewModel.facturaTotalAnadir.sum()}")
             }, 300)
             sharedViewModel.listaDePreciosDeProductos.clear()
             binding.nsvElegirProductoAnadir.isVisible = !(sharedViewModel.listaDeCantidadesAnadir.size == 0 || sharedViewModel.listaDeProductosAnadir.size == 0 || sharedViewModel.listaDePreciosAnadir.size == 0)
@@ -251,24 +255,64 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         binding.rvElegirProductoAnadir.adapter = adapter
         binding.rvElegirProductoAnadir.layoutManager = LinearLayoutManager(requireContext())
         adapter.updateList(sharedViewModel.listaDeCantidadesAnadir,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosAnadir)
+        //adapter.updateList(listaDeCantidades,listaDeProductos,listaDePrecios)
         adapter.notifyDataSetChanged()
         binding.rvElegirProductoAnadir.requestLayout()
     }
 
-    private fun onDeletedItem(position: Int){
+    private fun onDeletedItem(position : Int){
        // sharedViewModel.opcionesListAnadir.add(position,sharedViewModel.listaDeProductosAnadir[position])
-        sharedViewModel.listaDeCantidadesAnadir.removeAt(position)
-        sharedViewModel.listaDeProductosAnadir.removeAt(position)
-        sharedViewModel.listaDePreciosAnadir.removeAt(position)
-        adapter.notifyItemRemoved(position)
-        adapter.notifyDataSetChanged()
-        binding.rvElegirProductoAnadir.requestLayout()
-        Handler(Looper.getMainLooper()).postDelayed({
-            binding.tvMonto.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
-        }, 300)
-        sharedViewModel.listaDePreciosDeProductos.clear()
-        binding.tvProductosAnadidosAnadir.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
-        binding.llMonto.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+        try {
+            sharedViewModel.listaDeCantidadesAnadir.removeAt(position)
+            sharedViewModel.listaDeProductosAnadir.removeAt(position)
+            sharedViewModel.listaDePreciosAnadir.removeAt(position)
+            /*val productosOrdenadosActualizado = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
+        if(position in productosOrdenadosActualizado.indices) {
+            val listaCombinadaActualizada = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDeCantidadesAnadir)
+            val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
+            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
+            val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDePreciosAnadir)
+            val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
+            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()
+            productosOrdenadosActualizado.removeAt(position)
+            cantidadesOrdenadasActualizada.removeAt(position)
+            preciosOrdenadosActualizado.removeAt(position)*/
+            ordenarListas()
+            adapter.updateList(
+                sharedViewModel.listaDeCantidadesAnadir,
+                sharedViewModel.listaDeProductosAnadir,
+                sharedViewModel.listaDePreciosAnadir
+            )
+            adapter.notifyItemRemoved(position)
+            adapter.notifyDataSetChanged()
+            binding.rvElegirProductoAnadir.requestLayout()
+            Handler(Looper.getMainLooper()).postDelayed({
+                binding.tvMonto.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
+                sharedViewModel.facturaTotalAnadir = sharedViewModel.listaDePreciosDeProductos
+                Log.i("facturaTotalAnadirEliminar", "${sharedViewModel.facturaTotalAnadir.sum()}")
+            }, 300)
+            sharedViewModel.listaDePreciosDeProductos.clear()
+            binding.tvProductosAnadidosAnadir.isVisible =
+                !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+            binding.llMonto.isVisible =
+                !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+        }catch (e:Exception){
+            val inflaterRemover = requireActivity().layoutInflater
+            val layoutRemover = inflaterRemover.inflate(
+                R.layout.toast_custom_remover,
+                null
+            )
+            val textRemover =
+                layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+            textRemover.text =
+                "Hubo un error al eliminar un producto, debe salir y volver a entrar"
+            val toast = Toast(requireContext())
+            toast.duration = Toast.LENGTH_SHORT
+            toast.view = layoutRemover
+            toast.setGravity(Gravity.BOTTOM, 0, 600)
+            toast.show()
+        }
+
     }
    /* private fun filtrar(texto: String) {
          var listaFiltrada = arrayListOf<ProductosItemResponse>()
@@ -493,19 +537,33 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                         { response ->
                            Toast.makeText(requireContext(),"Productos agregados exitosamente", Toast.LENGTH_SHORT).show()
                             TextNombre?.setText("")
-                            TextFecha?.setText("")
+                            binding.etFechaTransaccion.setText(SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Calendar.getInstance().time))
                             DropDownProveedor?.setText("Elija una opción",false)
                             DropDownAlmacen?.setText("Elija una opción",false)
                             TextComentarios?.setText("")
                             sharedViewModel.listaDeCantidadesAnadir.clear()
                             sharedViewModel.listaDeProductosAnadir.clear()
                             sharedViewModel.listaDePreciosAnadir.clear()
+                            /*val productosOrdenadosActualizado = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
+                            val listaCombinadaActualizada = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDeCantidadesAnadir)
+                            val listaOrdenadaCombinadaActualizada = listaCombinadaActualizada.sortedBy { it.first }
+                            val cantidadesOrdenadasActualizada = listaOrdenadaCombinadaActualizada.map { it.second }.toMutableList()
+                            val listaCombinadaActualizada2 = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDePreciosAnadir)
+                            val listaOrdenadaCombinadaActualizada2 = listaCombinadaActualizada2.sortedBy { it.first }
+                            val preciosOrdenadosActualizado = listaOrdenadaCombinadaActualizada2.map { it.second }.toMutableList()
+                            adapter.updateList(cantidadesOrdenadasActualizada,productosOrdenadosActualizado,preciosOrdenadosActualizado)*/
                             adapter.notifyDataSetChanged()
                             binding.rvElegirProductoAnadir.requestLayout()
                             binding.tvProductosAnadidosAnadir.isVisible = false
                             binding.nsvElegirProductoAnadir.isVisible = false
                             binding.llMonto.isVisible = false
                             sharedViewModel.opcionesListAnadir.clear()
+                            sharedViewModel.facturaTotalAnadir.clear()
+                            sharedViewModel.listaDePreciosDeProductos.clear()
+                            sharedViewModel.opcionesListAnadir.clear()
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                findNavController().navigate(R.id.action_nav_añadir_inventario_to_nav_inicio)
+                            },500)
 
                         },
                         { error ->
@@ -514,7 +572,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                             binding.tvListaDesplegableProveedor.setText("Elija una opción",false)
                             binding.tvListaDesplegableAlmacen.setText("Elija una opción",false)
                             TextComentarios?.setText("")*/
-                            Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosAnadir} y ${sharedViewModel.listaDeCantidadesAnadir}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
                         }
                     )
 
@@ -655,6 +713,19 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
         binding.tvProductos.setText(nombre)
         binding.rvProductos.isVisible = false
     }*/*/
+
+    private fun ordenarListas(){
+        val listaCombinada = sharedViewModel.listaDeProductosAnadir.indices.map{ i ->
+            Triple(sharedViewModel.listaDeProductosAnadir[i], sharedViewModel.listaDeCantidadesAnadir[i], sharedViewModel.listaDePreciosAnadir[i])
+        }
+        val listaOrdenada = listaCombinada.sortedBy { it.first }
+
+        sharedViewModel.listaDeProductosAnadir = listaOrdenada.map { it.first }.toMutableList()
+        sharedViewModel.listaDeCantidadesAnadir = listaOrdenada.map { it.second }.toMutableList()
+        sharedViewModel.listaDePreciosAnadir = listaOrdenada.map { it.third }.toMutableList()
+
+        adapter.notifyDataSetChanged()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

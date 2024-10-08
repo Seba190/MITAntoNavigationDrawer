@@ -370,7 +370,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                                         Toast.makeText(requireContext(),
                                             "Alertas ingresadas exitosamente a la base de datos"
                                             , Toast.LENGTH_SHORT).show()
-                                          }, 4000)
+                                          }, 3000)
                                 }
                                 //Solo 2 se envía:
                                 if (sharedViewModel.ListasDeAlertas.isEmpty() && sharedViewModel.ListasDePreciosDeVenta.isEmpty() && sharedViewModel.ListasDePreciosDeCompra.isNotEmpty()) {
@@ -379,7 +379,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                                         Toast.makeText(requireContext(),
                                             "Precios de compra ingresados exitosamente a la base de datos"
                                             , Toast.LENGTH_SHORT).show()
-                                    }, 4000)
+                                    }, 3000)
                                 }
                                 //Solo 3 se envía
                                 if (sharedViewModel.ListasDeAlertas.isEmpty() && sharedViewModel.ListasDePreciosDeVenta.isNotEmpty() && sharedViewModel.ListasDePreciosDeCompra.isEmpty()) {
@@ -388,7 +388,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                                         Toast.makeText(requireContext(),
                                             "Precios de venta ingresados exitosamente a la base de datos"
                                             , Toast.LENGTH_SHORT).show()
-                                    }, 4000)
+                                    }, 3000)
 
                                 }
                                 //1 y 2 se envían
@@ -398,12 +398,12 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                                   //  }, 4000)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosCompraYProveedores()
-                                    }, 100)
+                                    }, 50)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         Toast.makeText(requireContext(),
                                             "Alertas y precios de compra ingresados exitosamente a la base de datos"
                                             , Toast.LENGTH_SHORT).show()
-                                    }, 4000)
+                                    }, 3000)
                                 }
                                 //1 y 3 s envían
                                 if (sharedViewModel.ListasDeAlertas.isNotEmpty() && sharedViewModel.ListasDePreciosDeVenta.isNotEmpty() && sharedViewModel.ListasDePreciosDeCompra.isEmpty()) {
@@ -412,12 +412,12 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                                 //    }, 4000)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosVentayClientes()
-                                    }, 100)
+                                    }, 50)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         Toast.makeText(requireContext(),
                                             "Alertas y precios de venta ingresados exitosamente a la base de datos"
                                             , Toast.LENGTH_SHORT).show()
-                                    }, 4000)
+                                    }, 3000)
                                 }
                                 //2 y 3 se envían
                                 if (sharedViewModel.ListasDeAlertas.isEmpty() && sharedViewModel.ListasDePreciosDeVenta.isNotEmpty() && sharedViewModel.ListasDePreciosDeCompra.isNotEmpty()) {
@@ -426,12 +426,12 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                               //      }, 4000)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosVentayClientes()
-                                    }, 100)
+                                    }, 50)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         Toast.makeText(requireContext(),
                                             "Precios de compra y precios de venta ingresados exitosamente a la base de datos"
                                             , Toast.LENGTH_SHORT).show()
-                                    }, 4000)
+                                    }, 3000)
                                 }
                                 //1, 2 y 3 se envían
                                 if (sharedViewModel.ListasDeAlertas.isNotEmpty() && sharedViewModel.ListasDePreciosDeVenta.isNotEmpty() && sharedViewModel.ListasDePreciosDeCompra.isNotEmpty()) {
@@ -440,15 +440,15 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                              //       }, 4000)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosCompraYProveedores()
-                                    }, 100)
+                                    }, 50)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         InsertarPreciosVentayClientes()
-                                    }, 200)
+                                    }, 100)
                                     Handler(Looper.getMainLooper()).postDelayed({
                                         Toast.makeText(requireContext(),
                                             "Alertas, precios de compra y precios de venta ingresados exitosamente"
                                             , Toast.LENGTH_SHORT).show()
-                                    }, 4000)
+                                    }, 3000)
                                 }
                                 TextPeso?.setText("")
                                 TextVolumen?.setText("")

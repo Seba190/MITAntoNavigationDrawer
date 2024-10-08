@@ -15,6 +15,9 @@ class AnadirTransferenciaViewHolder(view: View, private val sharedViewModel: Sha
     fun bind(cantidad:String,producto: String, position : Int, onClickDelete: (Int) -> Unit){
        binding.etUnidades.text = cantidad
        binding.etProducto.text = producto.substringBefore('(',producto).uppercase()
+       if(cantidad.isNotEmpty()){
+         sharedViewModel.cantidadDeProductos.add(cantidad.toInt())
+       }
         binding.cvTrash.setOnClickListener {
             onClickDelete(adapterPosition)  }
       /*  var onFocusChanged1 = false

@@ -29,9 +29,9 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             tools:text = "factura"
-            android:textSize="15sp"
-            android:layout_marginStart="11dp"
-            android:layout_marginTop="55dp"/>
+            android:textSize="12sp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="60dp"/>
 
     </androidx.cardview.widget.CardView>
 
@@ -51,7 +51,7 @@
         android:textColor="@color/black"
         android:text ="Almacén: "
         android:layout_marginStart="110dp"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="65dp"
         android:textSize="15sp"/>
 
     <TextView
@@ -61,7 +61,7 @@
         android:textColor="@color/black"
         tools:text ="Nombre Almacén"
         android:layout_marginStart="190dp"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="65dp"
         android:textSize="15sp"/>
 
     <TextView
@@ -70,7 +70,7 @@
         android:textColor="@color/black"
         android:text ="Proveedor: "
         android:layout_marginStart="110dp"
-        android:layout_marginTop="85dp"
+        android:layout_marginTop="105dp"
         android:textSize="15sp"/>
 
     <TextView
@@ -80,7 +80,7 @@
         android:textColor="@color/black"
         tools:text ="Nombre Proveedor"
         android:layout_marginStart="200dp"
-        android:layout_marginTop="85dp"
+        android:layout_marginTop="105dp"
         android:textSize="15sp"/>
 
 

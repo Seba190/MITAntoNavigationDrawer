@@ -12,7 +12,11 @@ class SinFacturaViewHolder(view: View): RecyclerView.ViewHolder(view) {
         binding.tvFechaSinFactura.text = sinFacturaItemResponse.FechaSinFactura
         binding.tvNombreSinFactura.text = sinFacturaItemResponse.Producto
         binding.tvNombreAlmacenSinFactura.text = sinFacturaItemResponse.Almacen
-        binding.tvUnidadesSinFactura.text = sinFacturaItemResponse.Unidades
+        if(sinFacturaItemResponse.TipoFactura == "FACTURA_ENTRADA") {
+            binding.tvUnidadesSinFactura.text = sinFacturaItemResponse.Unidades
+        }else{
+            binding.tvUnidadesSinFactura.text = "-${sinFacturaItemResponse.Unidades}"
+        }
         binding.root.setOnClickListener { onItemSelected(sinFacturaItemResponse.Id) }
     }
 }

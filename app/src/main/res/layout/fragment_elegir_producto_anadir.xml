@@ -88,27 +88,7 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_marginVertical="10dp"
-                    android:text="@string/textView_codigo_de_barra"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/etCodigoDeBarraAnadir"
-                    android:layout_width="220dp"
-                    android:layout_height="wrap_content"
-                    android:textColorHint="@color/color_list"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:hint="@string/placeholder_codigo_de_barra"
-                    android:textColor="@color/black"/>
 
                 <!--  <Button
                       android:id="@+id/bAnadirParametros"
@@ -160,6 +140,7 @@
                             android:hint="Unidades"
                             android:textColorHint="@color/color_list"
                             android:inputType="number"
+                            android:maxLength="8"
                             android:textColor="@color/black"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"/>
@@ -210,6 +191,7 @@
                             android:textColor="@color/black"
                             android:hint="@string/numero_de_cajas"
                             android:textColorHint="@color/color_list"
+                            android:maxLength="8"
                             android:inputType="number" />
 
                         <ImageView
@@ -228,7 +210,8 @@
                             android:textColor="@color/black"
                             android:hint="@string/Articulos_por_caja"
                             android:textColorHint="@color/color_list"
-                            android:inputType="number" />
+                            android:inputType="number"
+                            android:maxLength="8"/>
 
                     </LinearLayout>
 
@@ -250,10 +233,33 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:inputType="number"
+                    android:maxLength="8"
                     android:textColor="@color/black"
                     android:hint="Escriba el precio de compra"
                     android:textColorHint="@color/color_list"
                     android:layout_marginTop="5dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginVertical="10dp"
+                    android:text="@string/textView_codigo_de_barra"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etCodigoDeBarraAnadir"
+                    android:layout_width="220dp"
+                    android:layout_height="wrap_content"
+                    android:textColorHint="@color/color_list"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:hint="@string/placeholder_codigo_de_barra"
+                    android:textColor="@color/black"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"

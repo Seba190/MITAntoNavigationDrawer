@@ -29,9 +29,9 @@
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             tools:text = "factura"
-            android:textSize="15sp"
-            android:layout_marginStart="11dp"
-            android:layout_marginTop="55dp"/>
+            android:textSize="12sp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="60dp"/>
 
     </androidx.cardview.widget.CardView>
 
@@ -59,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/black"
-        android:text =" units. del almacén "
+        android:text =" units. al almacén "
         android:layout_marginStart="150dp"
         android:layout_marginTop="55dp"
         android:textSize="15sp"/>

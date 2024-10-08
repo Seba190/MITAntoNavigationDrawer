@@ -39,6 +39,7 @@
             android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:textColorHint="@color/color_list"
+            app:boxStrokeColor="@color/color_list"
             android:layout_gravity="end"
             android:gravity="end"
             style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">

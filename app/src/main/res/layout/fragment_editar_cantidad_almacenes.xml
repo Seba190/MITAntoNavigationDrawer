@@ -99,6 +99,7 @@ tools:context=".ui.Reportes.misDatos.almacenes.editarAlmacen.EditarCantidadAlmac
                         android:textColorHint="@color/color_list"
                         android:inputType="number"
                         android:textColor="@color/black"
+                        android:maxLength="8"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="20dp"/>

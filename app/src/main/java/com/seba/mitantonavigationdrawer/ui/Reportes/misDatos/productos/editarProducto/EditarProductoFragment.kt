@@ -252,71 +252,107 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
     //private var segundaVez = false
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //if(!segundaVez) {
-        val queue1 = Volley.newRequestQueue(requireContext())
-        //val id = arguments?.getString(EXTRA_ID).toString()
-        Log.i("Sebastian", "Valor de Id de destino es: ${sharedViewModel.id.last()}")
-        //  val id2 = this.arguments
-        // val id3 = id2?.get(EXTRA_ID)
-        //val id4 = almacenesItemResponse.Id
-        val cornerRadius = 150f
-        val url1 = "http://186.64.123.248/Reportes/Productos/registroInsertar.php?ID_PRODUCTO=${sharedViewModel.id.last()}"
-         val jsonObjectRequest1 = JsonObjectRequest(
-            Request.Method.GET, url1, null,
-            { response ->
-                tablaInventario()
-                if(TextNombre?.text?.isEmpty() == true && TextPeso?.text?.isEmpty() == true &&
-                    TextVolumen?.text?.isEmpty() == true && TextCodigoDeBarraProducto?.text?.isEmpty() == true &&
-                    TextCodigoDeBarraEmbalaje?.text?.isEmpty() == true && TextUnidadesEmbalaje?.text?.isEmpty() == true) {
-                    val urlImagen = response.getString("URL_PRODUCTO")
-                    val modificarUrl = urlImagen.replace("'", "%27")
-                    val modificarUrlFinal = modificarUrl.replace(" ", "%20")
-                    if(isValidUrl(modificarUrl)) {
-                        Picasso.get().load(Uri.parse(modificarUrlFinal).toString())
-                            .transform(Redondeado(cornerRadius)).into(Imagen, object: com.squareup.picasso.Callback{
-                                override fun onSuccess() {
-                                    Log.i("Sebastian", "Imagen cargada correctamente desde: $modificarUrlFinal")
-                                }
+        try {
+            //if(!segundaVez) {
+            val queue1 = Volley.newRequestQueue(requireContext())
+            //val id = arguments?.getString(EXTRA_ID).toString()
+            Log.i("Sebastian", "Valor de Id de destino es: ${sharedViewModel.id.last()}")
+            //  val id2 = this.arguments
+            // val id3 = id2?.get(EXTRA_ID)
+            //val id4 = almacenesItemResponse.Id
+            val cornerRadius = 150f
+            val url1 =
+                "http://186.64.123.248/Reportes/Productos/registroInsertar.php?ID_PRODUCTO=${sharedViewModel.id.last()}"
+            val jsonObjectRequest1 = JsonObjectRequest(
+                Request.Method.GET, url1, null,
+                { response ->
+                    tablaInventario()
+                    if (TextNombre?.text?.isEmpty() == true && TextPeso?.text?.isEmpty() == true &&
+                        TextVolumen?.text?.isEmpty() == true && TextCodigoDeBarraProducto?.text?.isEmpty() == true &&
+                        TextCodigoDeBarraEmbalaje?.text?.isEmpty() == true && TextUnidadesEmbalaje?.text?.isEmpty() == true
+                    ) {
+                        val urlImagen = response.getString("URL_PRODUCTO")
+                        val modificarUrl = urlImagen.replace("'", "%27")
+                        val modificarUrlFinal = modificarUrl.replace(" ", "%20")
+                        if (isValidUrl(modificarUrl)) {
+                            Picasso.get().load(Uri.parse(modificarUrlFinal).toString())
+                                .transform(Redondeado(cornerRadius))
+                                .into(Imagen, object : com.squareup.picasso.Callback {
+                                    override fun onSuccess() {
+                                        Log.i(
+                                            "Sebastian",
+                                            "Imagen cargada correctamente desde: $modificarUrlFinal"
+                                        )
+                                    }
 
-                                override fun onError(e: java.lang.Exception?) {
-                                    Log.e("Sebastian", "Error al cargar la imagen desde: $modificarUrlFinal", e)
-                                    binding.ivImageSelectedProducto.setImageResource(R.drawable.android_logo)
-                                }
+                                    override fun onError(e: java.lang.Exception?) {
+                                        Log.e(
+                                            "Sebastian",
+                                            "Error al cargar la imagen desde: $modificarUrlFinal",
+                                            e
+                                        )
+                                        binding.ivImageSelectedProducto.setImageResource(R.drawable.android_logo)
+                                    }
 
-                            })
-                    }else{
-                        Log.e("Sebastian", "URL no válida: $modificarUrlFinal")
-                        binding.ivImageSelectedProducto.setImageResource(R.drawable.android_logo)
+                                })
+                        } else {
+                            Log.e("Sebastian", "URL no válida: $modificarUrlFinal")
+                            binding.ivImageSelectedProducto.setImageResource(R.drawable.android_logo)
+                        }
+                        TextNombre?.setText(response.getString("PRODUCTO"))
+                        TextPeso?.setText(response.getString("PESO_PRODUCTO"))
+                        TextVolumen?.setText(response.getString("VOLUMEN_PRODUCTO"))
+                        // TextNombreImagen?.setText(response.getString("TELEFONO_CLIENTE"))
+                        TextCodigoDeBarraProducto?.setText(response.getString("CODIGO_BARRA_PRODUCTO"))
+                        TextCodigoDeBarraEmbalaje?.setText(response.getString("CODIGO_BARRA_EMBALAJE"))
+                        TextUnidadesEmbalaje?.setText(response.getString("UNIDADES_EMBALAJE"))
+                        DropwDownTipoDeProducto?.setText(response.getString("TIPO_PRODUCTO"), false)
                     }
-                    TextNombre?.setText(response.getString("PRODUCTO"))
-                    TextPeso?.setText(response.getString("PESO_PRODUCTO"))
-                    TextVolumen?.setText(response.getString("VOLUMEN_PRODUCTO"))
-                    // TextNombreImagen?.setText(response.getString("TELEFONO_CLIENTE"))
-                    TextCodigoDeBarraProducto?.setText(response.getString("CODIGO_BARRA_PRODUCTO"))
-                    TextCodigoDeBarraEmbalaje?.setText(response.getString("CODIGO_BARRA_EMBALAJE"))
-                    TextUnidadesEmbalaje?.setText(response.getString("UNIDADES_EMBALAJE"))
-                    DropwDownTipoDeProducto?.setText(response.getString("TIPO_PRODUCTO"), false)
+                    TextEstado = response.getString("ESTADO_PRODUCTO").toInt()
+                    if (TextEstado == 1) {
+                        radio1?.isChecked = true
+                    } else if (TextEstado == 0) {
+                        radio2?.isChecked = true
+                    }
+                }, { error ->
+                    Toast.makeText(
+                        requireContext(),
+                        "El id es ${sharedViewModel.id.last()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-                TextEstado = response.getString("ESTADO_PRODUCTO").toInt()
-                if (TextEstado == 1) {
-                    radio1?.isChecked = true
-                } else if (TextEstado == 0) {
-                    radio2?.isChecked = true
-                }
-            }, { error ->
-                Toast.makeText(requireContext(), "El id es ${sharedViewModel.id.last()}", Toast.LENGTH_SHORT).show()
-            }
-        )
-        queue1.add(jsonObjectRequest1)
+            )
+            queue1.add(jsonObjectRequest1)
 
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
-                // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
-                val action = EditarProductoFragmentDirections.actionNavEditarProductoToNavMisDatos(destino = "productos")
-                findNavController().navigate(action)
-            }
-        })
+            requireActivity().onBackPressedDispatcher.addCallback(
+                viewLifecycleOwner,
+                object : OnBackPressedCallback(true) {
+                    override fun handleOnBackPressed() {
+                        // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
+                        // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
+                        val action =
+                            EditarProductoFragmentDirections.actionNavEditarProductoToNavMisDatos(
+                                destino = "productos"
+                            )
+                        findNavController().navigate(action)
+                    }
+                })
+        }catch(e:Exception){
+            val inflaterRemover = requireActivity().layoutInflater
+            val layoutRemover = inflaterRemover.inflate(
+                R.layout.toast_custom_remover,
+                null
+            )
+            val textRemover =
+                layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+            textRemover.text =
+                "Hubo un error en el id, debe salir y volver a entrar"
+            val toast = Toast(requireContext())
+            toast.duration = Toast.LENGTH_SHORT
+            toast.view = layoutRemover
+            toast.setGravity(Gravity.BOTTOM, 0, 600)
+            toast.show()
+        }
     }
 
     private fun actualizarRegistros() {
@@ -409,14 +445,19 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                     // val matriz = response.getJSONArray("Lista")
                     val almacenes = response.getJSONArray("Almacenes")
                     val inventario = response.getJSONArray("Inventario")
-                    val listaAlmacenes = mutableListOf<String>()
-                    val listaInventario = mutableListOf<String>()
+                    var listaAlmacenes = mutableListOf<String>()
+                    var listaInventario = mutableListOf<String>()
                     for (i in (0 until almacenes.length())) {
                         listaAlmacenes.add(almacenes.getString(i))
                     }
                     for (i in (0 until inventario.length())) {
                         listaInventario.add(inventario.getString(i))
                     }
+                    val listaCombinada = listaAlmacenes.zip(listaInventario)
+                    val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
+                    val (almacenesOrdenados, inventarioOrdenado) = listaOrdenadaCombinada.unzip()
+                    listaAlmacenes = almacenesOrdenados.toMutableList()
+                    listaInventario = inventarioOrdenado.toMutableList()
                     for (i in (0 until listaAlmacenes.count())) {
                         val registro = LayoutInflater.from(requireContext())
                             .inflate(R.layout.filas_inventario, null, false)
@@ -455,12 +496,13 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                             for (i in (0 until almacenes2.length())) {
                                 listaAlmacenes2.add(almacenes2.getString(i))
                             }
-                            for (i in (0 until listaAlmacenes2.count())) {
+                            val almacenesOrdenados2 = listaAlmacenes2.sorted().toMutableList()
+                            for (i in (0 until almacenesOrdenados2.count())) {
                                 val registro = LayoutInflater.from(requireContext())
                                     .inflate(R.layout.filas_inventario, null, false)
                                 val tv0 = registro.findViewById<View>(R.id.tv0) as TextView
                                 val tv1 = registro.findViewById<View>(R.id.tv1) as TextView
-                                tv0.text = listaAlmacenes2[i]
+                                tv0.text = almacenesOrdenados2[i]
                                 tv1.text = "0"
                                 tv0.setTextColor(Color.DKGRAY)
                                 tv1.setTextColor(Color.DKGRAY)
@@ -469,8 +511,8 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                                 TablaAlmacenes?.addView(registro)
                                 registro.findViewById<TableRow>(R.id.trFilaTabla).setOnClickListener {
                                     //  binding.clEditarTiposDeProductos.isVisible = false
-                                    sharedViewModel.inventario.add(0.toString())
-                                    sharedViewModel.almacenes.add(listaAlmacenes2[i])
+                                    sharedViewModel.inventario.add(tv1.text.toString())
+                                    sharedViewModel.almacenes.add(almacenesOrdenados2[i])
                                     val editarCantidadProductosFragment =
                                         EditarCantidadProductosFragment()
                                     parentFragmentManager.beginTransaction()
@@ -499,12 +541,13 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                         for (i in (0 until almacenes3.length())) {
                             listaAlmacenes3.add(almacenes3.getString(i))
                         }
-                        for (i in (0 until listaAlmacenes3.count())) {
+                        val almacenesOrdenados3 = listaAlmacenes3.sorted().toMutableList()
+                        for (i in (0 until almacenesOrdenados3.count())) {
                             val registro = LayoutInflater.from(requireContext())
                                 .inflate(R.layout.filas_inventario, null, false)
                             val tv0 = registro.findViewById<View>(R.id.tv0) as TextView
                             val tv1 = registro.findViewById<View>(R.id.tv1) as TextView
-                            tv0.text = listaAlmacenes3[i]
+                            tv0.text = almacenesOrdenados3[i]
                             tv1.text = "0"
                             tv0.setTextColor(Color.DKGRAY)
                             tv1.setTextColor(Color.DKGRAY)
@@ -514,7 +557,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                             registro.findViewById<TableRow>(R.id.trFilaTabla).setOnClickListener {
                                 //  binding.clEditarTiposDeProductos.isVisible = false
                                 sharedViewModel.inventario.add(tv1.text.toString())
-                                sharedViewModel.almacenes.add(listaAlmacenes3[i])
+                                sharedViewModel.almacenes.add(almacenesOrdenados3[i])
                                 val editarCantidadProductosFragment =
                                     EditarCantidadProductosFragment()
                                 parentFragmentManager.beginTransaction()
@@ -648,7 +691,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                                 "Alertas actualizadas exitosamente.",
                                 Toast.LENGTH_SHORT
                             ).show()
-                        }, 4000)
+                        }, 3000)
                         Log.i(
                             "Sebastian4",
                             "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}"
@@ -662,7 +705,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                         //  }, 4000)
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarAlertas()
-                        }, 100)
+                        }, 200)
                     }
                     //Solo 2 se envía:
                     else if (sharedViewModel.listaDePreciosCompra.isNotEmpty() && sharedViewModel.listaDeAlertas.isEmpty() && sharedViewModel.listaDePreciosVenta.isEmpty()) {
@@ -673,7 +716,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                                 "Precios de compra actualizados exitosamente.",
                                 Toast.LENGTH_SHORT
                             ).show()
-                        }, 4000)
+                        }, 3000)
                         Log.i(
                             "Sebastian4",
                             "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}"
@@ -686,7 +729,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                         //  }, 4000)
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarPreciosCompra()
-                        }, 100)
+                        }, 200)
 
                     }
                     //Solo 3 se envía
@@ -697,7 +740,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                                 "Precios de venta actualizados exitosamente.",
                                 Toast.LENGTH_SHORT
                             ).show()
-                        }, 4000)
+                        }, 3000)
                         Log.i(
                             "Sebastian4",
                             "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}"
@@ -711,7 +754,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                         //  }, 4000)
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarPreciosVenta()
-                        }, 100)
+                        }, 200)
 
                     }
                     //1 y 2 se envían
@@ -722,7 +765,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                                 "Alertas y precios de compra actualizados exitosamente.",
                                 Toast.LENGTH_SHORT
                             ).show()
-                        }, 4000)
+                        }, 3000)
                         Log.i(
                             "Sebastian4",
                             "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}"
@@ -736,13 +779,13 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                         //   }, 4000)
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarAlertas()
-                        }, 100)
-                        Handler(Looper.getMainLooper()).postDelayed({
+                        }, 200)
+                      //  Handler(Looper.getMainLooper()).postDelayed({
                             borrarPreciosCompra()
-                        }, 150)
+                      //  }, 100)
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarPreciosCompra()
-                        }, 250)
+                        }, 200)
 
                     }
                     // Toast.makeText(requireContext(), "Precios de compra actualizados exitosamente.", Toast.LENGTH_SHORT).show()
@@ -755,7 +798,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                                 "Alertas y precios de venta actualizados exitosamente.",
                                 Toast.LENGTH_SHORT
                             ).show()
-                        }, 4000)
+                        }, 3000)
                         Log.i(
                             "Sebastian4",
                             "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}"
@@ -768,13 +811,13 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                         //  }, 4000)
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarAlertas()
-                        }, 100)
-                        Handler(Looper.getMainLooper()).postDelayed({
+                        }, 200)
+                       // Handler(Looper.getMainLooper()).postDelayed({
                             borrarPreciosVenta()
-                        }, 150)
+                       // }, 100)
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarPreciosVenta()
-                        }, 250)
+                        }, 200)
                     }
                     //Toast.makeText(requireContext(), "Precios de venta actualizados exitosamente.", Toast.LENGTH_SHORT).show()
                     //2 y 3 se envían
@@ -785,7 +828,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                                 "Precios de compra y de venta actualizados exitosamente.",
                                 Toast.LENGTH_SHORT
                             ).show()
-                        }, 4000)
+                        }, 3000)
                         Log.i(
                             "Sebastian4",
                             "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}"
@@ -799,13 +842,13 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                         //  }, 4000)
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarPreciosCompra()
-                        }, 100)
-                        Handler(Looper.getMainLooper()).postDelayed({
+                        }, 200)
+                       // Handler(Looper.getMainLooper()).postDelayed({
                             borrarPreciosVenta()
-                        }, 150)
+                       // }, 100)
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarPreciosVenta()
-                        }, 250)
+                        }, 200)
 
                     }
                     //Toast.makeText(requireContext(), "Precios de venta actualizados exitosamente.", Toast.LENGTH_SHORT).show()
@@ -817,7 +860,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                                 "Alertas, precios de compra y de venta actualizados exitosamente.",
                                 Toast.LENGTH_SHORT
                             ).show()
-                        }, 4000)
+                        }, 3000)
                         Log.i(
                             "Sebastian4",
                             "${sharedViewModel.listaDeAlertas}, ${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDePreciosVenta}"
@@ -831,19 +874,19 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                         //    }, 4000)
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarAlertas()
-                        }, 100)
-                        Handler(Looper.getMainLooper()).postDelayed({
+                        }, 200)
+                       // Handler(Looper.getMainLooper()).postDelayed({
                             borrarPreciosCompra()
-                        }, 150)
+                       // }, )
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarPreciosCompra()
-                        }, 250)
-                        Handler(Looper.getMainLooper()).postDelayed({
+                        }, 200)
+                      //  Handler(Looper.getMainLooper()).postDelayed({
                             borrarPreciosVenta()
-                        }, 300)
+                      //  }, )
                         Handler(Looper.getMainLooper()).postDelayed({
                             actualizarPreciosVenta()
-                        }, 400)
+                        }, 200)
                     }
 
                     //  Toast.makeText(requireContext(), "Precios de compra actualizados exitosamente.", Toast.LENGTH_SHORT).show()

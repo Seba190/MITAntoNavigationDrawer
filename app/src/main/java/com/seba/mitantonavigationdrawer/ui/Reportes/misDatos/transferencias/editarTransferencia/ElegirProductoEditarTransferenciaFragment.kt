@@ -65,6 +65,9 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
     private val sharedViewModel by activityViewModels<SharedViewModel>()
     private var adapter : ArrayAdapter<String>? = null
     private var encontrarProducto: Boolean = false
+    private var parEncontrado: Pair<String, Int>? = null
+    private var cantidadAgregada: Int? = 0
+    private val opcionesListTransferenciaActualizada: MutableList<String> = mutableListOf()
     // var DropDownProveedor: AutoCompleteTextView? = null
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,7 +92,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
             PorterDuff.Mode.SRC_ATOP)
 
 
-        if(sharedViewModel.listaDeAlmacenesEditarTransferencia.size > 1) {
+        /*if(sharedViewModel.listaDeAlmacenesEditarTransferencia.size > 1) {
             for (i in 1..<sharedViewModel.listaDeAlmacenesEditarTransferencia.size){
                 if(sharedViewModel.listaDeAlmacenesEditarTransferencia[i]==sharedViewModel.listaDeAlmacenesEditarTransferencia[i-1]){
                     ListaDesplegableElegirProducto()
@@ -102,7 +105,8 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
             }
         }else{
             ListaDesplegableElegirProducto()
-        }
+        }*/
+        ListaDesplegableElegirProducto()
         // ListaDesplegableElegirProveedor()
 
         binding.llCajasDeProductoElegirProducto.isVisible = false
@@ -143,6 +147,19 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                 Log.i("Sebastian2", "${sharedViewModel.opcionesListEditarTransferencia}, $trimmedItem, ${DropDownProducto?.text.toString().substringBefore(" (").uppercase()}")
                 trimmedItem == DropDownProducto?.text.toString().substringBefore(" (").uppercase()
             }
+
+            if(binding.llUnidadesElegirProducto.isVisible){
+                if(binding.etCantidad.text.isNotEmpty()) {
+                    sharedViewModel.cantidadTotalEditarTransferencia.add(binding.etCantidad.text.toString().toInt())
+                }
+            }else{
+                if(binding.etNumeroDeCajas.text.isNotEmpty() && binding.etArticulosPorCaja.text.isNotEmpty()) {
+                    val cantidad = binding.etNumeroDeCajas.text.toString().toInt()
+                        .times(binding.etArticulosPorCaja.text.toString().toInt())
+                    sharedViewModel.cantidadTotalEditarTransferencia.add(cantidad)
+                }
+            }
+            if(sharedViewModel.cantidadTotalEditarTransferencia.sum() <= 10000000) {
             if(encontrarProducto && DropDownProducto?.text.toString().contains("(") &&
                 DropDownProducto?.text.toString().contains(")")) {
                 val queue = Volley.newRequestQueue(requireContext())
@@ -154,7 +171,8 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                             val cantidadUnidades = JSONObject(response).getString("Cantidad")
                             if (binding.llUnidadesElegirProducto.isVisible) {
                                 if (binding.etCantidad.text.isNotBlank()) {
-                                    if (cantidadUnidades.toInt() < binding.etCantidad.text.toString()
+                                    parEncontrado = sharedViewModel.listaCombinadaTransferencia.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().substringBefore('(').trim() } ?: Pair("",0)
+                                    if (cantidadUnidades.toInt() + parEncontrado!!.second < binding.etCantidad.text.toString()
                                             .toInt()
                                     ) {
                                         val inflater = requireActivity().layoutInflater
@@ -184,6 +202,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                                         )
                                         binding.etCodigoDeBarra.setText("")
                                         binding.etCantidad.setText("")
+                                        ListaDesplegableElegirProducto()
                                         Toast.makeText(
                                             requireContext(),
                                             "Se ha agregado el producto a la transferencia",
@@ -199,7 +218,8 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                                 }
                             } else if (binding.llCajasDeProductoElegirProducto.isVisible) {
                                 if (binding.etNumeroDeCajas.text.isNotBlank() && binding.etArticulosPorCaja.text.isNotBlank()) {
-                                    if (cantidadUnidades.toInt() < binding.etNumeroDeCajas.text.toString()
+                                    parEncontrado = sharedViewModel.listaCombinadaTransferencia.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().substringBefore('(').trim() } ?: Pair("",0)
+                                    if (cantidadUnidades.toInt() + parEncontrado!!.second < binding.etNumeroDeCajas.text.toString()
                                             .toInt() * binding.etArticulosPorCaja.text.toString()
                                             .toInt()
                                     ) {
@@ -234,6 +254,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                                         binding.etArticulosPorCaja.setText("")
                                         binding.etNumeroDeCajas.setText("")
                                         binding.etCodigoDeBarra.setText("")
+                                        ListaDesplegableElegirProducto()
                                         Toast.makeText(
                                             requireContext(),
                                             "Se ha agregado el producto a la transferencia",
@@ -301,7 +322,8 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                             val cantidadUnidades = JSONObject(response).getString("Cantidad")
                             if (binding.llUnidadesElegirProducto.isVisible) {
                                 if (binding.etCantidad.text.isNotBlank()) {
-                                    if (cantidadUnidades.toInt() < binding.etCantidad.text.toString()
+                                    parEncontrado = sharedViewModel.listaCombinadaTransferencia.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().uppercase().trim() } ?: Pair("",0)
+                                    if (cantidadUnidades.toInt() + parEncontrado!!.second < binding.etCantidad.text.toString()
                                             .toInt()
                                     ) {
                                         val inflater = requireActivity().layoutInflater
@@ -331,6 +353,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                                         )
                                         binding.etCodigoDeBarra.setText("")
                                         binding.etCantidad.setText("")
+                                        ListaDesplegableElegirProducto()
                                         Toast.makeText(
                                             requireContext(),
                                             "Se ha agregado el producto a la transferencia",
@@ -346,7 +369,8 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                                 }
                             } else if (binding.llCajasDeProductoElegirProducto.isVisible) {
                                 if (binding.etNumeroDeCajas.text.isNotBlank() && binding.etArticulosPorCaja.text.isNotBlank()) {
-                                    if (cantidadUnidades.toInt() < binding.etNumeroDeCajas.text.toString()
+                                    parEncontrado = sharedViewModel.listaCombinadaTransferencia.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().uppercase().trim() } ?: Pair("",0)
+                                    if (cantidadUnidades.toInt() + parEncontrado!!.second < binding.etNumeroDeCajas.text.toString()
                                             .toInt() * binding.etArticulosPorCaja.text.toString()
                                             .toInt()
                                     ) {
@@ -384,6 +408,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                                         binding.etArticulosPorCaja.setText("")
                                         binding.etNumeroDeCajas.setText("")
                                         binding.etCodigoDeBarra.setText("")
+                                        ListaDesplegableElegirProducto()
                                         Toast.makeText(
                                             requireContext(),
                                             "Se ha agregado el producto a la transferencia",
@@ -436,6 +461,14 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                     }
                 }
                 queue.add(jsonObjectRequest)
+            }
+            }else{
+                Toast.makeText(
+                    requireContext(),
+                    "La cantidad total no puede superar los diez millones de unidades",
+                    Toast.LENGTH_SHORT
+                ).show()
+                sharedViewModel.cantidadTotalEditarTransferencia.removeLast()
             }
         }
 
@@ -509,6 +542,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
         val jsonObjectRequest = object : StringRequest(
             Request.Method.POST, url1,
             { response ->
+                opcionesListTransferenciaActualizada.clear()
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = JSONObject(response).getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
@@ -528,8 +562,10 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                     sharedViewModel.listaDeProductos.contains(elementoABuscar)
                 }*/
                 sharedViewModel.opcionesListEditarTransferencia.sort()
+
+                ajustarInventarioListaDesplegable()
                 //Crea un adpatador para el dropdown
-                 adapter = ArrayAdapter(requireContext(),R.layout.list_item,sharedViewModel.opcionesListEditarTransferencia)
+                 adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesListTransferenciaActualizada)
                 //binding.tvholaMundo?.setText(response.getString("Lista"))
                 DropDownProducto?.setAdapter(adapter)
                 DropDownProducto?.threshold = 1
@@ -570,14 +606,13 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                         binding.tvListaDesplegableElegirProducto.setText("",false)
                         DropDownProducto?.showDropDown()
                     }
-                    encontrarProducto = sharedViewModel.opcionesListEditarTransferencia.any { item ->
+                    encontrarProducto = opcionesListTransferenciaActualizada.any { item ->
                         val trimmedItem = item.substringBefore(" (")
                         trimmedItem == DropDownProducto?.text.toString().substringBefore(" (").uppercase()
                     }
                     //Si es un valor no válido con los parentesis
-                    if((binding.tvListaDesplegableElegirProducto.text.toString().contains("(") &&
-                                binding.tvListaDesplegableElegirProducto.text.toString().contains(")"))) {
-                        if (!hasFocus && !sharedViewModel.opcionesListEditarTransferencia.contains(
+                    if((binding.tvListaDesplegableElegirProducto.text.toString().contains("("))) {
+                        if (!hasFocus && !opcionesListTransferenciaActualizada.contains(
                                 DropDownProducto?.text.toString())) {
                             Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
                         }
@@ -589,6 +624,7 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                             Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
                         }
                         if(!hasFocus){
+                            binding.etArticulosPorCaja.setText("")
                             precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                         }
                     }
@@ -791,7 +827,8 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                     try {
                         val cantidad = JSONObject(response).getString("Cantidad")
                         if (binding.llUnidadesElegirProducto.isVisible) {
-                            if (cantidad.toInt() < binding.etCantidad.text.toString().toInt()) {
+                            parEncontrado = sharedViewModel.listaCombinadaTransferencia.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().substringBefore('(').trim() } ?: Pair("",0)
+                            if (cantidad.toInt() + parEncontrado!!.second< binding.etCantidad.text.toString().toInt()) {
                                 val inflater = requireActivity().layoutInflater
                                 val layout = inflater.inflate(R.layout.toast_custom, null)
                                 val text = layout.findViewById<TextView>(R.id.text_view_toast)
@@ -804,7 +841,8 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                             }
                         } else if (binding.llCajasDeProductoElegirProducto.isVisible) {
                             if (binding.etNumeroDeCajas.text.isNotBlank() && binding.etArticulosPorCaja.text.isNotBlank()) {
-                                if (cantidad.toInt() < binding.etNumeroDeCajas.text.toString()
+                                parEncontrado = sharedViewModel.listaCombinadaTransferencia.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().substringBefore('(').trim() } ?: Pair("",0)
+                                if (cantidad.toInt() + parEncontrado!!.second < binding.etNumeroDeCajas.text.toString()
                                         .toInt()
                                         .times(binding.etArticulosPorCaja.text.toString().toInt())
                                 ) {
@@ -851,7 +889,8 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                     try {
                         val cantidad = JSONObject(response).getString("Cantidad")
                         if (binding.llUnidadesElegirProducto.isVisible) {
-                            if (cantidad.toInt() < binding.etCantidad.text.toString().toInt()) {
+                            parEncontrado = sharedViewModel.listaCombinadaTransferencia.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().uppercase().trim() } ?: Pair("",0)
+                            if (cantidad.toInt() + parEncontrado!!.second< binding.etCantidad.text.toString().toInt()) {
                                 val inflater = requireActivity().layoutInflater
                                 val layout = inflater.inflate(R.layout.toast_custom, null)
                                 val text = layout.findViewById<TextView>(R.id.text_view_toast)
@@ -864,7 +903,8 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
                             }
                         } else if (binding.llCajasDeProductoElegirProducto.isVisible) {
                             if (binding.etNumeroDeCajas.text.isNotBlank() && binding.etArticulosPorCaja.text.isNotBlank()) {
-                                if (cantidad.toInt() < binding.etNumeroDeCajas.text.toString()
+                                parEncontrado = sharedViewModel.listaCombinadaTransferencia.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().uppercase().trim() } ?: Pair("",0)
+                                if (cantidad.toInt() + parEncontrado!!.second< binding.etNumeroDeCajas.text.toString()
                                         .toInt()
                                         .times(binding.etArticulosPorCaja.text.toString().toInt())
                                 ) {
@@ -930,6 +970,39 @@ class ElegirProductoEditarTransferenciaFragment : Fragment(R.layout.fragment_ele
         DropDownProducto?.threshold = 1
         DropDownProducto?.setAdapter(adapter)
         adapter!!.notifyDataSetChanged()
+
+    }
+
+    fun ajustarInventarioListaDesplegable(){
+        val regex = "\\d+".toRegex()
+        // val listaGuardada = mutableListOf<Int>()
+        // val listaGuardadaProductos = mutableListOf<String>()
+        for (cadena in sharedViewModel.opcionesListEditarTransferencia){
+            val match = regex.find(cadena)
+            if (match != null) {
+                val numeroOriginal = match.value.toInt()
+                parEncontrado = sharedViewModel.listaCombinadaTransferencia.find { it.first.substringBefore('(').trim() == cadena.substringBefore('(').trim() }
+                // Log.i("parEncontrado", "$parEncontrado , $numeroOriginal, $cadena, ${sharedViewModel.listaCombinadaSalida}")
+                if (parEncontrado != null) {
+                    cantidadAgregada = parEncontrado!!.second
+                    Log.i("parEncontrado2", "$parEncontrado ,$cantidadAgregada, $numeroOriginal, $cadena, ${sharedViewModel.listaCombinadaTransferencia}")
+                    // listaGuardadaProductos.add(parEncontrado!!.first.substringBefore('('))
+                    val nuevoNumero = numeroOriginal + cantidadAgregada!!
+                    val nuevaCadena = cadena.replaceFirst(
+                        numeroOriginal.toString(),
+                        nuevoNumero.toString())
+                    opcionesListTransferenciaActualizada.add(nuevaCadena)
+
+                    //listaGuardada.add(cantidadAgregada!!)
+                } else{
+                    opcionesListTransferenciaActualizada.add(cadena)
+                }
+            } else{
+                opcionesListTransferenciaActualizada.add(cadena)
+            }
+        }
+
+        Log.i("opcionesListSalida", "${sharedViewModel.opcionesListSalida} y $opcionesListTransferenciaActualizada")
 
     }
 
