@@ -192,6 +192,7 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
                 // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
                 val action = EditarProveedorFragmentDirections.actionNavEditarProveedorToNavMisDatos(destino = "proveedores")
                 findNavController().navigate(action)
+                borrarListas()
             }
         })
     }
@@ -328,6 +329,63 @@ class EditarProveedorFragment: Fragment(R.layout.fragment_editar_proveedor),Radi
             }
         }
         queue.add(jsonObjectRequest)
+    }
+
+    private fun borrarListas(){
+        sharedViewModel.listaDeProductos.clear()
+        sharedViewModel.listaDeCantidades.clear()
+        sharedViewModel.listaDeProductosAnadir.clear()
+        sharedViewModel.listaDeCantidadesAnadir.clear()
+        sharedViewModel.listaDePreciosAnadir.clear()
+        sharedViewModel.listaDePreciosDeProductos.clear()
+        sharedViewModel.listaDeProductosRemover.clear()
+        sharedViewModel.listaDeCantidadesRemover.clear()
+        sharedViewModel.listaDePreciosRemover.clear()
+        sharedViewModel.listaDePreciosDeProductosRemover.clear()
+        sharedViewModel.listaDeBodegasAnadir.clear()
+        sharedViewModel.listaDeAlertasAnadir.clear()
+        sharedViewModel.ListasDeAlertas.clear()
+        sharedViewModel.ListasDeAlmacenes.clear()
+        sharedViewModel.ListasDeProductosAlertas.clear()
+        sharedViewModel.listaDeClientesAnadir.clear()
+        sharedViewModel.listaDePreciosVentaAnadir.clear()
+        sharedViewModel.ListasDeClientes.clear()
+        sharedViewModel.ListasDePreciosDeVenta.clear()
+        sharedViewModel.ListasDeProductosPrecioVenta.clear()
+        sharedViewModel.listaDePreciosCompraAnadir.clear()
+        sharedViewModel.listaDeProveedoresAnadir.clear()
+        sharedViewModel.ListasDeProveedores.clear()
+        sharedViewModel.ListasDePreciosDeCompra.clear()
+        sharedViewModel.ListasDeProductosPrecioCompra.clear()
+        sharedViewModel.id.clear()
+        sharedViewModel.listaDeAlertas.clear()
+        sharedViewModel.listaDePreciosVenta.clear()
+        sharedViewModel.listaDePreciosCompra.clear()
+        sharedViewModel.listaDeBodegas.clear()
+        sharedViewModel.listaDeClientes.clear()
+        sharedViewModel.listaDeProveedores.clear()
+        sharedViewModel.numeroAlertas.clear()
+        sharedViewModel.numeroPreciosCompra.clear()
+        sharedViewModel.numeroPreciosVenta.clear()
+        sharedViewModel.listaDeAlmacenesAnadir.clear()
+        sharedViewModel.listaDeAlmacenesRemover.clear()
+        sharedViewModel.listaDeAlmacenesEntrada.clear()
+        sharedViewModel.listaDeAlmacenesSalida.clear()
+        sharedViewModel.listaDeAlmacenesTransferencia.clear()
+        sharedViewModel.listaDeAlmacenesEditarTransferencia.clear()
+        sharedViewModel.productos.clear()
+        sharedViewModel.inventario.clear()
+
+        sharedViewModel.facturaTotalAnadir.clear()
+        sharedViewModel.facturaTotalRemover.clear()
+        sharedViewModel.facturaTotalEntrada.clear()
+        sharedViewModel.facturaTotalSalida.clear()
+        sharedViewModel.cantidadTotalTransferencia.clear()
+        sharedViewModel.cantidadTotalEditarTransferencia.clear()
+
+        sharedViewModel.listaCombinadaEntrada.clear()
+        sharedViewModel.listaCombinadaSalida.clear()
+        sharedViewModel.listaCombinadaTransferencia.clear()
     }
 
     override fun onDestroyView() {

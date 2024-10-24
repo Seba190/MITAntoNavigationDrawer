@@ -30,6 +30,8 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class FacturaSalidaFragment : Fragment(R.layout.fragment_factura_salida) {
@@ -61,6 +63,10 @@ class FacturaSalidaFragment : Fragment(R.layout.fragment_factura_salida) {
         borrarListas()
         return root
     }
+    override fun onResume() {
+        super.onResume()
+        borrarListas()
+    }
     private fun initUI() {
         //  binding.rvAlmacenes.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
         //    override fun onQueryTextSubmit(query: String?): Boolean {
@@ -90,7 +96,8 @@ class FacturaSalidaFragment : Fragment(R.layout.fragment_factura_salida) {
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapter.updateList(response.FacturaSalida.sortedBy { it.FacturaSalida })
+                        val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                        adapter.updateList(response.FacturaSalida.sortedBy { it.FacturaSalida }.sortedByDescending { LocalDate.parse(it.FechaCompleta,dateFormatter) })
                         binding.progressBarFacturaSalida.isVisible = false
                         listaDeFacturasSalidaMutableList.clear()
                         listaDeFacturasSalidaMutableList.addAll(response.FacturaSalida)
@@ -134,7 +141,7 @@ class FacturaSalidaFragment : Fragment(R.layout.fragment_factura_salida) {
         findNavController().navigate(action)
     }
 
-    fun borrarListas(){
+  private fun borrarListas(){
         sharedViewModel.listaDeProductos.clear()
         sharedViewModel.listaDeCantidades.clear()
         sharedViewModel.listaDeProductosAnadir.clear()

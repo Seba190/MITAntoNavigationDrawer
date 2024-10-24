@@ -58,7 +58,7 @@ class ProductosFragment : Fragment(R.layout.fragment_productos) {
         retrofit = getRetrofit()
         listaDesplegableActividad()
         initUI()
-
+        borrarListas()
         return root
     }
 
@@ -164,7 +164,7 @@ class ProductosFragment : Fragment(R.layout.fragment_productos) {
         findNavController().navigate(action)
     }
 
-    fun borrarListas(){
+  private fun borrarListas(){
         sharedViewModel.listaDeProductos.clear()
         sharedViewModel.listaDeCantidades.clear()
         sharedViewModel.listaDeProductosAnadir.clear()

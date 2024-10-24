@@ -23,6 +23,8 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
     private val binding = ItemPrecioCompraBinding.bind(view)
     val editText : EditText = view.findViewById(R.id.etPrecioCompra)
     val textView : TextView = view.findViewById(R.id.tvSuppliers)
+    var segundaVez = false
+    var compararPreciosCompra : MutableList<String> = mutableListOf()
 
    /* init {
         binding.etPrecioCompra.addTextChangedListener(object : TextWatcher {
@@ -49,13 +51,12 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
         })
     }*/
     private var codeExecuted = false
-    var segundaVez = false
     fun bind(proveedorPrecioCompraItemResponse: ProveedorPrecioCompraItemResponseEditar,listaAdapter:RecyclerView.Adapter<*>) {
         binding.tvSuppliers.text = proveedorPrecioCompraItemResponse.Nombre
         binding.cbSuppliers.setOnClickListener {
             binding.etPrecioCompra.isEnabled = binding.cbSuppliers.isChecked
         }
-            if (sharedViewModel.listaDePreciosCompra.isNotEmpty()) {
+            if (sharedViewModel.listaDePreciosCompra.toList() != compararPreciosCompra.toList()) {
                 for (i in 0..<sharedViewModel.numeroPreciosCompra.size) {
                     if (binding.etPrecioCompra.text.isBlank()) {
                         if(binding.tvSuppliers.text.toString() == sharedViewModel.listaDeProveedores[i]){
@@ -81,9 +82,12 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
             }
             codeExecuted = true
         }*/
-        if(!segundaVez && sharedViewModel.listaDePreciosCompra.isEmpty()) {
+        if(!segundaVez) {
             obtenerPreciosCompra()
             segundaVez = true
+        }
+        if(sharedViewModel.listaDePreciosCompra.toList() == compararPreciosCompra.toList()) {
+            obtenerPreciosCompra()
         }
 
         Log.i("Sebastian", "${sharedViewModel.listaDePreciosCompra} y ${sharedViewModel.listaDeProveedores}")
@@ -98,6 +102,10 @@ class ProveedorPrecioCompraEditarViewHolder(view: View, private val listener: On
                 val precioCompra = JSONObject(response).getString("PRECIO_COMPRA")
                 binding.etPrecioCompra.setText(precioCompra)
                 sharedViewModel.listaDePreciosCompra[position] = precioCompra
+                if(!segundaVez){
+                    compararPreciosCompra.add(precioCompra)
+                    segundaVez = true
+                }
                /* if(sharedViewModel.listaDePreciosCompra.lastIndexOf("") != -1){
                     sharedViewModel.listaDePreciosCompra.removeAt(sharedViewModel.listaDePreciosCompra.lastIndexOf(""))
                 }*/

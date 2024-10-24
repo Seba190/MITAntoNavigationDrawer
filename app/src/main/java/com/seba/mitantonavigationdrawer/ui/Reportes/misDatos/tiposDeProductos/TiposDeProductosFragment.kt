@@ -63,6 +63,11 @@ class TiposDeProductosFragment : Fragment(R.layout.fragment_tipos_de_productos) 
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+        borrarListas()
+    }
+
     private fun initUI() {
         searchByName()
         adapter = TiposDeProductosAdapter{navigateToEditarTiposDeProductos(it)}
@@ -147,7 +152,7 @@ class TiposDeProductosFragment : Fragment(R.layout.fragment_tipos_de_productos) 
         findNavController().navigate(action)
     }
 
-    fun borrarListas(){
+   private fun borrarListas(){
         sharedViewModel.listaDeProductos.clear()
         sharedViewModel.listaDeCantidades.clear()
         sharedViewModel.listaDeProductosAnadir.clear()

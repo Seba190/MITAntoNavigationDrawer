@@ -129,7 +129,7 @@ class ProveedorPrecioCompraFragment : Fragment(R.layout.fragment_proveedor_preci
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapterPrecioCompra.updateList(response.Proveedores)
+                        adapterPrecioCompra.updateList(response.Proveedores.sortedBy { it.Nombre })
                         binding.progressBar.isVisible = false
 
                     }

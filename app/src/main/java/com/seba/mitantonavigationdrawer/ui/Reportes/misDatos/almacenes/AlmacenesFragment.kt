@@ -66,8 +66,12 @@ class AlmacenesFragment : Fragment(R.layout.fragment_almacenes) {
         listaDesplegableActividad()
         initUI()
         borrarListas()
-
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        borrarListas()
     }
 
     private fun initUI() {
@@ -176,7 +180,7 @@ class AlmacenesFragment : Fragment(R.layout.fragment_almacenes) {
 
     }
 
-    fun borrarListas(){
+   private fun borrarListas(){
         sharedViewModel.listaDeProductos.clear()
         sharedViewModel.listaDeCantidades.clear()
         sharedViewModel.listaDeProductosAnadir.clear()

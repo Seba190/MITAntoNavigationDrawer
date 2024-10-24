@@ -30,6 +30,7 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
     val editText : EditText = view.findViewById(R.id.etAlert)
     val textView : TextView = view.findViewById(R.id.tvWarehouse)
     var segundaVez = false
+    var compararAlertas : MutableList<String> = mutableListOf()
 
     /*init {
         binding.etAlert.addTextChangedListener(object : TextWatcher {
@@ -84,7 +85,7 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
             binding.etAlert.isEnabled = binding.cbWarehouse.isChecked
         }
 
-            if (sharedViewModel.listaDeAlertas.isNotEmpty()) {
+            if (sharedViewModel.listaDeAlertas.toList() != compararAlertas.toList()) {
                 for (i in 0..<sharedViewModel.numeroAlertas.size) {
                     if (binding.etAlert.text.isBlank()) {
                      if(binding.tvWarehouse.text.toString() == sharedViewModel.listaDeBodegas[i])   {
@@ -112,9 +113,14 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
             }
             codeExecuted = true
         }*/
-        if(!segundaVez && sharedViewModel.listaDeAlertas.isEmpty()) {
+        if(!segundaVez){
             obtenerAlertas()
             segundaVez = true
+        }
+        if(/*!segundaVez &&*/ sharedViewModel.listaDeAlertas.toList() == compararAlertas.toList()) {
+            obtenerAlertas()
+            Log.i("SebastianComparar", "${sharedViewModel.listaDeAlertas.toList()} y ${compararAlertas.toList()}")
+           // segundaVez = true
         }
         Log.i("Sebastian", "${sharedViewModel.listaDeBodegas} y ${sharedViewModel.listaDeAlertas}")
     }
@@ -173,6 +179,12 @@ class AlertasAlmacenesEditarViewHolder(view: View, private val listener: OnTextC
                 val alerta = JSONObject(response).getString("ALERTA")
                 binding.etAlert.setText(alerta)
                 sharedViewModel.listaDeAlertas[position] = alerta
+                if(!segundaVez){
+                    compararAlertas.add(alerta)
+                    segundaVez = true
+                }
+
+
                /* if(sharedViewModel.listaDeAlertas.lastIndexOf("") != -1){
                     sharedViewModel.listaDeAlertas.removeAt(sharedViewModel.listaDeAlertas.lastIndexOf(""))
                 }*/

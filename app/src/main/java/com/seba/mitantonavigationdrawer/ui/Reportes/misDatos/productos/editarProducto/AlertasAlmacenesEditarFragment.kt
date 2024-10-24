@@ -149,7 +149,7 @@ class AlertasAlmacenesEditarFragment() : Fragment(R.layout.fragment_alertas_alma
                             Log.i("Sebastian", response.toString())
                             //Log.i("Sebastian", response2.toString())
                             activity?.runOnUiThread {
-                                adapter.updateList(response.Almacenes)
+                                adapter.updateList(response.Almacenes.sortedBy { it.Nombre })
                                 binding.progressBarEditar.isVisible = false
                             }
                         }

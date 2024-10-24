@@ -10,6 +10,7 @@ data class TransferenciasItemResponse(
     @SerializedName("Id Transferencia")  val IdTransferencia: String,
     @SerializedName("Transferencia")  val Transferencia: String,
     @SerializedName("Productos")  val Productos: List<ProductosTransferenciasItemResponse>,
+    @SerializedName("Fecha Completa")  val FechaCompleta: String,
     @SerializedName("Dia Transferencia")  val DiaTransferencia: String,
     @SerializedName("Fecha Transferencia")  val FechaTransferencia: String,
     @SerializedName("Contenido")  val Contenido: String,

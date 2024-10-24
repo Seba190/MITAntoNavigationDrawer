@@ -146,7 +146,7 @@ class AlertasAlmacenesFragment() : Fragment(R.layout.fragment_alertas_almacenes)
                         Log.i("Sebastian", response.toString())
                         //Log.i("Sebastian", response2.toString())
                         activity?.runOnUiThread {
-                            adapter.updateList(response.Almacenes)
+                            adapter.updateList(response.Almacenes.sortedBy { it.Nombre })
                             binding.progressBar.isVisible = false
                         }
                     }

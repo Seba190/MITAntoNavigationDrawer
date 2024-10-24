@@ -147,7 +147,7 @@ class ClientePrecioVentaEditarFragment : Fragment(R.layout.fragment_cliente_prec
                         Log.i("Sebastian", response.toString())
                         //Log.i("Sebastian", response2.toString())
                         activity?.runOnUiThread {
-                            adapterPrecioVenta.updateList(response.Clientes)
+                            adapterPrecioVenta.updateList(response.Clientes.sortedBy { it.Nombre })
                             binding.progressBarPrecioVentaEditar.isVisible = false
 
                         }

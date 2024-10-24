@@ -564,9 +564,14 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                 DropDownProducto?.threshold = 1
                 DropDownProducto?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
-                        binding.etPrecioFacturaSalida.setText("")
-                        binding.etArticulosPorCajaFacturaSalida.setText("")
-                        precioYCantidad(parent.getItemAtPosition(position).toString())
+                    binding.etPrecioFacturaSalida.setText("")
+                    binding.etCantidadFacturaSalida.setText("")
+                    binding.etArticulosPorCajaFacturaSalida.setText("")
+                    binding.etNumeroDeCajasFacturaSalida.setText("")
+                    precioYCantidad(parent.getItemAtPosition(position).toString())
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        preguntarInventario()
+                    },200)
                 }
                 binding.etCodigoDeBarraFacturaSalida.addTextChangedListener(object: TextWatcher {
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -578,14 +583,24 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                                 if(DropDownProducto?.text.toString().contains("(") &&
                                     DropDownProducto?.text.toString().contains(")")){
                                     binding.etPrecioFacturaSalida.setText("")
+                                    binding.etCantidadFacturaSalida.setText("")
                                     binding.etArticulosPorCajaFacturaSalida.setText("")
+                                    binding.etNumeroDeCajasFacturaSalida.setText("")
                                     precioYCantidad(DropDownProducto?.text.toString())
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        preguntarInventario()
+                                    },200)
                                 }else if(!DropDownProducto?.text.toString().contains("(") &&
                                     !DropDownProducto?.text.toString().contains(")")){
                                     Log.i("PrecioyCantidad2","${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                                     binding.etPrecioFacturaSalida.setText("")
+                                    binding.etCantidadFacturaSalida.setText("")
                                     binding.etArticulosPorCajaFacturaSalida.setText("")
+                                    binding.etNumeroDeCajasFacturaSalida.setText("")
                                     precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        preguntarInventario()
+                                    },200)
                                 }
                             }, 300)
                         }
@@ -626,8 +641,13 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                         //Si no esta puesto el foco cuando no hay parentesis y esta escrito por ejemplo agua con gas, que obtenga el precio y cantidad
                         if(!hasFocus){
                             binding.etPrecioFacturaSalida.setText("")
+                            binding.etCantidadFacturaSalida.setText("")
                             binding.etArticulosPorCajaFacturaSalida.setText("")
+                            binding.etNumeroDeCajasFacturaSalida.setText("")
                             precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                preguntarInventario()
+                            },200)
                         }
                     }
                 }
@@ -653,14 +673,24 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                 if(DropDownProducto?.text.toString().contains("(") &&
                     DropDownProducto?.text.toString().contains(")")){
                     binding.etPrecioFacturaSalida.setText("")
+                    binding.etCantidadFacturaSalida.setText("")
                     binding.etArticulosPorCajaFacturaSalida.setText("")
+                    binding.etNumeroDeCajasFacturaSalida.setText("")
                     precioYCantidad(DropDownProducto?.text.toString())
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        preguntarInventario()
+                    },200)
                 }else if(!DropDownProducto?.text.toString().contains("(") &&
                     !DropDownProducto?.text.toString().contains(")")){
                     Log.i("PrecioyCantidad","${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                     binding.etPrecioFacturaSalida.setText("")
+                    binding.etCantidadFacturaSalida.setText("")
                     binding.etArticulosPorCajaFacturaSalida.setText("")
+                    binding.etNumeroDeCajasFacturaSalida.setText("")
                     precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        preguntarInventario()
+                    },200)
                 }
             }, 300)
         }
@@ -811,6 +841,7 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
             if (DropDownProducto?.text.toString().contains("(") &&
                 DropDownProducto?.text.toString().contains(")")
             ) {
+
                 val queue = Volley.newRequestQueue(requireContext())
                 val url = "http://186.64.123.248/FacturaSalida/preguntarInventario.php"
                 val jsonObjectRequest = object : StringRequest(
@@ -820,6 +851,8 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                             val cantidad = JSONObject(response).getString("Cantidad")
                             if (binding.llUnidadesElegirProductoFacturaSalida.isVisible) {
                                 parEncontrado = sharedViewModel.listaCombinadaSalida.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().substringBefore('(').trim() } ?: Pair("",0)
+                                Log.i("Cero","${cantidad.toInt() + parEncontrado!!.second}")
+                                if(binding.etCantidadFacturaSalida.text.isNotBlank()) {
                                 if (cantidad.toInt() + parEncontrado!!.second < binding.etCantidadFacturaSalida.text.toString()
                                         .toInt()
                                 ) {
@@ -838,10 +871,55 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                                     toast.view = layoutRemover
                                     toast.setGravity(Gravity.BOTTOM, 0, 600)
                                     toast.show()
+                                    binding.tvListaDesplegableElegirProductoFacturaSalida.setText(
+                                        "Elija una opción",
+                                        false
+                                    )
+                                    binding.etPrecioFacturaSalida.setText("")
+                                    binding.etArticulosPorCajaFacturaSalida.setText("")
+                                    binding.etCantidadFacturaSalida.setText("")
+                                  }
+                                }else {
+                                    if (cantidad.toInt() + parEncontrado!!.second == 0
+                                    ) {
+                                        Log.i(
+                                            "CeroDentro",
+                                            "${cantidad.toInt() + parEncontrado!!.second}"
+                                        )
+                                        val inflaterRemover = requireActivity().layoutInflater
+                                        val layoutRemover =
+                                            inflaterRemover.inflate(
+                                                R.layout.toast_custom_remover,
+                                                null
+                                            )
+                                        val textRemover =
+                                            layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+                                        textRemover.text =
+                                            "No existe inventario en este almacén"
+                                        val toast = Toast(requireContext())
+                                        toast.duration = Toast.LENGTH_SHORT
+                                        toast.view = layoutRemover
+                                        toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                        toast.show()
+                                        binding.tvListaDesplegableElegirProductoFacturaSalida.setText(
+                                            "Elija una opción",
+                                            false
+                                        )
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            binding.etPrecioFacturaSalida.setText("")
+                                            binding.etArticulosPorCajaFacturaSalida.setText("")
+                                            binding.etCantidadFacturaSalida.setText("")
+                                            binding.etNumeroDeCajasFacturaSalida.setText("")
+                                        },300)
+                                    }
                                 }
                             } else if (binding.llCajasDeProductoElegirProductoFacturaSalida.isVisible) {
+                                parEncontrado = sharedViewModel.listaCombinadaSalida.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().substringBefore('(').trim() } ?: Pair("",0)
                                 if (binding.etNumeroDeCajasFacturaSalida.text.isNotBlank() && binding.etArticulosPorCajaFacturaSalida.text.isNotBlank()) {
-                                    parEncontrado = sharedViewModel.listaCombinadaSalida.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().substringBefore('(').trim() } ?: Pair("",0)
+                                    Log.i(
+                                        "CeroCajas",
+                                        "${cantidad.toInt() + parEncontrado!!.second}"
+                                    )
                                     if (cantidad.toInt() + parEncontrado!!.second < binding.etNumeroDeCajasFacturaSalida.text.toString()
                                             .toInt()
                                             .times(
@@ -864,6 +942,46 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                                         toast.view = layoutRemover
                                         toast.setGravity(Gravity.BOTTOM, 0, 600)
                                         toast.show()
+                                        binding.tvListaDesplegableElegirProductoFacturaSalida.setText(
+                                            "Elija una opción",
+                                            false
+                                        )
+                                        binding.etPrecioFacturaSalida.setText("")
+                                        binding.etArticulosPorCajaFacturaSalida.setText("")
+                                        binding.etCantidadFacturaSalida.setText("")
+                                    }
+                                }else{
+                                    if(cantidad.toInt() + parEncontrado!!.second == 0){
+                                        Log.i(
+                                            "CeroDentroCajas",
+                                            "${cantidad.toInt() + parEncontrado!!.second}"
+                                        )
+                                        val inflaterRemover = requireActivity().layoutInflater
+                                        val layoutRemover =
+                                            inflaterRemover.inflate(
+                                                R.layout.toast_custom_remover,
+                                                null
+                                            )
+                                        val textRemover =
+                                            layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+                                        textRemover.text =
+                                            "No existe inventario en este almacén"
+                                        val toast = Toast(requireContext())
+                                        toast.duration = Toast.LENGTH_SHORT
+                                        toast.view = layoutRemover
+                                        toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                        toast.show()
+                                        binding.tvListaDesplegableElegirProductoFacturaSalida.setText(
+                                            "Elija una opción",
+                                            false
+                                        )
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            binding.etPrecioFacturaSalida.setText("")
+                                            binding.etArticulosPorCajaFacturaSalida.setText("")
+                                            binding.etCantidadFacturaSalida.setText("")
+                                            binding.etNumeroDeCajasFacturaSalida.setText("")
+                                        },300)
+
                                     }
                                 }
                             }
@@ -895,25 +1013,70 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                             val cantidad = JSONObject(response).getString("Cantidad")
                             if (binding.llUnidadesElegirProductoFacturaSalida.isVisible) {
                                 parEncontrado = sharedViewModel.listaCombinadaSalida.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().uppercase().trim() } ?: Pair("",0)
-                                if (cantidad.toInt() + parEncontrado!!.second < binding.etCantidadFacturaSalida.text.toString()
-                                        .toInt()
-                                ) {
-                                    val inflaterRemover = requireActivity().layoutInflater
-                                    val layoutRemover =
-                                        inflaterRemover.inflate(R.layout.toast_custom_remover, null)
-                                    val textRemover =
-                                        layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
-                                    textRemover.text =
-                                        "La cantidad es mayor que la cantidad en inventario"
-                                    val toast = Toast(requireContext())
-                                    toast.duration = Toast.LENGTH_SHORT
-                                    toast.view = layoutRemover
-                                    toast.setGravity(Gravity.BOTTOM, 0, 600)
-                                    toast.show()
+                                if(binding.etCantidadFacturaSalida.text.isNotBlank()) {
+                                    if (cantidad.toInt() + parEncontrado!!.second < binding.etCantidadFacturaSalida.text.toString()
+                                            .toInt()
+                                    ) {
+                                        val inflaterRemover = requireActivity().layoutInflater
+                                        val layoutRemover =
+                                            inflaterRemover.inflate(
+                                                R.layout.toast_custom_remover,
+                                                null
+                                            )
+                                        val textRemover =
+                                            layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+                                        textRemover.text =
+                                            "La cantidad es mayor que la cantidad en inventario"
+                                        val toast = Toast(requireContext())
+                                        toast.duration = Toast.LENGTH_SHORT
+                                        toast.view = layoutRemover
+                                        toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                        toast.show()
+                                        binding.tvListaDesplegableElegirProductoFacturaSalida.setText(
+                                            "Elija una opción",
+                                            false
+                                        )
+                                        binding.etPrecioFacturaSalida.setText("")
+                                        binding.etArticulosPorCajaFacturaSalida.setText("")
+                                        binding.etCantidadFacturaSalida.setText("")
+                                    }
+                                }else{
+                                    if (cantidad.toInt() + parEncontrado!!.second == 0
+                                    ) {
+                                        Log.i(
+                                            "CeroDentroSinParentesis",
+                                            "${cantidad.toInt() + parEncontrado!!.second}"
+                                        )
+                                        val inflaterRemover = requireActivity().layoutInflater
+                                        val layoutRemover =
+                                            inflaterRemover.inflate(
+                                                R.layout.toast_custom_remover,
+                                                null
+                                            )
+                                        val textRemover =
+                                            layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+                                        textRemover.text =
+                                            "No existe inventario en este almacén"
+                                        val toast = Toast(requireContext())
+                                        toast.duration = Toast.LENGTH_SHORT
+                                        toast.view = layoutRemover
+                                        toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                        toast.show()
+                                        binding.tvListaDesplegableElegirProductoFacturaSalida.setText(
+                                            "Elija una opción",
+                                            false
+                                        )
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            binding.etPrecioFacturaSalida.setText("")
+                                            binding.etArticulosPorCajaFacturaSalida.setText("")
+                                            binding.etCantidadFacturaSalida.setText("")
+                                            binding.etNumeroDeCajasFacturaSalida.setText("")
+                                        },300)
+                                    }
                                 }
                             } else if (binding.llCajasDeProductoElegirProductoFacturaSalida.isVisible) {
+                                parEncontrado = sharedViewModel.listaCombinadaSalida.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().uppercase().trim() } ?: Pair("",0)
                                 if (binding.etNumeroDeCajasFacturaSalida.text.isNotBlank() && binding.etArticulosPorCajaFacturaSalida.text.isNotBlank()) {
-                                    parEncontrado = sharedViewModel.listaCombinadaSalida.find { it.first.substringBefore('(').trim() == DropDownProducto?.text.toString().uppercase().trim() } ?: Pair("",0)
                                     if (cantidad.toInt() + parEncontrado!!.second < binding.etNumeroDeCajasFacturaSalida.text.toString()
                                             .toInt()
                                             .times(
@@ -936,6 +1099,46 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                                         toast.view = layoutRemover
                                         toast.setGravity(Gravity.BOTTOM, 0, 600)
                                         toast.show()
+                                        binding.tvListaDesplegableElegirProductoFacturaSalida.setText(
+                                            "Elija una opción",
+                                            false
+                                        )
+                                        binding.etPrecioFacturaSalida.setText("")
+                                        binding.etArticulosPorCajaFacturaSalida.setText("")
+                                        binding.etCantidadFacturaSalida.setText("")
+                                    }
+                                } else{
+                                    if (cantidad.toInt() + parEncontrado!!.second == 0
+                                    ) {
+                                        Log.i(
+                                            "CeroDentroCajasSinParentesis",
+                                            "${cantidad.toInt() + parEncontrado!!.second}"
+                                        )
+                                        val inflaterRemover = requireActivity().layoutInflater
+                                        val layoutRemover =
+                                            inflaterRemover.inflate(
+                                                R.layout.toast_custom_remover,
+                                                null
+                                            )
+                                        val textRemover =
+                                            layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+                                        textRemover.text =
+                                            "No existe inventario en este almacén"
+                                        val toast = Toast(requireContext())
+                                        toast.duration = Toast.LENGTH_SHORT
+                                        toast.view = layoutRemover
+                                        toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                        toast.show()
+                                        binding.tvListaDesplegableElegirProductoFacturaSalida.setText(
+                                            "Elija una opción",
+                                            false
+                                        )
+                                        Handler(Looper.getMainLooper()).postDelayed({
+                                            binding.etPrecioFacturaSalida.setText("")
+                                            binding.etArticulosPorCajaFacturaSalida.setText("")
+                                            binding.etCantidadFacturaSalida.setText("")
+                                            binding.etNumeroDeCajasFacturaSalida.setText("")
+                                        },300)
                                     }
                                 }
                             }

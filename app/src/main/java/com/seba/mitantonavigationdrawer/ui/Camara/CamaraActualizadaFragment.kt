@@ -25,6 +25,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -102,6 +103,7 @@ class CamaraActualizadaFragment : Fragment(R.layout.fragment_camara_actualizada)
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -150,6 +152,7 @@ class CamaraActualizadaFragment : Fragment(R.layout.fragment_camara_actualizada)
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun showImagePickerDialog() {
         val options = arrayOf("Tomar foto", "Seleccionar de la galería")
         val builder = AlertDialog.Builder(requireContext())

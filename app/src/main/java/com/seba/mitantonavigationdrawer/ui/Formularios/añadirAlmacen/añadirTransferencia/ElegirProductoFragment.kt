@@ -625,10 +625,15 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                 DropDownProducto?.threshold = 1
                 DropDownProducto?.onItemClickListener = AdapterView.OnItemClickListener {
                         parent, view, position, id ->
-                    if(binding.llCajasDeProductoElegirProducto.isVisible){
+                        binding.etArticulosPorCaja.setText("")
+                        binding.etNumeroDeCajas.setText("")
+                        binding.etCodigoDeBarra.setText("")
+                        binding.etCantidad.setText("")
                         precioYCantidad(parent.getItemAtPosition(position).toString())
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            preguntarInventario()
+                        },200)
                     }
-                }
                 binding.etCodigoDeBarra.addTextChangedListener(object: TextWatcher{
                     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -638,11 +643,25 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                             Handler(Looper.getMainLooper()).postDelayed({
                                 if(DropDownProducto?.text.toString().contains("(") &&
                                     DropDownProducto?.text.toString().contains(")")){
+                                    binding.etArticulosPorCaja.setText("")
+                                    binding.etNumeroDeCajas.setText("")
+                                    binding.etCodigoDeBarra.setText("")
+                                    binding.etCantidad.setText("")
                                     precioYCantidad(DropDownProducto?.text.toString())
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        preguntarInventario()
+                                    },200)
                                 }else if(!DropDownProducto?.text.toString().contains("(") &&
                                     !DropDownProducto?.text.toString().contains(")")){
                                     Log.i("PrecioyCantidad2","${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                                    binding.etArticulosPorCaja.setText("")
+                                    binding.etNumeroDeCajas.setText("")
+                                    binding.etCodigoDeBarra.setText("")
+                                    binding.etCantidad.setText("")
                                     precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        preguntarInventario()
+                                    },200)
                                 }
                             }, 300)
                         }
@@ -679,7 +698,14 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                              Toast.makeText(requireContext(), "El nombre del producto no es válido", Toast.LENGTH_SHORT).show()
                          }
                         if(!hasFocus){
+                            binding.etArticulosPorCaja.setText("")
+                            binding.etNumeroDeCajas.setText("")
+                            binding.etCodigoDeBarra.setText("")
+                            binding.etCantidad.setText("")
                             precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                preguntarInventario()
+                            },200)
                         }
                     }
                 }
@@ -703,11 +729,25 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
             Handler(Looper.getMainLooper()).postDelayed({
                 if(DropDownProducto?.text.toString().contains("(") &&
                     DropDownProducto?.text.toString().contains(")")){
+                    binding.etArticulosPorCaja.setText("")
+                    binding.etNumeroDeCajas.setText("")
+                    binding.etCodigoDeBarra.setText("")
+                    binding.etCantidad.setText("")
                     precioYCantidad(DropDownProducto?.text.toString())
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        preguntarInventario()
+                    },200)
                 }else if(!DropDownProducto?.text.toString().contains("(") &&
                     !DropDownProducto?.text.toString().contains(")")){
                     Log.i("PrecioyCantidad","${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                    binding.etArticulosPorCaja.setText("")
+                    binding.etNumeroDeCajas.setText("")
+                    binding.etCodigoDeBarra.setText("")
+                    binding.etCantidad.setText("")
                     precioYCantidad("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        preguntarInventario()
+                    },200)
                 }
             }, 300)
         }
@@ -877,16 +917,63 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                 try {
                     val cantidad = JSONObject(response).getString("Cantidad")
                     if(binding.llUnidadesElegirProducto.isVisible) {
-                        if (cantidad.toInt() < binding.etCantidad.text.toString().toInt()) {
-                            val inflater = requireActivity().layoutInflater
-                            val layout = inflater.inflate(R.layout.toast_custom,null)
-                            val text = layout.findViewById<TextView>(R.id.text_view_toast)
-                            text.text = "La cantidad es mayor que la cantidad en inventario"
-                            val toast = Toast(requireContext())
-                            toast.duration = Toast.LENGTH_SHORT
-                            toast.view = layout
-                            toast.setGravity(Gravity.BOTTOM, 0, 600)
-                            toast.show()
+                        Log.i(
+                            "CeroTransferencia",
+                            "${cantidad.toInt()}"
+                        )
+                        if(binding.etCantidad.text.isNotBlank()) {
+                            if (cantidad.toInt() < binding.etCantidad.text.toString().toInt()) {
+                                val inflater = requireActivity().layoutInflater
+                                val layout = inflater.inflate(R.layout.toast_custom, null)
+                                val text = layout.findViewById<TextView>(R.id.text_view_toast)
+                                text.text = "La cantidad es mayor que la cantidad en inventario"
+                                val toast = Toast(requireContext())
+                                toast.duration = Toast.LENGTH_SHORT
+                                toast.view = layout
+                                toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                toast.show()
+                                binding.tvListaDesplegableElegirProducto.setText(
+                                    "Elija una opción",
+                                    false
+                                )
+                                binding.etArticulosPorCaja.setText("")
+                                binding.etNumeroDeCajas.setText("")
+                                binding.etCodigoDeBarra.setText("")
+                                binding.etCantidad.setText("")
+                            }
+                        }else {
+                            if (cantidad.toInt() == 0
+                            ) {
+                                Log.i(
+                                    "CeroDentroConPar",
+                                    "${cantidad.toInt()}"
+                                )
+                                val inflaterRemover = requireActivity().layoutInflater
+                                val layoutRemover =
+                                    inflaterRemover.inflate(
+                                        R.layout.toast_custom_remover,
+                                        null
+                                    )
+                                val textRemover =
+                                    layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+                                textRemover.text =
+                                    "No existe inventario en este almacén"
+                                val toast = Toast(requireContext())
+                                toast.duration = Toast.LENGTH_SHORT
+                                toast.view = layoutRemover
+                                toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                toast.show()
+                                binding.tvListaDesplegableElegirProducto.setText(
+                                    "Elija una opción",
+                                    false
+                                )
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    binding.etArticulosPorCaja.setText("")
+                                    binding.etNumeroDeCajas.setText("")
+                                    binding.etCodigoDeBarra.setText("")
+                                    binding.etCantidad.setText("")
+                                },300)
+                            }
                         }
                     }
                     else if(binding.llCajasDeProductoElegirProducto.isVisible) {
@@ -903,6 +990,47 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                                 toast.view = layout
                                 toast.setGravity(Gravity.BOTTOM, 0, 600)
                                 toast.show()
+                                binding.tvListaDesplegableElegirProducto.setText(
+                                    "Elija una opción",
+                                    false
+                                )
+                                binding.etArticulosPorCaja.setText("")
+                                binding.etNumeroDeCajas.setText("")
+                                binding.etCodigoDeBarra.setText("")
+                                binding.etCantidad.setText("")
+                            }
+                        } else {
+                            if (cantidad.toInt() == 0) {
+                                Log.i(
+                                    "CeroDentroCajas",
+                                    "${cantidad.toInt()}"
+                                )
+                                val inflaterRemover = requireActivity().layoutInflater
+                                val layoutRemover =
+                                    inflaterRemover.inflate(
+                                        R.layout.toast_custom_remover,
+                                        null
+                                    )
+                                val textRemover =
+                                    layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+                                textRemover.text =
+                                    "No existe inventario en este almacén"
+                                val toast = Toast(requireContext())
+                                toast.duration = Toast.LENGTH_SHORT
+                                toast.view = layoutRemover
+                                toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                toast.show()
+                                binding.tvListaDesplegableElegirProducto.setText(
+                                    "Elija una opción",
+                                    false
+                                )
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    binding.etArticulosPorCaja.setText("")
+                                    binding.etCantidad.setText("")
+                                    binding.etNumeroDeCajas.setText("")
+                                    binding.etCodigoDeBarra.setText("")
+                                }, 300)
+
                             }
                         }
                     }
@@ -937,16 +1065,54 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                     try {
                         val cantidad = JSONObject(response).getString("Cantidad")
                         if(binding.llUnidadesElegirProducto.isVisible) {
-                            if (cantidad.toInt() < binding.etCantidad.text.toString().toInt()) {
-                                val inflater = requireActivity().layoutInflater
-                                val layout = inflater.inflate(R.layout.toast_custom,null)
-                                val text = layout.findViewById<TextView>(R.id.text_view_toast)
-                                text.text = "La cantidad es mayor que la cantidad en inventario"
-                                val toast = Toast(requireContext())
-                                toast.duration = Toast.LENGTH_SHORT
-                                toast.view = layout
-                                toast.setGravity(Gravity.BOTTOM, 0, 600)
-                                toast.show()
+                            if(binding.etCantidad.text.isNotBlank()) {
+                                if (cantidad.toInt() < binding.etCantidad.text.toString().toInt()) {
+                                    val inflater = requireActivity().layoutInflater
+                                    val layout = inflater.inflate(R.layout.toast_custom, null)
+                                    val text = layout.findViewById<TextView>(R.id.text_view_toast)
+                                    text.text = "La cantidad es mayor que la cantidad en inventario"
+                                    val toast = Toast(requireContext())
+                                    toast.duration = Toast.LENGTH_SHORT
+                                    toast.view = layout
+                                    toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                    toast.show()
+                                    binding.tvListaDesplegableElegirProducto.setText(
+                                        "Elija una opción",
+                                        false
+                                    )
+                                    binding.etArticulosPorCaja.setText("")
+                                    binding.etNumeroDeCajas.setText("")
+                                    binding.etCodigoDeBarra.setText("")
+                                    binding.etCantidad.setText("")
+                                }
+                            }else {
+                                if (cantidad.toInt() == 0) {
+                                    val inflaterRemover = requireActivity().layoutInflater
+                                    val layoutRemover =
+                                        inflaterRemover.inflate(
+                                            R.layout.toast_custom_remover,
+                                            null
+                                        )
+                                    val textRemover =
+                                        layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+                                    textRemover.text =
+                                        "No existe inventario en este almacén"
+                                    val toast = Toast(requireContext())
+                                    toast.duration = Toast.LENGTH_SHORT
+                                    toast.view = layoutRemover
+                                    toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                    toast.show()
+                                    binding.tvListaDesplegableElegirProducto.setText(
+                                        "Elija una opción",
+                                        false
+                                    )
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        binding.etArticulosPorCaja.setText("")
+                                        binding.etCantidad.setText("")
+                                        binding.etNumeroDeCajas.setText("")
+                                        binding.etCodigoDeBarra.setText("")
+                                    }, 300)
+                                }
                             }
                         }
                         else if(binding.llCajasDeProductoElegirProducto.isVisible) {
@@ -963,6 +1129,47 @@ class ElegirProductoFragment : Fragment(R.layout.fragment_elegir_producto) {
                                     toast.view = layout
                                     toast.setGravity(Gravity.BOTTOM, 0, 600)
                                     toast.show()
+                                    binding.tvListaDesplegableElegirProducto.setText(
+                                        "Elija una opción",
+                                        false
+                                    )
+                                    binding.etArticulosPorCaja.setText("")
+                                    binding.etNumeroDeCajas.setText("")
+                                    binding.etCodigoDeBarra.setText("")
+                                    binding.etCantidad.setText("")
+                                }
+                            } else {
+                                if (cantidad.toInt() == 0
+                                ) {
+                                    Log.i(
+                                        "CeroDentroCajasSinParentesis",
+                                        "${cantidad.toInt()}"
+                                    )
+                                    val inflaterRemover = requireActivity().layoutInflater
+                                    val layoutRemover =
+                                        inflaterRemover.inflate(
+                                            R.layout.toast_custom_remover,
+                                            null
+                                        )
+                                    val textRemover =
+                                        layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+                                    textRemover.text =
+                                        "No existe inventario en este almacén"
+                                    val toast = Toast(requireContext())
+                                    toast.duration = Toast.LENGTH_SHORT
+                                    toast.view = layoutRemover
+                                    toast.setGravity(Gravity.BOTTOM, 0, 600)
+                                    toast.show()
+                                    binding.tvListaDesplegableElegirProducto.setText(
+                                        "Elija una opción",
+                                        false
+                                    )
+                                    Handler(Looper.getMainLooper()).postDelayed({
+                                        binding.etArticulosPorCaja.setText("")
+                                        binding.etCantidad.setText("")
+                                        binding.etNumeroDeCajas.setText("")
+                                        binding.etCodigoDeBarra.setText("")
+                                    }, 300)
                                 }
                             }
                         }

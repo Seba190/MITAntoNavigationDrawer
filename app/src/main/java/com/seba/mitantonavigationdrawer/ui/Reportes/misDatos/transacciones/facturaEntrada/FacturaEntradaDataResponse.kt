@@ -12,6 +12,7 @@ data class FacturaEntradaItemResponse(
     @SerializedName("Productos")  val Productos: List<ProductosFacturaEntradaItemResponse>,
     @SerializedName("Proveedor")  val Proveedor: String,
     @SerializedName("Almacen")  val Almacen: String,
+    @SerializedName("Fecha Completa")  val FechaCompleta: String,
     @SerializedName("Dia Factura Entrada")  val DiaFacturaEntrada: String,
     @SerializedName("Fecha Factura Entrada")  val FechaFacturaEntrada: String,
     @SerializedName("Comentarios")  val Comentarios: String,

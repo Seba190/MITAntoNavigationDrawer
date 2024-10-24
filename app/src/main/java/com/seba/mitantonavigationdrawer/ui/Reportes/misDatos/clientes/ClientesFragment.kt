@@ -62,6 +62,12 @@ class ClientesFragment : Fragment(R.layout.fragment_clientes) {
         borrarListas()
         return root
     }
+
+    override fun onResume() {
+        super.onResume()
+        borrarListas()
+    }
+
     private fun initUI() {
         //  binding.rvAlmacenes.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
         //    override fun onQueryTextSubmit(query: String?): Boolean {
@@ -155,7 +161,7 @@ class ClientesFragment : Fragment(R.layout.fragment_clientes) {
         findNavController().navigate(action)
     }
 
-    fun borrarListas(){
+  private fun borrarListas(){
         sharedViewModel.listaDeProductos.clear()
         sharedViewModel.listaDeCantidades.clear()
         sharedViewModel.listaDeProductosAnadir.clear()

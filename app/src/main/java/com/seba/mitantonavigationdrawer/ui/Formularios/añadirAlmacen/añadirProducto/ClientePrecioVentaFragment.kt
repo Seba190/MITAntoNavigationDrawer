@@ -133,7 +133,7 @@ class ClientePrecioVentaFragment : Fragment(R.layout.fragment_cliente_precio_ven
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapterPrecioVenta.updateList(response.Clientes)
+                        adapterPrecioVenta.updateList(response.Clientes.sortedBy { it.Nombre })
                         binding.progressBarPrecioVenta.isVisible = false
 
                     }

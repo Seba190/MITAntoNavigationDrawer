@@ -30,6 +30,8 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
     private var _binding: FragmentTransferenciasBinding? = null
@@ -58,6 +60,11 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+        borrarListas()
+    }
+
     private fun initUI() {
         searchByName()
         adapter = TransferenciasAdapter(listaDeTransferenciasMutableList,sharedViewModel){navigateToEditarTransferencia(it)}
@@ -80,7 +87,10 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapter.updateList(response.Transferencias.sortedBy { it.Transferencia })
+                        val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                       // adapter.updateList(response.Transferencias.sortedWith(compareBy(
+                       //     {it.Transferencia} , compareByDescending{it.FechaCompleta})))
+                        adapter.updateList(response.Transferencias.sortedBy { it.Transferencia }.sortedByDescending { LocalDate.parse(it.FechaCompleta,dateFormatter) })
                         binding.progressBarTransferencias.isVisible = false
                         listaDeTransferenciasMutableList.clear()
                         listaDeTransferenciasMutableList.addAll(response.Transferencias)
@@ -124,7 +134,7 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
         findNavController().navigate(action)
     }
 
-    fun borrarListas(){
+  private fun borrarListas(){
         sharedViewModel.listaDeProductos.clear()
         sharedViewModel.listaDeCantidades.clear()
         sharedViewModel.listaDeProductosAnadir.clear()

@@ -63,6 +63,12 @@ class ProveedoresFragment : Fragment(R.layout.fragment_proveedores) {
         borrarListas()
         return root
     }
+
+    override fun onResume() {
+        super.onResume()
+        borrarListas()
+    }
+
     private fun initUI() {
         //  binding.rvAlmacenes.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
         //    override fun onQueryTextSubmit(query: String?): Boolean {
@@ -154,7 +160,7 @@ class ProveedoresFragment : Fragment(R.layout.fragment_proveedores) {
         findNavController().navigate(action)
     }
 
-    fun borrarListas(){
+   private fun borrarListas(){
         sharedViewModel.listaDeProductos.clear()
         sharedViewModel.listaDeCantidades.clear()
         sharedViewModel.listaDeProductosAnadir.clear()

@@ -18,6 +18,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.cardview.widget.CardView
@@ -40,6 +41,7 @@ import com.seba.mitantonavigationdrawer.databinding.FragmentEstadisticaBinding
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.AnadirTransferenciaAdapter
 import com.seba.mitantonavigationdrawer.ui.Formularios.añadirAlmacen.añadirTransferencia.ElegirProductoFragment
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.MisDatosFragmentArgs
+import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.tiposDeProductos.editarTiposDeProductos.EditarTiposDeProductosFragmentDirections
 import com.seba.mitantonavigationdrawer.ui.Reportes.misDatos.transferencias.TransferenciasFragmentArgs
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.estadística.EstadisticaViewModel
@@ -285,6 +287,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
         catch(e:Exception){
         }
 
+
         return root
     }
 
@@ -345,6 +348,16 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
             }
         )
         queue1.add(jsonObjectRequest1)
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Navegar a MisDatosFragment y pasar un identificador para saber qué fragmento llamar luego
+                // val action = EditarClienteFragmentDirections.actionEditarClienteFragmentToMisDatosFragment("clientes")
+                val action = R.id.action_nav_editar_transferencias_to_nav_transferencias
+                findNavController().navigate(action)
+                borrarListas()
+            }
+        })
     }
 
     fun updateData(dataCantidad: MutableList<String>, dataProducto: MutableList<String>) {
@@ -1048,6 +1061,63 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
 
 
         adapter.notifyDataSetChanged()
+    }
+
+    private fun borrarListas(){
+        sharedViewModel.listaDeProductos.clear()
+        sharedViewModel.listaDeCantidades.clear()
+        sharedViewModel.listaDeProductosAnadir.clear()
+        sharedViewModel.listaDeCantidadesAnadir.clear()
+        sharedViewModel.listaDePreciosAnadir.clear()
+        sharedViewModel.listaDePreciosDeProductos.clear()
+        sharedViewModel.listaDeProductosRemover.clear()
+        sharedViewModel.listaDeCantidadesRemover.clear()
+        sharedViewModel.listaDePreciosRemover.clear()
+        sharedViewModel.listaDePreciosDeProductosRemover.clear()
+        sharedViewModel.listaDeBodegasAnadir.clear()
+        sharedViewModel.listaDeAlertasAnadir.clear()
+        sharedViewModel.ListasDeAlertas.clear()
+        sharedViewModel.ListasDeAlmacenes.clear()
+        sharedViewModel.ListasDeProductosAlertas.clear()
+        sharedViewModel.listaDeClientesAnadir.clear()
+        sharedViewModel.listaDePreciosVentaAnadir.clear()
+        sharedViewModel.ListasDeClientes.clear()
+        sharedViewModel.ListasDePreciosDeVenta.clear()
+        sharedViewModel.ListasDeProductosPrecioVenta.clear()
+        sharedViewModel.listaDePreciosCompraAnadir.clear()
+        sharedViewModel.listaDeProveedoresAnadir.clear()
+        sharedViewModel.ListasDeProveedores.clear()
+        sharedViewModel.ListasDePreciosDeCompra.clear()
+        sharedViewModel.ListasDeProductosPrecioCompra.clear()
+        sharedViewModel.id.clear()
+        sharedViewModel.listaDeAlertas.clear()
+        sharedViewModel.listaDePreciosVenta.clear()
+        sharedViewModel.listaDePreciosCompra.clear()
+        sharedViewModel.listaDeBodegas.clear()
+        sharedViewModel.listaDeClientes.clear()
+        sharedViewModel.listaDeProveedores.clear()
+        sharedViewModel.numeroAlertas.clear()
+        sharedViewModel.numeroPreciosCompra.clear()
+        sharedViewModel.numeroPreciosVenta.clear()
+        sharedViewModel.listaDeAlmacenesAnadir.clear()
+        sharedViewModel.listaDeAlmacenesRemover.clear()
+        sharedViewModel.listaDeAlmacenesEntrada.clear()
+        sharedViewModel.listaDeAlmacenesSalida.clear()
+        sharedViewModel.listaDeAlmacenesTransferencia.clear()
+        sharedViewModel.listaDeAlmacenesEditarTransferencia.clear()
+        sharedViewModel.productos.clear()
+        sharedViewModel.inventario.clear()
+
+        sharedViewModel.facturaTotalAnadir.clear()
+        sharedViewModel.facturaTotalRemover.clear()
+        sharedViewModel.facturaTotalEntrada.clear()
+        sharedViewModel.facturaTotalSalida.clear()
+        sharedViewModel.cantidadTotalTransferencia.clear()
+        sharedViewModel.cantidadTotalEditarTransferencia.clear()
+
+        sharedViewModel.listaCombinadaEntrada.clear()
+        sharedViewModel.listaCombinadaSalida.clear()
+        sharedViewModel.listaCombinadaTransferencia.clear()
     }
 
     override fun onDestroyView() {

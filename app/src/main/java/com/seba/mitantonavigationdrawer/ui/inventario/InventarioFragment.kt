@@ -2,6 +2,7 @@ package com.seba.mitantonavigationdrawer.ui.inventario
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.SearchView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.os.bundleOf
@@ -81,22 +83,40 @@ class InventarioFragment: Fragment(R.layout.fragment_inventario) {
         val jsonObjectRequest1 = JsonObjectRequest(
             Request.Method.GET,url1, null,
             { response ->
-                // Obtén el array de opciones desde el objeto JSON
-                val jsonArray = response.getJSONArray("Lista")
-                // Convierte el array JSON a una lista mutable
-                val opcionesList = mutableListOf<String>()
-                for (i in 0 until jsonArray.length()) {
-                    opcionesList.add(jsonArray.getString(i).removeSurrounding("'","'"))
-                }
-                //Crea un adpatador para el dropdown
-                val adapter = ArrayAdapter(requireContext(),R.layout.list_item,opcionesList)
-                //binding.tvholaMundo?.setText(response.getString("Lista"))
-                DropdownInventario?.setAdapter(adapter)
+                try {
+                    // Obtén el array de opciones desde el objeto JSON
+                    val jsonArray = response.getJSONArray("Lista")
+                    // Convierte el array JSON a una lista mutable
+                    val opcionesList = mutableListOf<String>()
+                    for (i in 0 until jsonArray.length()) {
+                        opcionesList.add(jsonArray.getString(i).removeSurrounding("'", "'"))
+                    }
+                    //Crea un adpatador para el dropdown
+                    val adapter = ArrayAdapter(requireContext(), R.layout.list_item, opcionesList)
+                    //binding.tvholaMundo?.setText(response.getString("Lista"))
+                    DropdownInventario?.setAdapter(adapter)
 
-                DropdownInventario?.onItemClickListener = AdapterView.OnItemClickListener {
-                        parent, view, position, id ->
-                    searchByName()
-                    val itemSelected = parent.getItemAtPosition(position)
+                    DropdownInventario?.onItemClickListener =
+                        AdapterView.OnItemClickListener { parent, view, position, id ->
+                            searchByName()
+                            val itemSelected = parent.getItemAtPosition(position)
+
+                        }
+                }catch (e:Exception){
+                    val inflaterRemover = requireActivity().layoutInflater
+                    val layoutRemover = inflaterRemover.inflate(
+                        R.layout.toast_custom_remover,
+                        null
+                    )
+                    val textRemover =
+                        layoutRemover.findViewById<TextView>(R.id.text_view_toast_remover)
+                    textRemover.text =
+                        "Se termino el tiempo de espera, salga y vuelva a entrar"
+                    val toast = Toast(requireContext())
+                    toast.duration = Toast.LENGTH_SHORT
+                    toast.view = layoutRemover
+                    toast.setGravity(Gravity.BOTTOM, 0, 600)
+                    toast.show()
                 }
             }, { error ->
                 Toast.makeText(requireContext(), " La aplicación no se ha conectado con el servidor", Toast.LENGTH_SHORT).show()

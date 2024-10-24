@@ -12,6 +12,7 @@ data class SinFacturaItemResponse(
     @SerializedName("Producto")  val Producto: String,
     @SerializedName("Unidades")  val Unidades: String,
     @SerializedName("Tipo Factura")  val TipoFactura: String,
+    @SerializedName("Fecha Completa")  val FechaCompleta: String,
     @SerializedName("Dia Sin Factura")  val DiaSinFactura: String,
     @SerializedName("Fecha Sin Factura")  val FechaSinFactura: String,
     )

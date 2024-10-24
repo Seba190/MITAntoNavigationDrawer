@@ -27,6 +27,8 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
     private val binding = ItemPrecioVentaBinding.bind(itemView)
     val editText : EditText = itemView.findViewById(R.id.etPrecioVenta)
     val textView : TextView = itemView.findViewById(R.id.tvCustomers)
+    var segundaVez = false
+    var compararPreciosVenta : MutableList<String> = mutableListOf()
    // var buttonAgregar : Button? = null
 
 
@@ -51,7 +53,6 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
         })
 
     }*/
-    var segundaVez = false
     private var codeExecuted = false
     fun bind(clientePrecioVentaItemResponse: ClientePrecioVentaItemResponseEditar,
              listaAdapter: RecyclerView.Adapter<*>) {
@@ -69,7 +70,7 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
             }
         }*/
 
-        if (sharedViewModel.listaDePreciosVenta.isNotEmpty()) {
+        if (sharedViewModel.listaDePreciosVenta.toList() != compararPreciosVenta.toList()) {
             for (i in 0..<sharedViewModel.numeroPreciosVenta.size) {
                 if (binding.etPrecioVenta.text.isBlank()) {
                     if(binding.tvCustomers.text.toString() == sharedViewModel.listaDeClientes[i]){
@@ -97,9 +98,12 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
             }
             codeExecuted = true
         }*/
-        if(!segundaVez && sharedViewModel.listaDePreciosVenta.isEmpty()) {
+        if(!segundaVez) {
             obtenerClientes()
             segundaVez = true
+        }
+        if(sharedViewModel.listaDePreciosVenta.toList() == compararPreciosVenta.toList()) {
+            obtenerClientes()
         }
         Log.i("Sebastian", "${sharedViewModel.listaDeClientes} y ${sharedViewModel.listaDePreciosVenta}")
     }
@@ -142,6 +146,10 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
                 val precioVenta = JSONObject(response).getString("PRECIO_VENTA")
                 binding.etPrecioVenta.setText(precioVenta)
                 sharedViewModel.listaDePreciosVenta[position]= precioVenta
+                if(!segundaVez){
+                    compararPreciosVenta.add(precioVenta)
+                    segundaVez = true
+                }
                // Toast.makeText(itemView.context,"${sharedViewModel.listaDePreciosVenta} y ${sharedViewModel.listaDeClientes}",Toast.LENGTH_SHORT).show()
 
             },

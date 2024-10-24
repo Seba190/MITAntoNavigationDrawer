@@ -146,7 +146,7 @@ class ProveedorPrecioCompraEditarFragment : Fragment(R.layout.fragment_proveedor
                         Log.i("Sebastian", response.toString())
                         //Log.i("Sebastian", response2.toString())
                         activity?.runOnUiThread {
-                            adapterPrecioCompra.updateList(response.Proveedores)
+                            adapterPrecioCompra.updateList(response.Proveedores.sortedBy { it.Nombre })
                             binding.progressBarPrecioCompraEditar.isVisible = false
 
                         }

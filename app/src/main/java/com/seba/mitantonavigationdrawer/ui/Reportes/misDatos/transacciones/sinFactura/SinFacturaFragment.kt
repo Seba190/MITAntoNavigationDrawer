@@ -30,6 +30,8 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class SinFacturaFragment : Fragment(R.layout.fragment_sin_factura) {
@@ -61,6 +63,10 @@ class SinFacturaFragment : Fragment(R.layout.fragment_sin_factura) {
         borrarListas()
         return root
     }
+    override fun onResume() {
+        super.onResume()
+        borrarListas()
+    }
     private fun initUI() {
         searchByName()
         adapter = SinFacturaAdapter(listaDeSinFacturasMutableList){navigateToEditarSinFactura(it)}
@@ -82,7 +88,8 @@ class SinFacturaFragment : Fragment(R.layout.fragment_sin_factura) {
                     Log.i("Sebastian", response.toString())
                     //Log.i("Sebastian", response2.toString())
                     activity?.runOnUiThread {
-                        adapter.updateList(response.SinFactura.sortedBy { it.Producto })
+                        val dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+                        adapter.updateList(response.SinFactura.sortedBy { it.Producto }.sortedByDescending { LocalDate.parse(it.FechaCompleta,dateFormatter) })
                         binding.progressBarSinFactura.isVisible = false
                         listaDeSinFacturasMutableList.clear()
                         listaDeSinFacturasMutableList.addAll(response.SinFactura)
@@ -126,7 +133,7 @@ class SinFacturaFragment : Fragment(R.layout.fragment_sin_factura) {
         findNavController().navigate(action)
     }
 
-    fun borrarListas(){
+   private fun borrarListas(){
         sharedViewModel.listaDeProductos.clear()
         sharedViewModel.listaDeCantidades.clear()
         sharedViewModel.listaDeProductosAnadir.clear()
