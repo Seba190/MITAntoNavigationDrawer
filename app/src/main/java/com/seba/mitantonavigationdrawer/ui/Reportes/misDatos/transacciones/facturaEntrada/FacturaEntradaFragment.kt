@@ -64,8 +64,8 @@ class FacturaEntradaFragment : Fragment(R.layout.fragment_factura_entrada) {
         return root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         borrarListas()
     }
 

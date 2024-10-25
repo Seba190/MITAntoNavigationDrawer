@@ -368,6 +368,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListRemoverAlmacen.clear()
                 if(sharedViewModel.opcionesListRemoverAlmacen.isEmpty()) {
                   for (i in 0 until jsonArray.length()) {
                     sharedViewModel.opcionesListRemoverAlmacen.add(jsonArray.getString(i).removeSurrounding("'", "'"))
@@ -388,6 +389,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                     binding.llMontoRemover.isVisible = sharedViewModel.listaDeProductosRemover.size != 0
                     binding.nsvElegirProductoRemover.isVisible = false
                     binding.rvElegirProductoRemover.requestLayout()
+                    sharedViewModel.opcionesListRemover.clear()
                     val itemSelected = parent.getItemAtPosition(position)
                 }
                 DropDownAlmacen?.setOnClickListener {
@@ -422,6 +424,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListRemoverCliente.clear()
                 if(sharedViewModel.opcionesListRemoverCliente.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListRemoverCliente.add(jsonArray.getString(i).removeSurrounding("'", "'"))

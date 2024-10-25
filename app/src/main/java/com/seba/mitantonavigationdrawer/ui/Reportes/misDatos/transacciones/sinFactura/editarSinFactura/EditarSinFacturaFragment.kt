@@ -124,6 +124,7 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListSinFacturaAlmacen.clear()
                 if(sharedViewModel.opcionesListSinFacturaAlmacen.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListSinFacturaAlmacen.add(jsonArray.getString(i).removeSurrounding("'", "'"))
@@ -170,6 +171,7 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListSinFacturaProducto.clear()
                 if(sharedViewModel.opcionesListSinFacturaProducto.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListSinFacturaProducto.add(jsonArray.getString(i).removeSurrounding("'", "'"))

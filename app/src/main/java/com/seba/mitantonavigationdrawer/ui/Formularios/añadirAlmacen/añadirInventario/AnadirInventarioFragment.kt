@@ -428,6 +428,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListAnadirAlmacen.clear()
                 if(sharedViewModel.opcionesListAnadirAlmacen.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListAnadirAlmacen.add(jsonArray.getString(i).removeSurrounding("'", "'"))
@@ -449,6 +450,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                     binding.nsvElegirProductoAnadir.isVisible = false
                     binding.rvElegirProductoAnadir.requestLayout()
                     val itemSelected = parent.getItemAtPosition(position)
+                    sharedViewModel.opcionesListAnadir.clear()
                 }
                 DropDownAlmacen?.setOnClickListener {
                     if(DropDownAlmacen?.text.toString() == "Elija una opción"){
@@ -481,6 +483,7 @@ class AnadirInventarioFragment : Fragment(R.layout.fragment_anadir_inventario) {
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListAnadirProveedor.clear()
                 if(sharedViewModel.opcionesListAnadirProveedor.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListAnadirProveedor.add(jsonArray.getString(i).removeSurrounding("'", "'"))

@@ -62,6 +62,11 @@ class ProductosFragment : Fragment(R.layout.fragment_productos) {
         return root
     }
 
+    override fun onStart() {
+        super.onStart()
+        borrarListas()
+    }
+
     private fun initUI() {
         //  binding.rvAlmacenes.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
         //    override fun onQueryTextSubmit(query: String?): Boolean {

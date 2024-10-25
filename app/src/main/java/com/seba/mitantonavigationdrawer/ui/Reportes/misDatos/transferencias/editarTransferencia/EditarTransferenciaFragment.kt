@@ -430,6 +430,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListEditarTransferenciaDestino.clear()
                 if(sharedViewModel.opcionesListEditarTransferenciaDestino.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListEditarTransferenciaDestino.add(jsonArray.getString(i).removeSurrounding("'", "'"))
@@ -480,6 +481,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListEditarTransferenciaOrigen.clear()
                 if(sharedViewModel.opcionesListEditarTransferenciaOrigen.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListEditarTransferenciaOrigen.add(jsonArray.getString(i).removeSurrounding("'", "'"))

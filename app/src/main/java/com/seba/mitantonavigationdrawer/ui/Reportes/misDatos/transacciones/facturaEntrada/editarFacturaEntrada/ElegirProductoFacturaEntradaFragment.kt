@@ -335,6 +335,7 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
                 val jsonArray = JSONObject(response).getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
                 for (i in 0..<jsonArray.length()) {
+                    //Si no contiene en la
                     if (!sharedViewModel.opcionesListEntrada.contains(jsonArray.getString(i).replace("'", ""))&&
                         !sharedViewModel.listaDeProductosAnadir.contains("${jsonArray.getString(i).replace("'", "").substringBefore('(')}( 0 unid. )")){
                         sharedViewModel.opcionesListEntrada.add(jsonArray.getString(i).replace("'", ""))

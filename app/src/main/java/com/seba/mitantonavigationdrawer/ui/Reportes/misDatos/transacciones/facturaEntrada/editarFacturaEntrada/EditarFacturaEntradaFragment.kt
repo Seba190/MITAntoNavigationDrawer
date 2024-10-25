@@ -611,6 +611,7 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListEntradaAlmacen.clear()
                 if(sharedViewModel.opcionesListEntradaAlmacen.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListEntradaAlmacen.add(jsonArray.getString(i).removeSurrounding("'", "'"))
@@ -664,6 +665,7 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListEntradaProveedor.clear()
                 if(sharedViewModel.opcionesListEntradaProveedor.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListEntradaProveedor.add(jsonArray.getString(i).removeSurrounding("'", "'"))

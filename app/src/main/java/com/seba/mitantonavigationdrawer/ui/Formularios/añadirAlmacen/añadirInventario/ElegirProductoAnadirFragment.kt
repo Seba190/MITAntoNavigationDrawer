@@ -44,6 +44,9 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
     private val sharedViewModel by activityViewModels<SharedViewModel>()
     private var encontrarProducto: Boolean = false
     private var adapter : ArrayAdapter<String>? = null
+    private var contador: Int = 0
+    private var listaEliminados : MutableList<String> = mutableListOf()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -159,6 +162,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                                     )
                                     sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadAnadir.text.toString())
                                     sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
+
                                     eliminarElementoDeListaDesplegableConParentesis(DropDownProducto?.text.toString())
                                     //  refreshAdapterAnadirTransferenciaFragment()
                                     binding.tvListaDesplegableElegirProductoAnadir.setText(
@@ -259,9 +263,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                                 )
                                 sharedViewModel.listaDeCantidadesAnadir.add(binding.etCantidadAnadir.text.toString())
                                 sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
-                                eliminarElementoDeListaDesplegableSinParentesis(
-                                    DropDownProducto?.text.toString().uppercase()
-                                )
+                                eliminarElementoDeListaDesplegableSinParentesis(DropDownProducto?.text.toString().uppercase())
                                 //  refreshAdapterAnadirTransferenciaFragment()
                                 binding.tvListaDesplegableElegirProductoAnadir.setText(
                                     "Elija una opción",
@@ -294,11 +296,7 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                                 try{
                                 val cantidad = binding.etNumeroDeCajasAnadir.text.toString().toInt()
                                     .times(binding.etArticulosPorCajaAnadir.text.toString().toInt())
-                                sharedViewModel.listaDeProductosAnadir.add(
-                                    "${
-                                        DropDownProducto?.text.toString().uppercase()
-                                    }( 0 unid. )"
-                                )
+                                sharedViewModel.listaDeProductosAnadir.add("${DropDownProducto?.text.toString().uppercase()}( 0 unid. )")
                                 sharedViewModel.listaDeCantidadesAnadir.add(cantidad.toString())
                                 sharedViewModel.listaDePreciosAnadir.add(binding.etPrecioAnadir.text.toString())
                                 eliminarElementoDeListaDesplegableSinParentesis(
@@ -371,13 +369,13 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = JSONObject(response).getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
-
                 for (i in 0..<jsonArray.length()) {
                     if (!sharedViewModel.opcionesListAnadir.contains(jsonArray.getString(i).replace("'", ""))&&
                         !sharedViewModel.listaDeProductosAnadir.contains("${jsonArray.getString(i).replace("'", "").substringBefore('(')}( 0 unid. )")) {
                         sharedViewModel.opcionesListAnadir.add(jsonArray.getString(i).replace("'", ""))
                     }
-                }
+                  }
+
                 sharedViewModel.opcionesListAnadir.removeAll { elemento ->
                     val elementoABuscar = "${elemento.substringBefore('(')}( 0 unid. )"
                     sharedViewModel.listaDeProductosAnadir.contains(elementoABuscar)
@@ -641,6 +639,8 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
         // Si se encuentra el elemento, eliminarlo
         if (itemToRemove != null) {
             sharedViewModel.opcionesListAnadir.remove(itemToRemove)
+            contador++
+            listaEliminados.add(itemToRemove)
             // Notificar al adaptador que los datos han cambiado
             adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, sharedViewModel.opcionesListAnadir)
             DropDownProducto?.threshold = 1
@@ -656,6 +656,8 @@ class ElegirProductoAnadirFragment : Fragment(R.layout.fragment_elegir_producto_
         // Si se encuentra el elemento, eliminarlo
         Log.i("eliminarElementoDeListaDesplegableConParentesis", "$nombre , ${sharedViewModel.opcionesListAnadir}")
         sharedViewModel.opcionesListAnadir.remove(nombre)
+        contador++
+        listaEliminados.add(nombre)
         Log.i("eliminarElementoDeListaDesplegableConParentesisDespues", "$nombre , ${sharedViewModel.opcionesListAnadir}")
         // Notificar al adaptador que los datos han cambiado
         adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, sharedViewModel.opcionesListAnadir)

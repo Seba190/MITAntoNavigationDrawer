@@ -333,6 +333,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListTransferenciaDestino.clear()
                if(sharedViewModel.opcionesListTransferenciaDestino.isEmpty()) {
                    for (i in 0 until jsonArray.length()) {
                        sharedViewModel.opcionesListTransferenciaDestino.add(jsonArray.getString(i).removeSurrounding("'", "'"))
@@ -385,6 +386,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListTransferenciaOrigen.clear()
                 if(sharedViewModel.opcionesListTransferenciaOrigen.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListTransferenciaOrigen.add(jsonArray.getString(i).removeSurrounding("'", "'"))

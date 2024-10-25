@@ -190,9 +190,9 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
         drawerLayout.addDrawerListener(object :DrawerLayout.DrawerListener{
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
                 Log.i("Drawer", "Drawer sliding: $slideOffset")
-                /*CoroutineScope(Dispatchers.IO).launch {
+                CoroutineScope(Dispatchers.IO).launch {
                     borrarListas()
-                }*/
+                }
             }
 
             override fun onDrawerOpened(drawerView: View) {
@@ -226,7 +226,7 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
             }
     })
     }
-    /*fun borrarListas(){
+    fun borrarListas(){
         sharedViewModel.listaDeProductos.clear()
         sharedViewModel.listaDeCantidades.clear()
         sharedViewModel.listaDeProductosAnadir.clear()
@@ -281,7 +281,7 @@ class MainActivity : AppCompatActivity(),AnadirTransferenciaUpdater{
         sharedViewModel.listaCombinadaEntrada.clear()
         sharedViewModel.listaCombinadaSalida.clear()
         sharedViewModel.listaCombinadaTransferencia.clear()
-    }*/
+    }
     fun borrarOpcionesList1(){
         sharedViewModel.opcionesListSalida.clear()
         sharedViewModel.opcionesListEntrada.clear()

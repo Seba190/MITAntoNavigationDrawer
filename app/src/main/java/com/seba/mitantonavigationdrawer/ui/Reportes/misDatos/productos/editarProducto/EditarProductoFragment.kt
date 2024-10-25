@@ -399,6 +399,7 @@ class EditarProductoFragment : Fragment(R.layout.fragment_editar_producto),Radio
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista2")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListEditarProductoTipoDeProducto.clear()
                 if(sharedViewModel.opcionesListEditarProductoTipoDeProducto.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListEditarProductoTipoDeProducto.add(jsonArray.getString(i).removeSurrounding("'", "'"))

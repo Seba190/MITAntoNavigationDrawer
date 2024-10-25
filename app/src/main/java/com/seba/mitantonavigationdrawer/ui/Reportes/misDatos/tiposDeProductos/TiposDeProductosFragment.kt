@@ -63,8 +63,8 @@ class TiposDeProductosFragment : Fragment(R.layout.fragment_tipos_de_productos) 
         return root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         borrarListas()
     }
 

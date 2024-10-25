@@ -245,6 +245,7 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListAlmacenUsuario.clear()
                 if(sharedViewModel.opcionesListAlmacenUsuario.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListAlmacenUsuario.add(jsonArray.getString(i).removeSurrounding("'", "'"))

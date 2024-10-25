@@ -126,6 +126,7 @@ class EditarAlmacenFragment : Fragment(R.layout.fragment_editar_almacen),RadioGr
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListEditarAlmacenUsuario.clear()
                 if(sharedViewModel.opcionesListEditarAlmacenUsuario.isEmpty()){
                 for (i in 0 until jsonArray.length()) {
                     sharedViewModel.opcionesListEditarAlmacenUsuario.add(jsonArray.getString(i).removeSurrounding("'", "'"))

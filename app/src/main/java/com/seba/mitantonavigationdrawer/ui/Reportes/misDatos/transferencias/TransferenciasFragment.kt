@@ -60,8 +60,8 @@ class TransferenciasFragment : Fragment(R.layout.fragment_transferencias) {
         return root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         borrarListas()
     }
 

@@ -695,6 +695,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                 // Obtén el array de opciones desde el objeto JSON
                 val jsonArray = response.getJSONArray("Lista2")
                 // Convierte el array JSON a una lista mutable
+                sharedViewModel.opcionesListProductoTipoDeProducto.clear()
                 if(sharedViewModel.opcionesListProductoTipoDeProducto.isEmpty()) {
                     for (i in 0 until jsonArray.length()) {
                         sharedViewModel.opcionesListProductoTipoDeProducto.add(jsonArray.getString(i).removeSurrounding("'", "'"))

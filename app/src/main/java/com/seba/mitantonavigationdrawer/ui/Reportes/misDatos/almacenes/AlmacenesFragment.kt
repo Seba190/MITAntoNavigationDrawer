@@ -69,8 +69,8 @@ class AlmacenesFragment : Fragment(R.layout.fragment_almacenes) {
         return root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         borrarListas()
     }
 

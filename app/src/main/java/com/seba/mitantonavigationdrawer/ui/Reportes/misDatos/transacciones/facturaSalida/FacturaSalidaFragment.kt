@@ -63,10 +63,12 @@ class FacturaSalidaFragment : Fragment(R.layout.fragment_factura_salida) {
         borrarListas()
         return root
     }
-    override fun onResume() {
-        super.onResume()
+
+    override fun onStart() {
+        super.onStart()
         borrarListas()
     }
+
     private fun initUI() {
         //  binding.rvAlmacenes.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
         //    override fun onQueryTextSubmit(query: String?): Boolean {

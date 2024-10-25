@@ -90,7 +90,13 @@ class InicioFragment : Fragment() {
 
         }
 
-   private fun showFragment() {
+    override fun onStart() {
+        super.onStart()
+        borrarListas()
+    }
+
+
+    private fun showFragment() {
         val fragmentManager = parentFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
             .setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out)
