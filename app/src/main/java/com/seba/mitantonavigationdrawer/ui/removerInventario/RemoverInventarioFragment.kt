@@ -128,14 +128,18 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         }
 
         binding.tvProductosAnadidosRemover.isVisible = false
-        val productosOrdenados = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
+       /* val productosOrdenados = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
         val listaCombinada = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDeCantidadesRemover)
         val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
         val cantidadesOrdenadas = listaOrdenadaCombinada.map { it.second }.toMutableList()
         val listaCombinada2 = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDePreciosRemover)
         val listaOrdenadaCombinada2 = listaCombinada2.sortedBy { it.first }
-        val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()
-        recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados,preciosOrdenados)
+        val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()*/
+        ordenarListas()
+        recyclerViewElegirProducto(sharedViewModel.listaDeCantidadesRemover,sharedViewModel.listaDeProductosRemover,sharedViewModel.listaDePreciosRemover)
+        adapter.updateList(sharedViewModel.listaDeCantidadesRemover,sharedViewModel.listaDeProductosRemover,sharedViewModel.listaDePreciosRemover)
+        adapter.notifyDataSetChanged()
+        binding.rvElegirProductoRemover.requestLayout()
         binding.bActualizarRecyclerViewRemover.setOnClickListener {
            /* val productosOrdenadosActualizado = sharedViewModel.listaDeProductosRemover.sorted().toMutableList()
             val listaCombinadaActualizada = sharedViewModel.listaDeProductosRemover.zip(sharedViewModel.listaDeCantidadesRemover)
@@ -312,7 +316,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                             },
                             { error ->
                                 Toast.makeText(requireContext(),"El nombre de la factura es demasiado largo", Toast.LENGTH_SHORT).show()
-                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                             }
                         )
 
@@ -347,7 +351,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                 // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                 Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         ){
             override fun getParams(): MutableMap<String, String> {
@@ -517,7 +521,8 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                             binding.tvListaDesplegableCliente.setText("Elija una opción",false)
                             binding.tvListaDesplegableAlmacen.setText("Elija una opción",false)
                             TextComentarios?.setText("")*/
-                            Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosRemover} y ${sharedViewModel.listaDeCantidadesRemover}", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosRemover} y ${sharedViewModel.listaDeCantidadesRemover}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                         }
                     )
 
@@ -543,7 +548,7 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                 // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                 //Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
-                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         ){
             override fun getParams(): MutableMap<String, String> {
@@ -573,7 +578,8 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
                   DropDownDestino?.setText("Elija una opción",false)
                   TextComentarios?.setText("")
                   TextCodigoDeBarra?.setText("")*/
-                Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosRemover} y ${sharedViewModel.listaDeCantidadesRemover}", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(),"Error $error y ${sharedViewModel.listaDeProductosRemover} y ${sharedViewModel.listaDeCantidadesRemover}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         )
 
@@ -675,8 +681,6 @@ class RemoverInventarioFragment : Fragment(R.layout.fragment_remover_inventario)
         sharedViewModel.listaDeProductosRemover = listaOrdenada.map { it.first }.toMutableList()
         sharedViewModel.listaDeCantidadesRemover = listaOrdenada.map { it.second }.toMutableList()
         sharedViewModel.listaDePreciosRemover = listaOrdenada.map { it.third }.toMutableList()
-
-        adapter.notifyDataSetChanged()
     }
 
     override fun onDestroyView() {

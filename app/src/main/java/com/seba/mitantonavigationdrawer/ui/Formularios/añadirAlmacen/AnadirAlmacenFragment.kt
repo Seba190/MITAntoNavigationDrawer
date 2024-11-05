@@ -144,7 +144,7 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                         },
                         { error ->
                            // Toast.makeText(requireContext(),"No se ha introducido el almacen a la base de datos", Toast.LENGTH_SHORT).show()
-                            Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                         }
                     ){
                         override fun getParams(): MutableMap<String, String> {
@@ -164,7 +164,7 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                // Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
-                Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue.add(jsonObjectRequest)
@@ -214,7 +214,7 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                     Toast.makeText(requireContext(),"Almacen insertado exitosamente", Toast.LENGTH_SHORT).show()
                 }, Response.ErrorListener { error ->
                     Toast.makeText(requireContext(),"No se ha introducido el almacen a la base de datos porque no hay conexión a ella", Toast.LENGTH_SHORT).show()
-                   // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                   // Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                 }
             ) {
                 override fun getParams(): MutableMap<String, String> {
@@ -310,7 +310,7 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                             },
                             { error ->
                                 Toast.makeText(requireContext(),"El usuario responsable del almacén es obligatorio", Toast.LENGTH_SHORT).show()
-                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                             }
                         )
 
@@ -343,7 +343,7 @@ class AnadirAlmacenFragment : Fragment(R.layout.fragment_anadir_almacen) {
                 // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                 Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
-               // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         ){
             override fun getParams(): MutableMap<String, String> {

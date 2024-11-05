@@ -583,7 +583,7 @@ class ElegirProductoFacturaEntradaFragment : Fragment(R.layout.fragment_elegir_p
             }, { error ->
                 /*if(binding.tvListaDesplegableElegirProveedor.text.toString() != "Elija una opción" &&
             binding.tvListaDesplegableElegirProducto.text.toString() != "Elija una opción") {*/
-                Toast.makeText(requireContext(), "No se ha podido cargar los parametros $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No se ha podido cargar los parametros", Toast.LENGTH_SHORT).show()
                 // binding.etCantidad.setText(unidadesEmbalaje)
                 Log.i("Runtime","$error")
             }

@@ -101,7 +101,7 @@ class EditarCantidadAlmacenesFragment : Fragment(R.layout.fragment_editar_cantid
             },
             { error ->
                 Toast.makeText(requireContext(), "Cantidad actualizada exitosamente", Toast.LENGTH_SHORT).show()
-                //Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                 // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
@@ -132,7 +132,7 @@ class EditarCantidadAlmacenesFragment : Fragment(R.layout.fragment_editar_cantid
                 //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
-               // Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                 Log.i("Sebastian","$error, ${sharedViewModel.id.last()}, ${sharedViewModel.productos.last()}, $cantidad")
 
                 // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()

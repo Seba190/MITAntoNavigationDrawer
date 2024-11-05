@@ -301,7 +301,7 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                             Log.i("Sebastián", "$e")
                         }
                     },
-                    { error -> //Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_SHORT).show()
+                    { error -> //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                         Log.i("Sebastián", "$error")
                     }) {
                     override fun getParams(): MutableMap<String, String> {
@@ -469,7 +469,7 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                             Log.i("Sebastián", "$e")
                         }
                     },
-                    { error -> //Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_SHORT).show()
+                    { error -> //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                         Log.i("Sebastián", "$error")
                     }) {
                     override fun getParams(): MutableMap<String, String> {
@@ -819,7 +819,7 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
             }, { error ->
                 /*if(binding.tvListaDesplegableElegirProveedor.text.toString() != "Elija una opción" &&
             binding.tvListaDesplegableElegirProducto.text.toString() != "Elija una opción") {*/
-                Toast.makeText(requireContext(), "No se ha podido cargar los parametros $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "No se ha podido cargar los parametros", Toast.LENGTH_SHORT).show()
                 // binding.etCantidad.setText(unidadesEmbalaje)
                 Log.i("Runtime","$error")
             }
@@ -989,7 +989,7 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                             Log.i("Sebastián", "$e")
                         }
                     },
-                    { error -> //Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_SHORT).show()
+                    { error -> //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                         Log.i("Sebastián", "$error")
                     }) {
                     override fun getParams(): MutableMap<String, String> {
@@ -1146,7 +1146,7 @@ class ElegirProductoFacturaSalidaFragment : Fragment(R.layout.fragment_elegir_pr
                             Log.i("Sebastián", "$e")
                         }
                     },
-                    { error -> //Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_SHORT).show()
+                    { error -> //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                         Log.i("Sebastián", "$error")
                     }) {
                     override fun getParams(): MutableMap<String, String> {

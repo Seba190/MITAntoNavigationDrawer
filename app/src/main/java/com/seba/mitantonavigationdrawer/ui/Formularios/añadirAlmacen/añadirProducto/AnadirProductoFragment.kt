@@ -525,7 +525,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                     "Conecte la aplicación al servidor",
                     Toast.LENGTH_SHORT
                 ).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -929,7 +929,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                     { error ->
                         Toast.makeText(
                             requireContext(),
-                            "No hay producto o embalaje asociado a este producto $error",
+                            "No hay producto o embalaje asociado a este producto",
                             Toast.LENGTH_SHORT
                         ).show()
                     }) {
@@ -981,7 +981,7 @@ class AnadirProductoFragment : Fragment(R.layout.fragment_anadir_producto), TuDi
                     { error ->
                         Toast.makeText(
                             requireContext(),
-                            "No hay producto o embalaje asociado a este producto $error",
+                            "No hay producto o embalaje asociado a este producto",
                             Toast.LENGTH_SHORT
                         ).show()
                     }) {

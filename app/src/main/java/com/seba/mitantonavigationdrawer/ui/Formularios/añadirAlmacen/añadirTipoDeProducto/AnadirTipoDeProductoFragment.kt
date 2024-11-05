@@ -86,7 +86,7 @@ class AnadirTipoDeProductoFragment : Fragment(R.layout.fragment_anadir_tipo_de_p
                                     "No se ha introducido el tipo de producto a la base de datos",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                                // Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                             }
                         ) {
                             override fun getParams(): MutableMap<String, String> {
@@ -122,7 +122,7 @@ class AnadirTipoDeProductoFragment : Fragment(R.layout.fragment_anadir_tipo_de_p
                 // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                 Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
-                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {

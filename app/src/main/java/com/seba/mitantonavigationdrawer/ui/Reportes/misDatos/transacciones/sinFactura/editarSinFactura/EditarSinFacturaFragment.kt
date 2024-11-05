@@ -263,7 +263,7 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                 }, 3000)
             },
             { error ->
-                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                 // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
@@ -297,7 +297,7 @@ class EditarSinFacturaFragment : Fragment(R.layout.fragment_editar_sin_factura),
                 TextFecha?.setText("")*/
             },
             { error ->
-                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                 // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )

@@ -234,7 +234,8 @@ class EditarTiposDeProductosFragment: Fragment(R.layout.fragment_editar_tipos_de
             },
             { error ->
                 //Toast.makeText(requireContext(), "Producto agregado exitosamente. El id de ingreso es el número $id ", Toast.LENGTH_SHORT).show()
-                Toast.makeText(requireContext(),"$error",Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(),"$error",Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                 Log.i("Sebastian", "$error")
                 //Toast.makeText(requireContext(),"Error $fotoBase64", Toast.LENGTH_SHORT).show()
 

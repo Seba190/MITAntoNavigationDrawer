@@ -24,6 +24,7 @@ import com.android.volley.toolbox.Volley
 import com.seba.mitantonavigationdrawer.R
 import com.seba.mitantonavigationdrawer.databinding.FragmentEditarTiposDeProductosBinding
 import com.seba.mitantonavigationdrawer.databinding.FragmentInicioBinding
+import com.seba.mitantonavigationdrawer.ui.ConnectionChecker
 import com.seba.mitantonavigationdrawer.ui.SharedViewModel
 import com.seba.mitantonavigationdrawer.ui.añadirDatos.AnadirDatosFragment
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +35,8 @@ import kotlinx.coroutines.launch
 class InicioFragment : Fragment() {
 
     private var _binding: FragmentInicioBinding? = null
-    private lateinit var container_layout: FrameLayout
-    private var fragmentVisible = false
+   // private lateinit var container_layout: FrameLayout
+   // private var fragmentVisible = false
     private val sharedViewModel : SharedViewModel by activityViewModels()
 
     // This property is only valid between onCreateView and
@@ -95,7 +96,6 @@ class InicioFragment : Fragment() {
         borrarListas()
     }
 
-
     private fun showFragment() {
         val fragmentManager = parentFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
@@ -138,7 +138,7 @@ class InicioFragment : Fragment() {
 
                 }
             },{error ->
-                Toast.makeText(requireContext(),"$error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
 
             } )
         queue2.add(jsonObjectRequest2)

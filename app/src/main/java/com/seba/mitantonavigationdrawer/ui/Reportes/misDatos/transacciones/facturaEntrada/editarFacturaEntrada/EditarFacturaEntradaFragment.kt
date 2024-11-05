@@ -117,14 +117,14 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
         }
 
 
-        val productosOrdenados = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
+       /* val productosOrdenados = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
         val listaCombinada = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDeCantidadesAnadir)
         val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
         val cantidadesOrdenadas = listaOrdenadaCombinada.map { it.second }.toMutableList()
         val listaCombinada2 = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDePreciosAnadir)
         val listaOrdenadaCombinada2 = listaCombinada2.sortedBy { it.first }
-        val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()
-        recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados,preciosOrdenados)
+        val preciosOrdenados = listaOrdenadaCombinada2.map { it.second }.toMutableList()*/
+
         binding.bActualizarRecyclerViewEditar.setOnClickListener {
            /* val productosOrdenadosActualizado = sharedViewModel.listaDeProductosAnadir.sorted().toMutableList()
             val listaCombinadaActualizada = sharedViewModel.listaDeProductosAnadir.zip(sharedViewModel.listaDeCantidadesAnadir)
@@ -254,17 +254,29 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
 
                 }
 
+                    Log.i("productos","${sharedViewModel.listaDeProductosAnadir}")
+                    ordenarListas()
+                    Log.i("productosOrdenados","${sharedViewModel.listaDeProductosAnadir}")
+                    recyclerViewElegirProducto(sharedViewModel.listaDeCantidadesAnadir, sharedViewModel.listaDeProductosAnadir, sharedViewModel.listaDePreciosAnadir)
+                    adapter.updateList(sharedViewModel.listaDeCantidadesAnadir, sharedViewModel.listaDeProductosAnadir, sharedViewModel.listaDePreciosAnadir)
+                    adapter.notifyDataSetChanged()
+                    binding.rvElegirProductoEditar.requestLayout()
+
+                Handler(Looper.getMainLooper()).postDelayed({
                     binding.nsvElegirProductoEditar.isVisible = true
-                    binding.tvProductosAnadidosEditar.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
-                    binding.llMontoEditar.isVisible = !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+                    binding.tvProductosAnadidosEditar.isVisible =
+                        !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
+                    binding.llMontoEditar.isVisible =
+                        !(adapter.listaDeCantidadesAnadir.size == 0 || adapter.listaDeProductosAnadir.size == 0 || adapter.listaDePreciosAnadir.size == 0)
                     ordenarListas()
                     adapter.notifyDataSetChanged()
                     Handler(Looper.getMainLooper()).postDelayed({
-                        binding.tvMontoEditar.text = sharedViewModel.listaDePreciosDeProductos.sum().toString()
+                        binding.tvMontoEditar.text =
+                            sharedViewModel.listaDePreciosDeProductos.sum().toString()
                     }, 300)
                     sharedViewModel.listaDePreciosDeProductos.clear()
                     binding.rvElegirProductoEditar.requestLayout()
-
+                },100)
 
 
             }, { error ->
@@ -290,9 +302,9 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
         binding.rvElegirProductoEditar.setHasFixedSize(true)
         binding.rvElegirProductoEditar.adapter = adapter
         binding.rvElegirProductoEditar.layoutManager = LinearLayoutManager(requireContext())
-        adapter.updateList(sharedViewModel.listaDeCantidadesAnadir,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosAnadir)
+       // adapter.updateList(sharedViewModel.listaDeCantidadesAnadir,sharedViewModel.listaDeProductosAnadir,sharedViewModel.listaDePreciosAnadir)
         adapter.notifyDataSetChanged()
-        binding.rvElegirProductoEditar.requestLayout()
+       // binding.rvElegirProductoEditar.requestLayout()
     }
 
     private fun onDeletedItem(position: Int){
@@ -369,8 +381,8 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
 
                 },
                 { error ->
-                    Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
-                    //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                 }
             ) {
                 override fun getParams(): MutableMap<String, String> {
@@ -750,7 +762,6 @@ class EditarFacturaEntradaFragment : Fragment(R.layout.fragment_editar_factura_e
         sharedViewModel.listaDeCantidadesAnadir = listaOrdenada.map { it.second }.toMutableList()
         sharedViewModel.listaDePreciosAnadir = listaOrdenada.map { it.third }.toMutableList()
 
-        adapter.notifyDataSetChanged()
     }
 
 

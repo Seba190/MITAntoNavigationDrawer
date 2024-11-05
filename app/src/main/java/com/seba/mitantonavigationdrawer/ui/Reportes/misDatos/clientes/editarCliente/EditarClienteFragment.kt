@@ -179,7 +179,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
             },
             { error ->
                 Log.i("Sebastian","Error: $error")
-                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                 // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
@@ -208,7 +208,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
                 //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_SHORT).show()
 
             },{error ->
-                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             })
         {
             override fun getParams(): MutableMap<String, String> {
@@ -232,7 +232,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
                 //   TextDropdown?.setText("Elija una opción",false)
             },
             { error ->
-                Toast.makeText(requireContext(),"El error es $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                 // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()
             }
         )
@@ -274,7 +274,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
                                 //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_SHORT).show()
 
                             },{error ->
-                                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                             })
                         {
                             override fun getParams(): MutableMap<String, String> {
@@ -296,7 +296,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
                                 //  Toast.makeText(requireContext(), "Exito", Toast.LENGTH_SHORT).show()
 
                             },{error ->
-                                //Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                             })
                         {
                             override fun getParams(): MutableMap<String, String> {
@@ -322,7 +322,7 @@ class EditarClienteFragment : Fragment(R.layout.fragment_editar_cliente), RadioG
                 // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                 Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
-                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                // Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         ){
             override fun getParams(): MutableMap<String, String> {

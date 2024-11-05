@@ -103,7 +103,7 @@ class AnadirClienteFragment : Fragment(R.layout.fragment_anadir_cliente) {
                                     "No se ha introducido el cliente a la base de datos",
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                                // Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                             }
                         ) {
                             override fun getParams(): MutableMap<String, String> {
@@ -142,7 +142,7 @@ class AnadirClienteFragment : Fragment(R.layout.fragment_anadir_cliente) {
                 // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                 Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
-               // Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+               // Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {

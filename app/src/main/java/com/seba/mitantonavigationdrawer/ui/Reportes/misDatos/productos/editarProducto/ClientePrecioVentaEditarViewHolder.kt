@@ -131,7 +131,7 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
                 }
 
             }, { error ->
-                Toast.makeText(itemView.context, "$error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(itemView.context, "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         )
         queue1.add(jsonObjectRequest1)
@@ -154,7 +154,7 @@ class ClientePrecioVentaEditarViewHolder(itemView: View, private val listener: O
 
             },
             { error ->
-                //Toast.makeText(itemView.context, "$error", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(itemView.context, "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                 //Log.i("Sebastian","$error")
                 // Toast.makeText(itemView.context, "El error es $error", Toast.LENGTH_SHORT).show()
                 // Toast.makeText(requireContext(),"Solo se ha podido borrar el almacen.", Toast.LENGTH_SHORT).show()

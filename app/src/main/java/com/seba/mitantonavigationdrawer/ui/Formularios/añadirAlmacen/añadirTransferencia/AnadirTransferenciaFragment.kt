@@ -157,7 +157,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                 "Conecte la aplicación al servidor",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                         }
                     ) {
                         override fun getParams(): MutableMap<String, String> {
@@ -233,11 +233,15 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
             }
            }*/
         binding.tvProductosAnadidos.isVisible = false
-        val productosOrdenados = sharedViewModel.listaDeProductos.sorted().toMutableList()
+        /*val productosOrdenados = sharedViewModel.listaDeProductos.sorted().toMutableList()
         val listaCombinada = sharedViewModel.listaDeProductos.zip(sharedViewModel.listaDeCantidades)
         val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
-        val cantidadesOrdenadas = listaOrdenadaCombinada.map { it.second }.toMutableList()
-        recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados)
+        val cantidadesOrdenadas = listaOrdenadaCombinada.map { it.second }.toMutableList()*/
+        ordenarListas()
+        recyclerViewElegirProducto(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
+        adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
+        adapter.notifyDataSetChanged()
+        binding.rvElegirProducto.requestLayout()
         //var segundaVez = false
         binding.bActualizarRecyclerView.setOnClickListener {
            /* val productosOrdenadosActualizados = sharedViewModel.listaDeProductos.sorted().toMutableList()
@@ -282,11 +286,10 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
         binding.rvElegirProducto.setHasFixedSize(true)
         binding.rvElegirProducto.adapter = adapter
         binding.rvElegirProducto.layoutManager = LinearLayoutManager(requireContext())
-        adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
+       /* adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
         adapter.notifyDataSetChanged()
-        binding.rvElegirProducto.requestLayout()
-        binding.tvProductosAnadidos.isVisible =
-            !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
+        binding.rvElegirProducto.requestLayout()*/
+        binding.tvProductosAnadidos.isVisible = !(adapter.listaDeCantidades.size == 0 && adapter.listaDeProductos.size == 0)
     }
 
     private fun onDeletedItem(position: Int) {
@@ -406,6 +409,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                         binding.nsvElegirProducto.isVisible = false
                         binding.rvElegirProducto.requestLayout()
                         val itemSelected = parent.getItemAtPosition(position)
+                        sharedViewModel.opcionesListTransferencia.clear()
                     }
                 DropDownOrigen?.setOnClickListener {
                     if(DropDownOrigen?.text.toString() == "Elija una opción"){
@@ -469,8 +473,8 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
 
                             },
                             { error ->
-                                Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
-                                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                             }
                         ) {
                             override fun getParams(): MutableMap<String, String> {
@@ -518,7 +522,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                     "Conecte la aplicación al servidor",
                     Toast.LENGTH_SHORT
                 ).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -603,7 +607,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                 // Toast.makeText(requireContext(),"Id ingresado correctamente al formulario.", Toast.LENGTH_SHORT).show()
             }, { error ->
                 //Toast.makeText(requireContext(),"Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -816,7 +820,7 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
                                 "Sebastian",
                                 "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}"
                             )
-                            //Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                            // Log.i("Sebastián", "$error")
                             Log.i("Sebastian", "Mensaje 4")
                         }) {
@@ -917,8 +921,6 @@ class AnadirTransferenciaFragment : Fragment(R.layout.fragment_anadir_transferen
         sharedViewModel.listaDeProductos = productosOrdenados.toMutableList()
         sharedViewModel.listaDeCantidades = cantidadesOrdenadas.toMutableList()
 
-
-        adapter.notifyDataSetChanged()
     }
 
     override fun onDestroyView() {

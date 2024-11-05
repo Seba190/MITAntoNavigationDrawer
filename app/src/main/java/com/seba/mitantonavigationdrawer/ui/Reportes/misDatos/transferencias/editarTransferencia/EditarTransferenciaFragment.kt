@@ -149,7 +149,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                                 "Esta cambiando la transferencia a ${TextNombre?.text.toString().uppercase()}",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                         }
                     ) {
                         override fun getParams(): MutableMap<String, String> {
@@ -227,11 +227,10 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
            }*/
         binding.tvProductosAnadidos.isVisible = false
 
-        val productosOrdenados = sharedViewModel.listaDeProductos.sorted().toMutableList()
+        /*val productosOrdenados = sharedViewModel.listaDeProductos.sorted().toMutableList()
         val listaCombinada = sharedViewModel.listaDeProductos.zip(sharedViewModel.listaDeCantidades)
         val listaOrdenadaCombinada = listaCombinada.sortedBy { it.first }
-        val cantidadesOrdenadas = listaOrdenadaCombinada.map { it.second }.toMutableList()
-        recyclerViewElegirProducto(cantidadesOrdenadas,productosOrdenados)
+        val cantidadesOrdenadas = listaOrdenadaCombinada.map { it.second }.toMutableList()*/
        // var segundaVez = false
         binding.bActualizarRecyclerView.setOnClickListener {
             /*val productosOrdenadosActualizados = sharedViewModel.listaDeProductos.sorted().toMutableList()
@@ -332,6 +331,11 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                     sharedViewModel.listaDeCantidades.add(response.getString("CANTIDAD").toString())
                     sharedViewModel.listaDeProductos.add("${response.getString("PRODUCTO")} ( 0 unid. )")
                 }*/
+                ordenarListas()
+                recyclerViewElegirProducto(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
+                adapter.updateList(sharedViewModel.listaDeCantidades,sharedViewModel.listaDeProductos)
+                adapter.notifyDataSetChanged()
+                binding.rvElegirProducto.requestLayout()
 
                 Handler(Looper.getMainLooper()).postDelayed({
                     binding.nsvElegirProducto.isVisible = true
@@ -339,8 +343,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                     adapter.updateList(sharedViewModel.listaDeCantidades, sharedViewModel.listaDeProductos)
                     adapter.notifyDataSetChanged()
                     binding.rvElegirProducto.requestLayout()
-
-                }, 500)
+                }, 100)
 
 
             }, { error ->
@@ -552,8 +555,8 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
 
             },
             { error ->
-                Toast.makeText(requireContext(), "$error", Toast.LENGTH_SHORT).show()
-                //Toast.makeText(requireContext(),"Error $error", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -960,7 +963,7 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
                                 "Sebastian",
                                 "${sharedViewModel.listaDeProductos} , ${sharedViewModel.listaDeCantidades},${sharedViewModel.listaDeProductosAntigua} y ${sharedViewModel.listaDeCantidadesAntigua}"
                             )
-                            //Toast.makeText(requireContext(), "El error es $error", Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(requireContext(), "Conecte la aplicación al servidor", Toast.LENGTH_SHORT).show()
                             // Log.i("Sebastián", "$error")
                             Log.i("Sebastian", "Mensaje 4")
                         }) {
@@ -1061,8 +1064,6 @@ class EditarTransferenciaFragment : Fragment(R.layout.fragment_editar_transferen
         sharedViewModel.listaDeProductos = productosOrdenados.toMutableList()
         sharedViewModel.listaDeCantidades = cantidadesOrdenadas.toMutableList()
 
-
-        adapter.notifyDataSetChanged()
     }
 
     private fun borrarListas(){
